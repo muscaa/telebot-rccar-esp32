@@ -14,11 +14,11 @@ int vmenu(string title, int options_count, option options[]) {
     int capture;
     int current = 0;
     bool redraw = true;
-    while ((capture = read_capture()) != KEY_RETURN) {
-        if (capture == KEY_UP) {
+    while ((capture = read_capture()) != K_RETURN) {
+        if (capture == K_UP) {
             current = (current - 1 + options_count) % options_count;
             redraw = true;
-        } else if (capture == KEY_DOWN) {
+        } else if (capture == K_DOWN) {
             current = (current + 1) % options_count;
             redraw = true;
         }
@@ -26,18 +26,18 @@ int vmenu(string title, int options_count, option options[]) {
         if (redraw) {
             clear_screen();
 
-            printf("%s\n", title);
-            printf("\n");
+            println("%s", title);
+            println("");
 
             for (int i = 0; i < options_count; i++) {
                 option opt = options[i];
                 
                 if (i == current) {
                     push_foreground(opt.color_code);
-                    printf("%s\n", opt.name);
+                    println("%s", opt.name);
                     pop_foreground();
                 } else {
-                    printf("%s\n", opt.name);
+                    println("%s", opt.name);
                 }
             }
 

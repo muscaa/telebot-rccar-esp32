@@ -1,7 +1,6 @@
 #ifndef _UTILS_MENU_H_
     #define _UTILS_MENU_H_
 
-    #include <stdio.h>
     #include <stdbool.h>
 
     #include "string.h"

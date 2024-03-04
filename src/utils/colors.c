@@ -29,32 +29,32 @@ char* backgroundHistory[100];
 
 void push_foreground_color(char* color) {
     foregroundHistory[foreground++] = color;
-    printf("%s", color);
+    print("%s", color);
 }
 
 void push_background_color(char* color) {
     backgroundHistory[background++] = color;
-    printf("%s", color);
+    print("%s", color);
 }
 
 void pop_foreground_color() {
     if (--foreground <= 0) {
-        printf("%s", color(0, 0));
+        print("%s", color(0, 0));
         return;
     }
     char* last = foregroundHistory[foreground];
     free(last);
-    printf("%s", foregroundHistory[foreground - 1]);
+    print("%s", foregroundHistory[foreground - 1]);
 }
 
 void pop_background_color() {
     if (--background <= 0) {
-        printf("%s", color(0, 0));
+        print("%s", color(0, 0));
         return;
     }
     char* last = backgroundHistory[background];
     free(last);
-    printf("%s", backgroundHistory[background - 1]);
+    print("%s", backgroundHistory[background - 1]);
 }
 
 // PUBLIC

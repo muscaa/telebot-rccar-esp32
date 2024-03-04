@@ -3,6 +3,8 @@
 
     #include <stdio.h>
     #include <stdlib.h>
+
+    #include "console.h"
 #endif
 
 #define COLOR_BLACK   0

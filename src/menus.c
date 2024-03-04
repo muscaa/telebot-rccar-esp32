@@ -1,4 +1,5 @@
 #include "menus.h"
+#include <stdio.h>
 
 // PUBLIC
 void main_menu() {
@@ -11,5 +12,5 @@ void main_menu() {
     };
     int option = vmenu("Main Menu", 3, options);
 
-    printf("You selected option %d\n", option);
+    println("You selected option %d", option);
 }
