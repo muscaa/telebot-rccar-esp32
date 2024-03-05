@@ -1,16 +1,51 @@
 #include "menus.h"
-#include <stdio.h>
+#include "p1/main.h"
+#include "utils/console.h"
+#include "utils/menu.h"
 
 // PUBLIC
-void main_menu() {
+int main_menu() {
     clear_screen();
 
     option options[] = {
-        new_option("Option 1", "This is the first option", COLOR_RED),
-        new_option("Option 2", "This is the second option", COLOR_GREEN),
-        new_option("Option 3", "This is the third option", COLOR_BLUE)
+        new_option_builder()
+                .name("Main Menu")
+                .separator(true)
+                .build(),
+        new_option_builder()
+                .separator(true)
+                .build(),
+        new_option_builder()
+                .id(1)
+                .name("#1. Meeting room reservation")
+                .build(),
+        new_option_builder()
+                .id(2)
+                .name("#2. System for keeping track of books in a library")
+                .build(),
+        new_option_builder()
+                .id(3)
+                .name("#3. Bicycle reservation system")
+                .build(),
+        new_option_builder()
+                .id(4)
+                .name("#4. System for booking pharmacy products")
+                .build(),
+        new_option_builder()
+                .separator(true)
+                .build(),
+        new_option_builder()
+                .name("Exit")
+                .hover_color(COLOR_RED)
+                .build(),
     };
-    int option = vmenu("Main Menu", 3, options);
+    option opt = vmenu(sizeof(options) / sizeof(option), options);
 
-    println("You selected option %d", option);
+    switch (opt.id) {
+        case 1: return p1_main();
+        case 2: return p2_main();
+        case 3: return p3_main();
+        case 4: return p4_main();
+    }
+    return 0;
 }

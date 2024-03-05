@@ -1,6 +1,6 @@
 #include "menus.h"
 
 int main() {
-    main_menu();
-    return 0;
+    push_foreground(COLOR_WHITE);
+    return main_menu();
 }

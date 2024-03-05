@@ -1,11 +1,9 @@
-#ifndef _UTILS_COLORS_H_
-    #define _UTILS_COLORS_H_
+#pragma once
 
-    #include <stdio.h>
-    #include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-    #include "console.h"
-#endif
+#include "console.h"
 
 #define COLOR_BLACK   0
 #define COLOR_RED     1

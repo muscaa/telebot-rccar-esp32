@@ -1,10 +1,7 @@
-#ifndef _UTILS_STRING_H_
-    #define _UTILS_STRING_H_
+#pragma once
 
-    #include <stdio.h>
-    #include <stdlib.h>
-#endif
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef const char* string;

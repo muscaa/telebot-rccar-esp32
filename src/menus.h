@@ -1,12 +1,15 @@
-#ifndef _MENUS_H_
-    #define _MENUS_H_
+#pragma once
 
-    #include <stdio.h>
+#include <stdio.h>
 
-    #include "utils/string.h"
-    #include "utils/colors.h"
-    #include "utils/console.h"
-    #include "utils/menu.h"
-#endif
+#include "utils/string.h"
+#include "utils/colors.h"
+#include "utils/console.h"
+#include "utils/menu.h"
 
-void main_menu();
+#include "p1/main.h"
+#include "p2/main.h"
+#include "p3/main.h"
+#include "p4/main.h"
+
+int main_menu();
