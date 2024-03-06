@@ -3,16 +3,19 @@
 #include <stdio.h>
 
 // PRIVATE
-int config = 0;
-FILE* configs[100];
+int save = 0;
+FILE* save_history[100];
+
+int load = 0;
+FILE* load_history[100];
 
 void write(byte b) {
-    fwrite(&b, sizeof(byte), 1, configs[config - 1]);
+    fwrite(&b, sizeof(byte), 1, save_history[save - 1]);
 }
 
 byte read() {
     byte p;
-    fread(&p, sizeof(byte), 1, configs[config - 1]);
+    fread(&p, sizeof(byte), 1, load_history[load - 1]);
     return p;
 }
 
@@ -94,18 +97,20 @@ config_writer writer = { write_bool, write_byte, write_char, write_int, write_lo
 config_reader reader = { read_bool, read_byte, read_char, read_int, read_long, read_float, read_double, read_len_string, read_string };
 
 // PUBLIC
-void push_config(int mode, string file) {
-    configs[config++] = fopen(file, mode == CONFIG_SAVE ? "wb" : "rb");
+config_writer push_save_config(string file) {
+    save_history[save++] = fopen(file, "wb");
+    return writer;
 }
 
-void pop_config() {
-    fclose(configs[--config]);
+void pop_save_config() {
+    fclose(save_history[--save]);
 }
 
-void save(void (*f)(config_writer)) {
-    f(writer);
+config_reader push_load_config(string file) {
+    load_history[load++] = fopen(file, "rb");
+    return reader;
 }
 
-void load(void (*f)(config_reader)) {
-    f(reader);
+void pop_load_config() {
+    fclose(load_history[--load]);
 }

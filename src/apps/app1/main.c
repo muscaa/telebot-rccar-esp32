@@ -1,5 +1,5 @@
 /*
-#1. Meeting room reservation
+#1. Meeting rooms reservation system
 
 The user can view the available rooms and book a room.
 The app allows adding/deleting a room with name and capacity,

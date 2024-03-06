@@ -38,6 +38,6 @@ option new_option();
 
 option_builder new_option_builder();
 
-option vmenu(int options_count, option options[]);
+option vmenu(const int options_length, option options[]);
 
-option hmenu(int options_count, option options[]);
+option hmenu(const int options_length, option options[]);

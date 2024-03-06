@@ -1,6 +1,11 @@
+#include "utils/utils.h"
+#include "apps/apps.h"
 #include "menus.h"
 
 int main() {
     push_foreground(COLOR_WHITE);
-    return main_menu();
+    init_apps();
+    int exit = main_menu();
+    pop_foreground();
+    return exit;
 }

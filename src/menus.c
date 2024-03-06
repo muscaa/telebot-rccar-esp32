@@ -1,63 +1,38 @@
 #include "menus.h"
 
-// PRIVATE
-void save_main_menu(config_writer w) {
-    w.Long(123);
-    w.Double(4.56);
-    println("wrote some lines");
-}
-
-void load_main_menu(config_reader r) {
-    long i = r.Long();
-    double f = r.Double();
-    println("read some lines");
-    println("%d %lf", i, f);
-}
+#include "utils/utils.h"
+#include "apps/apps.h"
 
 // PUBLIC
 int main_menu() {
     clear_screen();
 
-    option options[] = {
-        new_option_builder()
-                .name("Main Menu")
-                .separator()
-                .build(),
-        new_option_builder()
-                .separator()
-                .build(),
-        new_option_builder()
-                .id(1)
-                .name("#1. Meeting room reservation")
-                .build(),
-        new_option_builder()
-                .id(2)
-                .name("#2. System for keeping track of books in a library")
-                .build(),
-        new_option_builder()
-                .id(3)
-                .name("#3. Bicycle reservation system")
-                .build(),
-        new_option_builder()
-                .id(4)
-                .name("#4. System for booking pharmacy products")
-                .build(),
-        new_option_builder()
-                .separator()
-                .build(),
-        new_option_builder()
-                .name("Exit")
-                .foreground_hover(COLOR_RED)
-                .build(),
-    };
-    option opt = vmenu(sizeof(options) / sizeof(option), options);
-
-    switch (opt.id) {
-        case 1: return app1_main();
-        case 2: return app2_main();
-        case 3: return app3_main();
-        case 4: return app4_main();
+    int len = 0;
+    option options[4 + get_apps_length()];
+    options[len++] = new_option_builder()
+                    .name("Main Menu")
+                    .separator()
+                    .build();
+    options[len++] = new_option_builder()
+                    .separator()
+                    .build();
+    for (int i = 0; i < get_apps_length(); i++) {
+        app app = get_app(i);
+        options[len++] = new_option_builder()
+                        .id(i)
+                        .name(app.name)
+                        .build();
     }
+    options[len++] = new_option_builder()
+                    .separator()
+                    .build();
+    options[len++] = new_option_builder()
+                    .name("Exit")
+                    .foreground_hover(COLOR_RED)
+                    .build();
+    option opt = vmenu(len, options);
+
+    if (opt.id != -1) get_app(opt.id).launch();
 
     return 0;
 }

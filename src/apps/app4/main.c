@@ -1,5 +1,5 @@
 /*
-#4. System for booking pharmacy products
+#4. Pharmacy products booking system
 
 The application user can view the available products and book products to
 pick up from the pharmacy. App user can add/delete products, search for

@@ -3,9 +3,6 @@
 #include "../types/byte.h"
 #include "../types/string.h"
 
-#define CONFIG_SAVE 0
-#define CONFIG_LOAD 1
-
 typedef struct {
     void (*Bool)(bool);
     void (*Byte)(byte);
@@ -30,10 +27,10 @@ typedef struct {
     string (*String)(int);
 } config_reader;
 
-void push_config(int mode, string file);
+config_writer push_save_config(string file);
 
-void pop_config();
+void pop_save_config();
 
-void save(void (*f)(config_writer));
+config_reader push_load_config(string file);
 
-void load(void (*f)(config_reader));
+void pop_load_config();

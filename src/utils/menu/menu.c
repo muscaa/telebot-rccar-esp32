@@ -4,15 +4,15 @@
 #include "../system/colors.h"
 
 // PRIVATE
-void decrease(int* current, int options_count, option options[]) {
+void decrease(int* current, const int options_length, option options[]) {
     do {
-        *current = (*current - 1 + options_count) % options_count;
+        *current = (*current - 1 + options_length) % options_length;
     } while (options[*current].separator);
 }
 
-void increase(int* current, int options_count, option options[]) {
+void increase(int* current, const int options_length, option options[]) {
     do {
-        *current = (*current + 1) % options_count;
+        *current = (*current + 1) % options_length;
     } while (options[*current].separator);
 }
 
@@ -143,19 +143,19 @@ void menu_pre_draw() {
     clear_screen();
 }
 
-option menu(int options_count, option options[], int increase_key, int decrease_key,
+option menu(const int options_length, option options[], const int increase_key, const int decrease_key,
                 void (*pre_draw)(), void (*draw)(int, option[], int, int), void (*post_draw)(int, option[], int)) {
     start_capture();
     int current = -1;
-    increase(&current, options_count, options);
+    increase(&current, options_length, options);
     bool redraw = true;
     int capture;
     while ((capture = read_capture()) != K_RETURN) {
         if (capture == increase_key) {
-            increase(&current, options_count, options);
+            increase(&current, options_length, options);
             redraw = true;
         } else if (capture == decrease_key) {
-            decrease(&current, options_count, options);
+            decrease(&current, options_length, options);
             redraw = true;
         }
 
@@ -163,10 +163,10 @@ option menu(int options_count, option options[], int increase_key, int decrease_
             redraw = false;
 
             pre_draw();
-            for (int i = 0; i < options_count; i++) {
-                draw(options_count, options, current, i);
+            for (int i = 0; i < options_length; i++) {
+                draw(options_length, options, current, i);
             }
-            post_draw(options_count, options, current);
+            post_draw(options_length, options, current);
         }
     }
     stop_capture();
@@ -179,7 +179,7 @@ option menu(int options_count, option options[], int increase_key, int decrease_
 }
 
 // vertical menu start
-void vmenu_draw(int options_count, option options[], int current, int i) {
+void vmenu_draw(const int options_length, option options[], int current, int i) {
     option opt = options[i];
     
     int background;
@@ -195,20 +195,20 @@ void vmenu_draw(int options_count, option options[], int current, int i) {
     if (background != -1) pop_background();
 }
 
-void vmenu_post_draw(int options_count, option options[], int current) {
+void vmenu_post_draw(const int options_length, option options[], int current) {
     string desc = options[current].description;
     if (desc != NULL) {
         println(desc);
     }
 }
 
-option vmenu(int options_count, option options[]) {
-    return menu(options_count, options, K_DOWN, K_UP, menu_pre_draw, vmenu_draw, vmenu_post_draw);
+option vmenu(const int options_length, option options[]) {
+    return menu(options_length, options, K_DOWN, K_UP, menu_pre_draw, vmenu_draw, vmenu_post_draw);
 }
 // vertical menu end
 
 // horizontal menu start
-void hmenu_draw(int options_count, option options[], int current, int i) {
+void hmenu_draw(const int options_length, option options[], int current, int i) {
     option opt = options[i];
     
     int background;
@@ -224,7 +224,7 @@ void hmenu_draw(int options_count, option options[], int current, int i) {
     if (background != -1) pop_background();
 }
 
-void hmenu_post_draw(int options_count, option options[], int current) {
+void hmenu_post_draw(const int options_length, option options[], int current) {
     string desc = options[current].description;
     if (desc != NULL) {
         print(desc);
@@ -233,7 +233,7 @@ void hmenu_post_draw(int options_count, option options[], int current) {
     println("");
 }
 
-option hmenu(int options_count, option options[]) {
-    return menu(options_count, options, K_RIGHT, K_LEFT, menu_pre_draw, hmenu_draw, hmenu_post_draw);
+option hmenu(const int options_length, option options[]) {
+    return menu(options_length, options, K_RIGHT, K_LEFT, menu_pre_draw, hmenu_draw, hmenu_post_draw);
 }
 // horizontal menu end

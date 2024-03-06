@@ -1,6 +1,7 @@
 #include "dialogs.h"
 
 #include "../system/console.h"
+#include "menu.h"
 
 bool dialog_yes_no(string title) {
     clear_screen();

@@ -27,18 +27,18 @@ char* true_color(int base, int red, int green, int blue) {
 }
 
 int foreground = 0;
-char* foregroundHistory[100];
+char* foreground_history[100];
 
 int background = 0;
-char* backgroundHistory[100];
+char* background_history[100];
 
 void push_foreground_color(char* color) {
-    foregroundHistory[foreground++] = color;
+    foreground_history[foreground++] = color;
     print("%s", color);
 }
 
 void push_background_color(char* color) {
-    backgroundHistory[background++] = color;
+    background_history[background++] = color;
     print("%s", color);
 }
 
@@ -47,9 +47,9 @@ void pop_foreground_color() {
         print("%s", color(0, 0));
         return;
     }
-    char* last = foregroundHistory[foreground];
+    char* last = foreground_history[foreground];
     free(last);
-    print("%s", foregroundHistory[foreground - 1]);
+    print("%s", foreground_history[foreground - 1]);
 }
 
 void pop_background_color() {
@@ -57,9 +57,9 @@ void pop_background_color() {
         print("%s", color(0, 0));
         return;
     }
-    char* last = backgroundHistory[background];
+    char* last = background_history[background];
     free(last);
-    print("%s", backgroundHistory[background - 1]);
+    print("%s", background_history[background - 1]);
 }
 
 // PUBLIC

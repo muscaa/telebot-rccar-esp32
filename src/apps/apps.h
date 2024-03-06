@@ -1,8 +1,14 @@
 #pragma once
 
-#include "../menus.h"
+#include "../utils/utils.h"
 
-#include "app1/main.h"
-#include "app2/main.h"
-#include "app3/main.h"
-#include "app4/main.h"
+typedef struct {
+    string name;
+    int (*launch)();
+} app;
+
+void init_apps();
+
+int get_apps_length();
+
+app get_app(int index);

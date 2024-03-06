@@ -1,5 +1,5 @@
 /*
-#2. System for keeping track of books in a library
+#2. Library books tracking system
 
 The system allows to store the data of the books in a library.
 App user can add books by specifying title, author, type, location,
