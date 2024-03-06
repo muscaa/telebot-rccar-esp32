@@ -47,7 +47,7 @@ int main_menu() {
                 .build(),
         new_option_builder()
                 .name("Exit")
-                .hover_color(COLOR_RED)
+                .foreground_hover(COLOR_RED)
                 .build(),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
@@ -58,18 +58,6 @@ int main_menu() {
         case 3: return p3_main();
         case 4: return p4_main();
     }
-
-    push_config(CONFIG_SAVE, "file.dat");
-        save(save_main_menu);
-    pop_config();
-
-    pause_console();
-
-    push_config(CONFIG_LOAD, "file.dat");
-        load(load_main_menu);
-    pop_config();
-
-    pause_console();
 
     return 0;
 }

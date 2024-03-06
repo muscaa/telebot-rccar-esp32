@@ -15,13 +15,29 @@ void increase(int* current, int options_count, option options[]) {
 
 option_builder set_id(int id);
 option_builder set_name(string name);
+option_builder set_name_hover(string name_hover);
 option_builder set_description(string description);
-option_builder set_hover_color(int hover_color);
+option_builder set_foreground(int foreground);
+option_builder set_foreground_hover(int foreground);
+option_builder set_background(int background);
+option_builder set_background_hover(int background);
 option_builder set_separator();
 option_builder set_action(void (*action)());
 option build_option();
 
-option_builder ob = { set_id, set_name, set_description, set_hover_color, set_separator, set_action, build_option };
+option_builder ob = {
+    set_id,
+    set_name,
+    set_name_hover,
+    set_description,
+    set_foreground,
+    set_foreground_hover,
+    set_background,
+    set_background_hover,
+    set_separator,
+    set_action,
+    build_option
+};
 option current_building_option;
 
 option_builder set_id(int id) {
@@ -34,13 +50,33 @@ option_builder set_name(string name) {
     return ob;
 }
 
+option_builder set_name_hover(string name_hover) {
+    current_building_option.name_hover = name_hover;
+    return ob;
+}
+
 option_builder set_description(string description) {
     current_building_option.description = description;
     return ob;
 }
 
-option_builder set_hover_color(int hover_color) {
-    current_building_option.hover_color = hover_color;
+option_builder set_foreground(int foreground) {
+    current_building_option.foreground = foreground;
+    return ob;
+}
+
+option_builder set_foreground_hover(int foreground_hover) {
+    current_building_option.foreground_hover = foreground_hover;
+    return ob;
+}
+
+option_builder set_background(int background) {
+    current_building_option.background = background;
+    return ob;
+}
+
+option_builder set_background_hover(int background_hover) {
+    current_building_option.background_hover = background_hover;
     return ob;
 }
 
@@ -62,12 +98,16 @@ option build_option() {
 option new_option() {
     option opt = {
         -1,
+        -1,
         NULL,
         NULL,
+        NULL,
+        COLOR_WHITE, // if not set, the system overrides it
         COLOR_BLUE,
+        -1,
+        -1,
         false,
-        NULL,
-        -1
+        NULL
     };
     return opt;
 }
@@ -77,97 +117,53 @@ option_builder new_option_builder() {
     return ob;
 }
 
-option vmenu(int options_count, option options[]) {
-    start_capture();
-    int current = -1;
-    increase(&current, options_count, options);
-    bool redraw = true;
-    int capture;
-    while ((capture = read_capture()) != K_RETURN) {
-        if (capture == K_UP) {
-            decrease(&current, options_count, options);
-            redraw = true;
-        } else if (capture == K_DOWN) {
-            increase(&current, options_count, options);
-            redraw = true;
-        }
+string get_option_name(option opt, bool hovered, int* background, int* foreground) {
+    *background = -1;
+    *foreground = -1;
+    if (opt.background != -1) *background = opt.background;
+    if (opt.foreground != -1) *foreground = opt.foreground;
 
-        if (redraw) {
-            clear_screen();
+    string name = "";
+    if (opt.name != NULL) name = opt.name;
 
-            //println("%s", title);
-            //println("");
+    if (hovered) {
+        if (opt.background_hover != -1) *background = opt.background_hover;
+        if (opt.foreground_hover != -1) *foreground = opt.foreground_hover;
 
-            for (int i = 0; i < options_count; i++) {
-                option opt = options[i];
-                //opt.index = i; // not working? why? whatever..
-                
-                if (i == current) {
-                    push_foreground(opt.hover_color);
-                    println("%s", opt.name != NULL ? opt.name : "");
-                    pop_foreground();
-                } else {
-                    println("%s", opt.name != NULL ? opt.name : "");
-                }
-            }
-
-            redraw = false;
-
-            string desc = options[current].description;
-            if (desc != NULL) {
-                //println("");
-                //println("");
-                println(desc);
-            }
-        }
+        if (opt.name_hover != NULL) name = opt.name_hover;
     }
-    stop_capture();
 
-    option opt = options[current];
-    opt.index = current; // fixed the index problem
-    if (opt.action != NULL) opt.action(current);
-
-    return opt;
+    return name;
 }
 
-option hmenu(int options_count, option options[]) {
+void menu_pre_draw() {
+    clear_screen();
+}
+
+option menu(int options_count, option options[], int increase_key, int decrease_key,
+                void (*pre_draw)(), void (*draw)(int, option[], int, int), void (*post_draw)(int, option[], int)) {
     start_capture();
     int current = -1;
     increase(&current, options_count, options);
     bool redraw = true;
     int capture;
     while ((capture = read_capture()) != K_RETURN) {
-        if (capture == K_LEFT) {
-            decrease(&current, options_count, options);
-            redraw = true;
-        } else if (capture == K_RIGHT) {
+        if (capture == increase_key) {
             increase(&current, options_count, options);
+            redraw = true;
+        } else if (capture == decrease_key) {
+            decrease(&current, options_count, options);
             redraw = true;
         }
 
         if (redraw) {
-            clear_screen();
-
-            for (int i = 0; i < options_count; i++) {
-                option opt = options[i];
-                
-                if (i == current) {
-                    push_foreground(opt.hover_color);
-                    print("%s", opt.name != NULL ? opt.name : "");
-                    pop_foreground();
-                } else {
-                    print("%s", opt.name != NULL ? opt.name : "");
-                }
-            }
-
             redraw = false;
 
-            string desc = options[current].description;
-            if (desc != NULL) {
-                print(desc);
+            pre_draw();
+            for (int i = 0; i < options_count; i++) {
+                draw(options_count, options, current, i);
             }
-
-            println("");
+            post_draw(options_count, options, current);
         }
     }
     stop_capture();
@@ -178,3 +174,63 @@ option hmenu(int options_count, option options[]) {
 
     return opt;
 }
+
+// vertical menu start
+void vmenu_draw(int options_count, option options[], int current, int i) {
+    option opt = options[i];
+    
+    int background;
+    int foreground;
+    string name = get_option_name(opt, current == i, &background, &foreground);
+
+    if (background != -1) push_background(background);
+    if (foreground != -1) push_foreground(foreground);
+
+    println(name);
+
+    if (foreground != -1) pop_foreground();
+    if (background != -1) pop_background();
+}
+
+void vmenu_post_draw(int options_count, option options[], int current) {
+    string desc = options[current].description;
+    if (desc != NULL) {
+        println(desc);
+    }
+}
+
+option vmenu(int options_count, option options[]) {
+    return menu(options_count, options, K_DOWN, K_UP, menu_pre_draw, vmenu_draw, vmenu_post_draw);
+}
+// vertical menu end
+
+// horizontal menu start
+void hmenu_draw(int options_count, option options[], int current, int i) {
+    option opt = options[i];
+    
+    int background;
+    int foreground;
+    string name = get_option_name(opt, current == i, &background, &foreground);
+
+    if (background != -1) push_background(background);
+    if (foreground != -1) push_foreground(foreground);
+
+    print(name);
+
+    if (foreground != -1) pop_foreground();
+    if (background != -1) pop_background();
+}
+
+void hmenu_post_draw(int options_count, option options[], int current) {
+    string desc = options[current].description;
+    if (desc != NULL) {
+        print(desc);
+    }
+
+    println("");
+}
+
+option hmenu(int options_count, option options[]) {
+    return menu(options_count, options, K_RIGHT, K_LEFT, menu_pre_draw, hmenu_draw, hmenu_post_draw);
+}
+// horizontal menu end

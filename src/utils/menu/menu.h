@@ -8,12 +8,16 @@
 
 typedef struct {
     int id;
+    int index;
     string name;
+    string name_hover;
     string description;
-    int hover_color;
+    int foreground;
+    int foreground_hover;
+    int background;
+    int background_hover;
     bool separator;
     void (*action)(int);
-    int index;
 } option;
 
 struct _option_builder;
@@ -21,8 +25,12 @@ typedef struct _option_builder option_builder;
 struct _option_builder {
     option_builder (*id)(int);
     option_builder (*name)(string);
+    option_builder (*name_hover)(string);
     option_builder (*description)(string);
-    option_builder (*hover_color)(int);
+    option_builder (*foreground)(int);
+    option_builder (*foreground_hover)(int);
+    option_builder (*background)(int);
+    option_builder (*background_hover)(int);
     option_builder (*separator)();
     option_builder (*on_action)(void (*action)(int));
     option (*build)();

@@ -8,9 +8,6 @@
 #include "utils/menu/menu.h"
 #include "utils/config.h"
 
-#include "p1/main.h"
-#include "p2/main.h"
-#include "p3/main.h"
-#include "p4/main.h"
+#include "apps/apps.h"
 
 int main_menu();
