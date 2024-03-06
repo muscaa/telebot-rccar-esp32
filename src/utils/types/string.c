@@ -1,5 +1,7 @@
 #include "string.h"
 
+#include <stdlib.h>
+
 // PUBLIC
 string concat(string s1, string s2) {
     const size_t len1 = strlen(s1);

@@ -53,10 +53,10 @@ int main_menu() {
     option opt = vmenu(sizeof(options) / sizeof(option), options);
 
     switch (opt.id) {
-        case 1: return p1_main();
-        case 2: return p2_main();
-        case 3: return p3_main();
-        case 4: return p4_main();
+        case 1: return app1_main();
+        case 2: return app2_main();
+        case 3: return app3_main();
+        case 4: return app4_main();
     }
 
     return 0;

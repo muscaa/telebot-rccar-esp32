@@ -11,6 +11,6 @@ data from/to the file. Also use data structures for information read from the fi
 
 #include "main.h"
 
-int p3_main() {
+int app3_main() {
     return 0;
 }

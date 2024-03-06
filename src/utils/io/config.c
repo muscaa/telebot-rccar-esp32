@@ -1,5 +1,7 @@
 #include "config.h"
 
+#include <stdio.h>
+
 // PRIVATE
 int config = 0;
 FILE* configs[100];
@@ -81,11 +83,11 @@ double read_double() {
 }
 
 string read_len_string() {
-
+    return NULL;
 }
 
 string read_string(int len) {
-
+    return NULL;
 }
 
 config_writer writer = { write_bool, write_byte, write_char, write_int, write_long, write_float, write_double, write_len_string, write_string };

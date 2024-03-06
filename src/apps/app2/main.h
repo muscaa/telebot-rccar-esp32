@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-
 #include "../apps.h"
 
-int p3_main();
+int app2_main();

@@ -11,7 +11,7 @@ the file. Also use data structures for information read from the file.
 
 #include "main.h"
 
-int p2_main() {
+int app2_main() {
     if (dialog_yes_no("a title")) {
         println("pressed yes");
     } else {

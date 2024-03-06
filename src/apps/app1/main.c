@@ -25,7 +25,7 @@ To book a room, the user must specify the date and time.
 #define ID_ADD_ROOM 1
 #define ID_DELETE_ROOM 2
 
-int p1_main() {
+int app1_main() {
     clear_screen();
     
     option options[] = {

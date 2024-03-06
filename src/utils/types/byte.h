@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdbool.h>
-#include <limits.h>
 
 #define byte _Byte
 

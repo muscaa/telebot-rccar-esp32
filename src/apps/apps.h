@@ -2,9 +2,7 @@
 
 #include "../menus.h"
 
-#include "../utils/string.h"
-#include "../utils/colors.h"
-#include "../utils/console.h"
-#include "../utils/menu/menu.h"
-#include "../utils/menu/dialogs.h"
-#include "../utils/config.h"
+#include "app1/main.h"
+#include "app2/main.h"
+#include "app3/main.h"
+#include "app4/main.h"

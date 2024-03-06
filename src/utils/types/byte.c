@@ -1,5 +1,7 @@
 #include "byte.h"
 
+#include <limits.h>
+
 bool is_big_endian() {
     int big_endian = 1;
     return *((byte*) &big_endian) == 1;

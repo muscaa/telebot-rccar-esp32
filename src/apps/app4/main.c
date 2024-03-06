@@ -10,6 +10,6 @@ Also use data structures for information read from the file.
 
 #include "main.h"
 
-int p4_main() {
+int app4_main() {
     return 0;
 }

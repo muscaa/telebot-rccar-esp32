@@ -1,10 +1,7 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdbool.h>
-
-#include "string.h"
-#include "byte.h"
+#include "../types/byte.h"
+#include "../types/string.h"
 
 #define CONFIG_SAVE 0
 #define CONFIG_LOAD 1

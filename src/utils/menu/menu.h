@@ -2,9 +2,7 @@
 
 #include <stdbool.h>
 
-#include "../string.h"
-#include "../colors.h"
-#include "../console.h"
+#include "../types/string.h"
 
 typedef struct {
     int id;

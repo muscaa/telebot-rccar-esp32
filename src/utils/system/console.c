@@ -1,5 +1,17 @@
 #include "console.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+
+#if WIN
+    #include <Windows.h>
+#elif UNIX
+    #include <unistd.h>
+    #include <termios.h>
+    #include <sys/ioctl.h>
+#endif
+
 // PUBLIC
 void clear_screen() {
     #if WIN

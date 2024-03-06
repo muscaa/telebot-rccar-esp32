@@ -1,5 +1,8 @@
 #include "menu.h"
 
+#include "../system/console.h"
+#include "../system/colors.h"
+
 // PRIVATE
 void decrease(int* current, int options_count, option options[]) {
     do {
