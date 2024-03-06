@@ -1,46 +1,97 @@
 #include "config.h"
+#include "byte.h"
+#include <stdio.h>
 
 // PRIVATE
-/*
-for (int i = 0; i < sizeof(int); i++) {
-    unsigned char byte = (number >> (i * 8)) & 0xFF;
-    fwrite(&byte, sizeof(unsigned char), 1, file);
+int config = 0;
+FILE* configs[100];
+
+void write(byte b) {
+    fwrite(&b, sizeof(byte), 1, configs[config - 1]);
 }
 
-for (int i = 0; i < sizeof(int); i++) {
-    unsigned char byte;
-    fread(&byte, sizeof(unsigned char), 1, file);
-    number |= byte << (i * 8);
+byte read() {
+    byte p;
+    fread(&p, sizeof(byte), 1, configs[config - 1]);
+    return p;
 }
-*/
 
 // writing
-void write_bool(bool v);
-void write_byte(byte v);
-void write_char(char v);
-void write_int(int v);
-void write_long(long v);
-void write_float(float v);
-void write_double(double v);
-void write_len_string(string v);
-void write_string(string v);
+void write_bool(bool v) {
+    bool_to_bytes(v, write);
+}
+
+void write_byte(byte v) {
+    byte_to_bytes(v, write);
+}
+
+void write_char(char v) {
+    char_to_bytes(v, write);
+}
+
+void write_int(int v) {
+    int_to_bytes(v, write);
+}
+
+void write_long(long v) {
+    long_to_bytes(v, write);
+}
+
+void write_float(float v) {
+    float_to_bytes(v, write);
+}
+
+void write_double(double v) {
+    double_to_bytes(v, write);
+}
+
+void write_len_string(string v) {
+    
+}
+
+void write_string(string v) {
+
+}
 
 // reading
-bool read_bool();
-byte read_byte();
-char read_char();
-int read_int();
-long read_long();
-float read_float();
-double read_double();
-string read_len_string();
-string read_string(int len);
+bool read_bool() {
+    return bytes_to_bool(read);
+}
+
+byte read_byte() {
+    return bytes_to_byte(read);
+}
+
+char read_char() {
+    return bytes_to_char(read);
+}
+
+int read_int() {
+    return bytes_to_int(read);
+}
+
+long read_long() {
+    return bytes_to_long(read);
+}
+
+float read_float() {
+    return bytes_to_float(read);
+}
+
+double read_double() {
+    return bytes_to_double(read);
+}
+
+string read_len_string() {
+
+}
+
+string read_string(int len) {
+
+}
 
 config_writer writer = { write_bool, write_byte, write_char, write_int, write_long, write_float, write_double, write_len_string, write_string };
 config_reader reader = { read_bool, read_byte, read_char, read_int, read_long, read_float, read_double, read_len_string, read_string };
-
-int config = 0;
-FILE* configs[100];
 
 // PUBLIC
 void push_config(int mode, string file) {
@@ -56,5 +107,5 @@ void save(void (*f)(config_writer)) {
 }
 
 void load(void (*f)(config_reader)) {
-
+    f(reader);
 }

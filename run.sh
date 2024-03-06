@@ -3,7 +3,8 @@
 source init.sh
 
 if [ -f ./build/program ]; then
-    ./build/program $@
+    cd build/
+    ./program $@
     exit=$?
 
     echo

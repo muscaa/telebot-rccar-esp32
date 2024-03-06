@@ -6,6 +6,7 @@
 #include "utils/colors.h"
 #include "utils/console.h"
 #include "utils/menu.h"
+#include "utils/config.h"
 
 #include "p1/main.h"
 #include "p2/main.h"
