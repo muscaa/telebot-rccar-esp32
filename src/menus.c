@@ -1,5 +1,4 @@
 #include "menus.h"
-#include "utils/console.h"
 
 // PRIVATE
 void save_main_menu(config_writer w) {
@@ -22,10 +21,10 @@ int main_menu() {
     option options[] = {
         new_option_builder()
                 .name("Main Menu")
-                .separator(true)
+                .separator()
                 .build(),
         new_option_builder()
-                .separator(true)
+                .separator()
                 .build(),
         new_option_builder()
                 .id(1)
@@ -44,7 +43,7 @@ int main_menu() {
                 .name("#4. System for booking pharmacy products")
                 .build(),
         new_option_builder()
-                .separator(true)
+                .separator()
                 .build(),
         new_option_builder()
                 .name("Exit")

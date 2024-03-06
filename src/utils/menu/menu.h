@@ -2,9 +2,9 @@
 
 #include <stdbool.h>
 
-#include "string.h"
-#include "colors.h"
-#include "console.h"
+#include "../string.h"
+#include "../colors.h"
+#include "../console.h"
 
 typedef struct {
     int id;
@@ -23,7 +23,7 @@ struct _option_builder {
     option_builder (*name)(string);
     option_builder (*description)(string);
     option_builder (*hover_color)(int);
-    option_builder (*separator)(bool);
+    option_builder (*separator)();
     option_builder (*on_action)(void (*action)(int));
     option (*build)();
 };
@@ -33,3 +33,5 @@ option new_option();
 option_builder new_option_builder();
 
 option vmenu(int options_count, option options[]);
+
+option hmenu(int options_count, option options[]);

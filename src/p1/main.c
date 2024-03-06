@@ -31,11 +31,11 @@ int p1_main() {
     option options[] = {
         new_option_builder()
                 .name("Meeting room reservation")
-                .separator(true)
+                .separator()
                 .build(),
         new_option_builder()
                 .name("")
-                .separator(true)
+                .separator()
                 .build(),
         new_option_builder()
                 .id(ID_ADD_ROOM)
@@ -47,7 +47,7 @@ int p1_main() {
                 .build(),
         new_option_builder()
                 .name("")
-                .separator(true)
+                .separator()
                 .build(),
         new_option_builder()
                 .id(ID_MAIN_MENU)

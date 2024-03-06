@@ -1,6 +1,4 @@
 #include "config.h"
-#include "byte.h"
-#include <stdio.h>
 
 // PRIVATE
 int config = 0;

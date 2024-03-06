@@ -1,7 +1,4 @@
 #include "menu.h"
-#include "colors.h"
-#include "console.h"
-#include <stdlib.h>
 
 // PRIVATE
 void decrease(int* current, int options_count, option options[]) {
@@ -20,7 +17,7 @@ option_builder set_id(int id);
 option_builder set_name(string name);
 option_builder set_description(string description);
 option_builder set_hover_color(int hover_color);
-option_builder set_separator(bool separator);
+option_builder set_separator();
 option_builder set_action(void (*action)());
 option build_option();
 
@@ -47,8 +44,8 @@ option_builder set_hover_color(int hover_color) {
     return ob;
 }
 
-option_builder set_separator(bool separator) {
-    current_building_option.separator = separator;
+option_builder set_separator() {
+    current_building_option.separator = true;
     return ob;
 }
 
@@ -128,6 +125,55 @@ option vmenu(int options_count, option options[]) {
 
     option opt = options[current];
     opt.index = current; // fixed the index problem
+    if (opt.action != NULL) opt.action(current);
+
+    return opt;
+}
+
+option hmenu(int options_count, option options[]) {
+    start_capture();
+    int current = -1;
+    increase(&current, options_count, options);
+    bool redraw = true;
+    int capture;
+    while ((capture = read_capture()) != K_RETURN) {
+        if (capture == K_LEFT) {
+            decrease(&current, options_count, options);
+            redraw = true;
+        } else if (capture == K_RIGHT) {
+            increase(&current, options_count, options);
+            redraw = true;
+        }
+
+        if (redraw) {
+            clear_screen();
+
+            for (int i = 0; i < options_count; i++) {
+                option opt = options[i];
+                
+                if (i == current) {
+                    push_foreground(opt.hover_color);
+                    print("%s", opt.name != NULL ? opt.name : "");
+                    pop_foreground();
+                } else {
+                    print("%s", opt.name != NULL ? opt.name : "");
+                }
+            }
+
+            redraw = false;
+
+            string desc = options[current].description;
+            if (desc != NULL) {
+                print(desc);
+            }
+
+            println("");
+        }
+    }
+    stop_capture();
+
+    option opt = options[current];
+    opt.index = current;
     if (opt.action != NULL) opt.action(current);
 
     return opt;
