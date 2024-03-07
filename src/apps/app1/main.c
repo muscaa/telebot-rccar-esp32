@@ -21,99 +21,98 @@ To book a room, the user must specify the date and time.
 
 #include "main.h"
 
-#define TITLE option_title("Meeting rooms reservation system").build()
+#define TITLE builder_title("Meeting rooms reservation system").build()
 
-#define ID_BACK 0
+int menu_rooms();
+    int menu_rooms_view();
+        int menu_rooms_view_nofilter();
+        int menu_rooms_view_byname();
+        int menu_rooms_view_bycapacity();
+        int menu_rooms_view_byavailability();
+    int menu_rooms_add();
+int menu_bookings();
+
+int menu_rooms_view_nofilter() {
+    return 0;
+}
+
+int menu_rooms_view_byname() {
+    return 0;
+}
+
+int menu_rooms_view_bycapacity() {
+    return 0;
+}
+
+int menu_rooms_view_byavailability() {
+    return 0;
+}
 
 int menu_rooms_view() {
+    program_action actions[] = {
+        new_action("No filter", menu_rooms_view_nofilter),
+        new_action("Filter by name", menu_rooms_view_byname),
+        new_action("Filter by capacity", menu_rooms_view_bycapacity),
+        new_action("Filter by availability", menu_rooms_view_byavailability),
+        new_action("Back", menu_rooms),
+    };
+    int i = 0;
     option options[] = {
         TITLE,
-        option_separator()
-                .build(),
-        option_selection("No filter")
-                .build(),
-        option_selection("Filter by name")
-                .build(),
-        option_selection("Filter by capacity")
-                .build(),
-        option_selection("Filter by availability")
-                .build(),
-        option_separator()
-                .build(),
-        option_selection("Back")
-                .id(ID_BACK)
-                .build(),
+        SEPARATOR,
+        option_selection_action(actions, &i),
+        option_selection_action(actions, &i),
+        option_selection_action(actions, &i),
+        option_selection_action(actions, &i),
+        SEPARATOR,
+        option_selection_action(actions, &i),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-
-    switch (opt.id) {
-        case ID_BACK: return app1_main();
-    }
-    return 0;
+    return action_performed(actions, opt);
 }
 
 int menu_rooms_add() {
     return 0;
 }
 
-#define ID_ROOMS_VIEW 1
-#define ID_ROOMS_ADD 2
 int menu_rooms() {
+    program_action actions[] = {
+        new_action("View rooms", menu_rooms_view),
+        new_action("Add room", menu_rooms_add),
+        new_action("Back", app1_main),
+    };
+    int i = 0;
     option options[] = {
         TITLE,
-        option_separator()
-                .build(),
-        option_selection("View rooms")
-                .id(ID_ROOMS_VIEW)
-                .build(),
-        option_selection("Add room")
-                .id(ID_ROOMS_ADD)
-                .build(),
-        option_separator()
-                .build(),
-        option_selection("Back")
-                .id(ID_BACK)
-                .build(),
+        SEPARATOR,
+        option_selection_action(actions, &i),
+        option_selection_action(actions, &i),
+        SEPARATOR,
+        option_selection_action(actions, &i),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-
-    switch (opt.id) {
-        case ID_BACK: return app1_main();
-        case ID_ROOMS_VIEW: return menu_rooms_view();
-        case ID_ROOMS_ADD: return menu_rooms_add();
-    }
-    return 0;
+    return action_performed(actions, opt);
 }
 
 int menu_bookings() {
     return 0;
 }
 
-#define ID_ROOMS 1
-#define ID_BOOKINGS 2
 int app1_main() {
+    program_action actions[] = {
+        new_action("Rooms", menu_rooms),
+        new_action("Bookings", menu_bookings),
+        new_action("Back to Main Menu", main_menu),
+    };
+    int i = 0;
     option options[] = {
         TITLE,
-        option_separator()
-                .build(),
-        option_selection("Rooms")
-                .id(ID_ROOMS)
-                .build(),
-        option_selection("Bookings")
-                .id(ID_BOOKINGS)
-                .build(),
-        option_separator()
-                .build(),
-        option_selection("Back to Main Menu")
-                .id(ID_BACK)
-                .build(),
+        SEPARATOR,
+        option_selection_action(actions, &i),
+        option_selection_action(actions, &i),
+        SEPARATOR,
+        option_selection_action(actions, &i),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-
-    switch (opt.id) {
-        case ID_BACK: return main_menu();
-        case ID_ROOMS: return menu_rooms();
-        case ID_BOOKINGS: return menu_bookings();
-    }
-    return 0;
+    return action_performed(actions, opt);
 }

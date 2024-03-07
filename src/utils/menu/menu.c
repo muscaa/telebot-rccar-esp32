@@ -28,7 +28,7 @@ option_builder set_separator();
 option_builder set_action(void (*action)());
 option build_option();
 
-option_builder ob = {
+option_builder builder = {
     set_id,
     set_name,
     set_name_hover,
@@ -45,52 +45,52 @@ option current_building_option;
 
 option_builder set_id(int id) {
     current_building_option.id = id;
-    return ob;
+    return builder;
 }
 
 option_builder set_name(string name) {
     current_building_option.name = name;
-    return ob;
+    return builder;
 }
 
 option_builder set_name_hover(string name_hover) {
     current_building_option.name_hover = name_hover;
-    return ob;
+    return builder;
 }
 
 option_builder set_description(string description) {
     current_building_option.description = description;
-    return ob;
+    return builder;
 }
 
 option_builder set_foreground(int foreground) {
     current_building_option.foreground = foreground;
-    return ob;
+    return builder;
 }
 
 option_builder set_foreground_hover(int foreground_hover) {
     current_building_option.foreground_hover = foreground_hover;
-    return ob;
+    return builder;
 }
 
 option_builder set_background(int background) {
     current_building_option.background = background;
-    return ob;
+    return builder;
 }
 
 option_builder set_background_hover(int background_hover) {
     current_building_option.background_hover = background_hover;
-    return ob;
+    return builder;
 }
 
 option_builder set_separator() {
     current_building_option.separator = true;
-    return ob;
+    return builder;
 }
 
 option_builder set_action(void (*action)()) {
     current_building_option.action = action;
-    return ob;
+    return builder;
 }
 
 option build_option() {
@@ -99,7 +99,7 @@ option build_option() {
 
 // PUBLIC
 option new_option() {
-    option opt = {
+    return (option) {
         -1,
         -1,
         NULL,
@@ -112,12 +112,11 @@ option new_option() {
         false,
         NULL
     };
-    return opt;
 }
 
 option_builder new_option_builder() {
     current_building_option = new_option();
-    return ob;
+    return builder;
 }
 
 string get_option_name(option opt, bool hovered, int* background, int* foreground) {

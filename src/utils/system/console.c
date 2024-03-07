@@ -58,12 +58,6 @@ void start_capture() {
 }
 
 int read_capture() {
-    /*if (ReadConsoleInput(hInput, &input_record, 1, &events_read)) {
-        if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown) {
-            return input_record.Event.KeyEvent.wVirtualKeyCode;
-        }
-    }
-    return 0;*/
     if (ReadConsoleInput(hInput, &input_record, 1, &events_read)) {
         if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown) {
             int ca = input_record.Event.KeyEvent.uChar.AsciiChar;

@@ -49,11 +49,11 @@ void write_double(double v) {
 }
 
 void write_len_string(string v) {
-    
+    // TODO
 }
 
 void write_string(string v) {
-
+    // TODO
 }
 
 // reading
@@ -86,11 +86,11 @@ double read_double() {
 }
 
 string read_len_string() {
-    return NULL;
+    return NULL; // TODO
 }
 
 string read_string(int len) {
-    return NULL;
+    return NULL; // TODO
 }
 
 config_writer writer = { write_bool, write_byte, write_char, write_int, write_long, write_float, write_double, write_len_string, write_string };

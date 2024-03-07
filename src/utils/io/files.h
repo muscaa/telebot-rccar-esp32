@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "../types/string.h"
+#include "../system/system.h"
 
 bool file_exists(string path);
 

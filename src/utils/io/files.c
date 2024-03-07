@@ -1,7 +1,12 @@
 #include "files.h"
 
 #include <stdio.h>
-#include <sys/stat.h>
+
+#if WIN
+    #include <direct.h>
+#elif UNIX
+    #include <sys/stat.h>
+#endif
 
 bool file_exists(string path) {
     FILE* file = fopen(path, "r");
@@ -22,5 +27,9 @@ bool create_file(string path) {
 }
 
 bool create_dirs(string path) {
-    return mkdir(path, 0777) == 0;
+    #if WIN
+        return _mkdir(path) == 0;
+    #elif UNIX
+        return mkdir(path, 0777) == 0;
+    #endif
 }

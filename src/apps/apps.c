@@ -1,7 +1,5 @@
 #include "apps.h"
 
-#include "../menus.h"
-
 #include "app1/main.h"
 #include "app2/main.h"
 #include "app3/main.h"
@@ -13,8 +11,7 @@ int apps_length = 0;
 app apps[MAX_APPS_LENGTH];
 
 app new_app(string name, int (*launch)()) {
-    app app = { name, launch };
-    return app;
+    return (app) { name, launch };
 }
 
 void init_apps() {

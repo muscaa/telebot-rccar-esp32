@@ -16,7 +16,8 @@ gcc -Wall -o build\program %C_FILES%
 
 rem Run program if compilation was successful
 if %errorlevel% equ 0 (
-    build\program %*
+    cd build
+    program %*
     set exit_code=!errorlevel!
     
     echo.
