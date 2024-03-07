@@ -19,7 +19,7 @@
 
 void clear_screen();
 
-void title(string title);
+void set_console_title(string title);
 
 void pause_console();
 

@@ -5,14 +5,18 @@
 
 bool dialog_yes_no(string title) {
     clear_screen();
-    
+
     option options[] = {
+        new_option_builder()
+                .name("################################\n#")
+                .separator()
+                .build(),
         new_option_builder()
                 .name(title)
                 .separator()
                 .build(),
         new_option_builder()
-                .name("\n-------------------------------\n")
+                .name("\n################################\n\n")
                 .separator()
                 .build(),
         new_option_builder()
@@ -21,7 +25,7 @@ bool dialog_yes_no(string title) {
                 .build(),
         new_option_builder()
                 .id(0)
-                .name("yes")
+                .name("[yes]")
                 .build(),
         new_option_builder()
                 .name("           ")
@@ -29,10 +33,14 @@ bool dialog_yes_no(string title) {
                 .build(),
         new_option_builder()
                 .id(1)
-                .name("no")
+                .name("[no]")
                 .build(),
         new_option_builder()
                 .name("           ")
+                .separator()
+                .build(),
+        new_option_builder()
+                .name("\n\n################################\n")
                 .separator()
                 .build(),
     };

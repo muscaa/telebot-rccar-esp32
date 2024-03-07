@@ -21,7 +21,7 @@ void clear_screen() {
     #endif
 }
 
-void title(string title) {
+void set_console_title(string title) {
     #if WIN
         system(concat("title ", title));
     #elif UNIX

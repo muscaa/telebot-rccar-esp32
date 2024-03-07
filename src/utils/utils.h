@@ -7,6 +7,7 @@
 #include "types/string.h"
 
 #include "io/config.h"
+#include "io/files.h"
 
 #include "system/system.h"
 #include "system/colors.h"
@@ -14,3 +15,4 @@
 
 #include "menu/menu.h"
 #include "menu/dialogs.h"
+#include "menu/options.h"
