@@ -21,6 +21,10 @@ To book a room, the user must specify the date and time.
 
 #include "main.h"
 
+#include "../../utils/utils.h"
+#include "../../menus.h"
+#include "rooms.h"
+
 #define TITLE builder_title("Meeting rooms reservation system").build()
 
 int menu_rooms();
@@ -32,8 +36,46 @@ int menu_rooms();
     int menu_rooms_add();
 int menu_bookings();
 
+int no_rooms_available() {
+    program_action actions[] = {
+        new_action("Back", menu_rooms_view),
+    };
+    int i = 0;
+    option options[] = {
+        TITLE,
+        SEPARATOR,
+        builder_separator().name("No rooms available.").build(),
+        SEPARATOR,
+        option_selection_action(actions, &i),
+    };
+    option opt = vmenu(sizeof(options) / sizeof(option), options);
+    return action_performed(actions, opt);
+}
+
 int menu_rooms_view_nofilter() {
-    return 0;
+    if (get_rooms_length() == 0) {
+        return no_rooms_available();
+    }
+    program_action actions[] = {
+        new_action("Back", menu_rooms_view),
+    };
+    int i = 0;
+    int j = 0;
+    option options[get_rooms_length() + 4];
+    options[j++] = TITLE;
+    options[j++] = SEPARATOR;
+    for (; j < get_rooms_length() + 2; j++) {
+        room r = get_room(j - 2);
+        options[j] = builder_selection(r.name).id(j).build();
+    }
+    options[j++] = SEPARATOR;
+    options[j++] = option_selection_action(actions, &i);
+    option opt = vmenu(sizeof(options) / sizeof(option), options);
+    if (opt.id >= 2) {
+        // room settings
+        return 0;
+    }
+    return action_performed(actions, opt);
 }
 
 int menu_rooms_view_byname() {
@@ -72,7 +114,8 @@ int menu_rooms_view() {
 }
 
 int menu_rooms_add() {
-    return 0;
+    add_room("o camera", 87);
+    return menu_rooms();
 }
 
 int menu_rooms() {

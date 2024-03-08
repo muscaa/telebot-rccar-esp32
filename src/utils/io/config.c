@@ -1,6 +1,8 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // PRIVATE
 int save = 0;
@@ -48,12 +50,15 @@ void write_double(double v) {
     double_to_bytes(v, write);
 }
 
-void write_len_string(string v) {
-    // TODO
+void write_string(string v) {
+    for (int i = 0; i < strlen(v); i++) {
+        write_char(v[i]);
+    }
 }
 
-void write_string(string v) {
-    // TODO
+void write_len_string(string v) {
+    write_int(strlen(v));
+    write_string(v);
 }
 
 // reading
@@ -85,16 +90,21 @@ double read_double() {
     return bytes_to_double(read);
 }
 
-string read_len_string() {
-    return NULL; // TODO
-}
-
 string read_string(int len) {
-    return NULL; // TODO
+    char* s = malloc(len);
+    for (int i = 0; i < len; i++) {
+        s[i] = read_char();
+    }
+    return s;
 }
 
-config_writer writer = { write_bool, write_byte, write_char, write_int, write_long, write_float, write_double, write_len_string, write_string };
-config_reader reader = { read_bool, read_byte, read_char, read_int, read_long, read_float, read_double, read_len_string, read_string };
+string read_len_string() {
+    int len = read_int();
+    return read_string(len);
+}
+
+config_writer writer = { write_bool, write_byte, write_char, write_int, write_long, write_float, write_double, write_string, write_len_string };
+config_reader reader = { read_bool, read_byte, read_char, read_int, read_long, read_float, read_double, read_string, read_len_string };
 
 // PUBLIC
 config_writer push_save_config(string file) {

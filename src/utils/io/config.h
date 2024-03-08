@@ -11,8 +11,8 @@ typedef struct {
     void (*Long)(long);
     void (*Float)(float);
     void (*Double)(double);
-    void (*LenString)(string);
     void (*String)(string);
+    void (*LenString)(string);
 } config_writer;
 
 typedef struct {
@@ -23,8 +23,8 @@ typedef struct {
     long (*Long)();
     float (*Float)();
     double (*Double)();
-    string (*LenString)();
     string (*String)(int);
+    string (*LenString)();
 } config_reader;
 
 config_writer push_save_config(string file);
