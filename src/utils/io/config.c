@@ -91,10 +91,11 @@ double read_double() {
 }
 
 string read_string(int len) {
-    char* s = malloc(len);
+    char* s = malloc(len + 1);
     for (int i = 0; i < len; i++) {
         s[i] = read_char();
     }
+    s[len] = '\0';
     return s;
 }
 

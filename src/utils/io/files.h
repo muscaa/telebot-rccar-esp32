@@ -7,6 +7,8 @@
 
 bool file_exists(string path);
 
-bool create_file(string path);
+bool file_create(string path);
 
-bool create_dirs(string path);
+string file_parent(string path);
+
+bool dir_create(string path);

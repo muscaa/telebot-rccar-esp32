@@ -1,6 +1,8 @@
 #include "files.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if WIN
     #include <direct.h>
@@ -17,7 +19,7 @@ bool file_exists(string path) {
     return false;
 }
 
-bool create_file(string path) {
+bool file_create(string path) {
     FILE* file = fopen(path, "w");
     if (file) {
         fclose(file);
@@ -26,7 +28,21 @@ bool create_file(string path) {
     return false;
 }
 
-bool create_dirs(string path) {
+string file_parent(string path) {
+    int i;
+    for (i = strlen(path) - 1; i >= 0; i--) {
+        if (path[i] == '/') break;
+    }
+    if (i == -1) return NULL;
+
+    char* new_path = malloc(i + 1);
+    memcpy(new_path, path, i);
+    new_path[i] = '\0';
+
+    return new_path;
+}
+
+bool dir_create(string path) {
     #if WIN
         return _mkdir(path) == 0;
     #elif UNIX
