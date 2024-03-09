@@ -1,7 +1,6 @@
 #include "rooms.h"
 
 #include "main.h"
-#include <stdlib.h>
 
 #define CONFIG_FILE CONFIG_DIR "rooms.dat" // TODO mkdirs before fopen
 
@@ -22,6 +21,29 @@ bool init_filter() {
     return false;
 }
 
+int find_room(string name) {
+    for (int i = 0; i < rooms_length; i++) {
+        if (strcmp(rooms[i].name, name) == 0) return i;
+    }
+    return -1;
+}
+
+bool is_room_available(room room, date date_from, time time_from, date date_to, time time_to) {
+    for (int i = 0; i < room.bookings_length; i++) {
+        booking b = room.bookings[i];
+
+        if (compare_date_time(b.date_from, b.time_from, date_from, time_from) >= 0
+                && compare_date_time(b.date_from, b.time_from, date_to, time_to) < 0) {
+            return false;
+        }
+        if (compare_date_time(b.date_to, b.time_to, date_from, time_from) > 0
+                && compare_date_time(b.date_to, b.time_to, date_to, time_to) <= 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void save_rooms() {
     string parent = file_parent(CONFIG_FILE);
     if (parent != NULL) dir_create(parent);
@@ -38,12 +60,19 @@ void save_rooms() {
         for (int j = 0; j < room.bookings_length; j++) {
             booking booking = room.bookings[j];
 
-            w.Int(booking.date.day);
-            w.Int(booking.date.month);
-            w.Int(booking.date.year);
+            w.Byte(booking.date_from.day);
+            w.Byte(booking.date_from.month);
+            w.Int(booking.date_from.year);
 
-            w.Int(booking.time.hour);
-            w.Int(booking.time.minute);
+            w.Byte(booking.time_from.hour);
+            w.Byte(booking.time_from.minute);
+
+            w.Byte(booking.date_to.day);
+            w.Byte(booking.date_to.month);
+            w.Int(booking.date_to.year);
+
+            w.Byte(booking.time_to.hour);
+            w.Byte(booking.time_to.minute);
         }
     }
     pop_save_config();
@@ -77,12 +106,19 @@ void load_rooms() {
                 for (int j = 0; j < room.bookings_length; j++) {
                     booking booking;
 
-                    booking.date.day = r.Int();
-                    booking.date.month = r.Int();
-                    booking.date.year = r.Int();
+                    booking.date_from.day = r.Byte();
+                    booking.date_from.month = r.Byte();
+                    booking.date_from.year = r.Int();
 
-                    booking.time.hour = r.Int();
-                    booking.time.minute = r.Int();
+                    booking.time_from.hour = r.Byte();
+                    booking.time_from.minute = r.Byte();
+
+                    booking.date_to.day = r.Byte();
+                    booking.date_to.month = r.Byte();
+                    booking.date_to.year = r.Int();
+
+                    booking.time_to.hour = r.Byte();
+                    booking.time_to.minute = r.Byte();
 
                     room.bookings[j] = booking;
                 }
@@ -102,9 +138,9 @@ bool add_room(string name, int capacity) {
     load_rooms();
     if (rooms_length == 0) {
         rooms = malloc(sizeof(room)); // 1 room
+    } else if (room_exists(name)) {
+        return false;
     }
-
-    if (room_exists(name)) return false;
 
     room room;
     room.name = name;
@@ -116,15 +152,23 @@ bool add_room(string name, int capacity) {
     return true;
 }
 
+void delete_room(room r) {
+    int index = find_room(r.name);
+    if (index == -1) return;
+
+    //memcpy(rooms + (index * sizeof(room)), rooms + ((index + 1) * sizeof(room)), (rooms_length - index - 1) * sizeof(room)); // doesnt work, weird..
+    memcpy(&rooms[index], &rooms[index + 1], (rooms_length - index - 1) * sizeof(room));
+    rooms_length--;
+    rooms = realloc(rooms, rooms_length * sizeof(room));
+    save_rooms();
+}
+
 room get_room(int index) {
     return rooms[index];
 }
 
 bool room_exists(string name) {
-    for (int i = 0; i < rooms_length; i++) {
-        if (strcmp(rooms[i].name, name) == 0) return true;
-    }
-    return false;
+    return find_room(name) != -1;
 }
 
 int get_filtered_rooms_length() {
@@ -194,7 +238,9 @@ void filter_rooms_by_availability(availability_filter filter) {
     for (int i = 0; i < filtered_rooms_length; i++) {
         room r = filtered_rooms[i];
 
-        // TODO
+        if (is_room_available(r, filter.date_from, filter.time_from, filter.date_to, filter.time_to)) {
+            filtered_rooms[new_filtered_rooms_length++] = r;
+        }
     }
     filtered_rooms = realloc(filtered_rooms, new_filtered_rooms_length * sizeof(room));;
     filtered_rooms_length = new_filtered_rooms_length;

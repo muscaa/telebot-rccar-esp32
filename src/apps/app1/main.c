@@ -47,18 +47,26 @@ int menu_room_info(room room) {
         builder_separator()
                 .name(concat("Room name: ", room.name))
                 .build(),
-            builder_separator()
+        builder_separator()
                 .name(concat("Room capacity: ", as_string(room.capacity)))
                 .build(),
         SEPARATOR,
-        // options
+        builder_selection("Delete")
+                .id(2)
+                .build(),
+        builder_selection("Book")
+                .id(3)
+                .build(),
         SEPARATOR,
         option_selection_action(actions, &actions_index),
         option_selection_action(actions, &actions_index),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    if (opt.id >= 2) {
-        return menu_room_info(get_room(opt.id - 2));
+    if (opt.id == 2) {
+        delete_room(room);
+        return menu_rooms_view();
+    } else if (opt.id == 3) {
+        return 0;
     }
     return action_performed(actions, opt);
 }

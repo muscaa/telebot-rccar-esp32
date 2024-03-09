@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+#include "../types/byte.h"
+
 #define MONTH_JANUARY 1
 #define MONTH_FEBRUARY 2
 #define MONTH_MARCH 3
@@ -15,28 +17,15 @@
 #define MONTH_NOVEMBER 11
 #define MONTH_DECEMBER 12
 
-#define DAYS_JANUARY 31
-#define DAYS_FEBRUARY 28 // 29
-#define DAYS_MARCH 31
-#define DAYS_APRIL 30
-#define DAYS_MAY 31
-#define DAYS_JUNE 30
-#define DAYS_JULY 31
-#define DAYS_AUGUST 31
-#define DAYS_SEPTEMBER 30
-#define DAYS_OCTOBER 31
-#define DAYS_NOVEMBER 30
-#define DAYS_DECEMBER 31
-
 typedef struct {
-    int day;
-    int month;
+    byte day;
+    byte month;
     int year;
 } date;
 
 typedef struct {
-    int hour;
-    int minute;
+    byte hour;
+    byte minute;
 } time;
 
 date new_date(int day, int month, int year);
@@ -44,3 +33,7 @@ date new_date(int day, int month, int year);
 time new_time(int hour, int minute);
 
 bool is_leap_year(int year);
+
+int get_month_days(int month, int year);
+
+int compare_date_time(date date1, time time1, date date2, time time2);

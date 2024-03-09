@@ -13,7 +13,7 @@ string concat(string s1, string s2) {
     return result;
 }
 
-string as_string(long long number) {
+string as_string(long long int number) {
     int length = snprintf( NULL, 0, "%lld", number );
     char* result = malloc( length + 1 );
     sprintf( result, "%lld", number );

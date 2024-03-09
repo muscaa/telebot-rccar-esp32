@@ -7,8 +7,10 @@
 #define CAPACITY_HIGHER 2
 
 typedef struct {
-    date date;
-    time time;
+    date date_from;
+    time time_from;
+    date date_to;
+    time time_to;
 } booking;
 
 typedef struct {
@@ -44,6 +46,8 @@ void load_rooms();
 int get_rooms_length();
 
 bool add_room(string name, int capacity);
+
+void delete_room(room r);
 
 room get_room(int index);
 
