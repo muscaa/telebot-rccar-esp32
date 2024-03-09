@@ -19,17 +19,22 @@ typedef struct {
 } room;
 
 typedef struct {
+    bool set;
     string name;
 } name_filter;
 
 typedef struct {
+    bool set;
     int capacity;
     int mode;
 } capacity_filter;
 
 typedef struct {
-    date date;
-    time time;
+    bool set;
+    date date_from;
+    time time_from;
+    date date_to;
+    time time_to;
 } availability_filter;
 
 //void save_rooms();
@@ -44,8 +49,14 @@ room get_room(int index);
 
 bool room_exists(string name);
 
-room* filter_rooms_by_name(room* start_rooms, int start_rooms_length, int* result_length, name_filter filter);
+int get_filtered_rooms_length();
 
-room* filter_rooms_by_capacity(room* start_rooms, int start_rooms_length, int* filter_length, capacity_filter filter);
+room get_filtered_room(int index);
 
-room* filter_rooms_by_availability(room* start_rooms, int start_rooms_length, int* filter_length, availability_filter filter);
+void filter_clear();
+
+void filter_rooms_by_name(name_filter filter);
+
+void filter_rooms_by_capacity(capacity_filter filter);
+
+void filter_rooms_by_availability(availability_filter filter);

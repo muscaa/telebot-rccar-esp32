@@ -5,7 +5,8 @@ program_action new_action(string name, int (*on_action)()) {
 }
 
 option option_selection_action(program_action actions[], int* i) {
-    return builder_selection(actions[*i].name).id((*i)++).build();
+    (*i)++; // weird compile warnings...
+    return builder_selection(actions[*i - 1].name).id(*i - 1).build();
 }
 
 int action_performed(program_action actions[], option opt) {

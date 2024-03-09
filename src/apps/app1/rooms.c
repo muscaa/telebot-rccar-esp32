@@ -1,13 +1,27 @@
 #include "rooms.h"
 
 #include "main.h"
+#include <stdlib.h>
 
 #define CONFIG_FILE CONFIG_DIR "rooms.dat" // TODO mkdirs before fopen
 
 int rooms_length = 0;
 room* rooms;
 
+int filtered_rooms_length = -1;
+room* filtered_rooms;
+
 // PRIVATE
+bool init_filter() {
+    if (filtered_rooms_length == -1) {
+        filtered_rooms = malloc(rooms_length * sizeof(room));
+        memcpy(filtered_rooms, rooms, rooms_length * sizeof(room));
+        filtered_rooms_length = rooms_length;
+        return true;
+    }
+    return false;
+}
+
 void save_rooms() {
     string parent = file_parent(CONFIG_FILE);
     if (parent != NULL) dir_create(parent);
@@ -113,14 +127,75 @@ bool room_exists(string name) {
     return false;
 }
 
-room* filter_rooms_by_name(room* start_rooms, int start_rooms_length, int* result_length, name_filter filter) {
-
+int get_filtered_rooms_length() {
+    return filtered_rooms_length;
 }
 
-room* filter_rooms_by_capacity(room* start_rooms, int start_rooms_length, int* filter_length, capacity_filter filter) {
-
+room get_filtered_room(int index) {
+    return filtered_rooms[index];
 }
 
-room* filter_rooms_by_availability(room* start_rooms, int start_rooms_length, int* filter_length, availability_filter filter) {
-    
+void filter_clear() {
+    if (filtered_rooms_length != -1) {
+        free(filtered_rooms);
+        filtered_rooms = NULL;
+        filtered_rooms_length = -1;
+    }
+}
+
+void filter_rooms_by_name(name_filter filter) {
+    if (!init_filter() && filtered_rooms_length == 0) return;
+    if (!filter.set) return;
+    int new_filtered_rooms_length = 0;
+    for (int i = 0; i < filtered_rooms_length; i++) {
+        room r = filtered_rooms[i];
+
+        if (strstr(r.name, filter.name)) {
+            filtered_rooms[new_filtered_rooms_length++] = r;
+        }
+    }
+    filtered_rooms = realloc(filtered_rooms, new_filtered_rooms_length * sizeof(room));;
+    filtered_rooms_length = new_filtered_rooms_length;
+}
+
+void filter_rooms_by_capacity(capacity_filter filter) {
+    if (!init_filter() && filtered_rooms_length == 0) return;
+    if (!filter.set) return;
+    int new_filtered_rooms_length = 0;
+    for (int i = 0; i < filtered_rooms_length; i++) {
+        room r = filtered_rooms[i];
+
+        switch (filter.mode) {
+            case CAPACITY_LOWER:
+                if (r.capacity <= filter.capacity) {
+                    filtered_rooms[new_filtered_rooms_length++] = r;
+                }
+                break;
+            case CAPACITY_EQUAL:
+                if (r.capacity == filter.capacity) {
+                    filtered_rooms[new_filtered_rooms_length++] = r;
+                }
+                break;
+            case CAPACITY_HIGHER:
+                if (r.capacity >= filter.capacity) {
+                    filtered_rooms[new_filtered_rooms_length++] = r;
+                }
+                break;
+        }
+    }
+    filtered_rooms = realloc(filtered_rooms, new_filtered_rooms_length * sizeof(room));;
+    filtered_rooms_length = new_filtered_rooms_length;
+}
+
+void filter_rooms_by_availability(availability_filter filter) {
+    if (!init_filter() && filtered_rooms_length == 0) return;
+    if (!filter.set) return;
+    int new_filtered_rooms_length = 0;
+    for (int i = 0; i < filtered_rooms_length; i++) {
+        room r = filtered_rooms[i];
+
+        // TODO
+    }
+    filtered_rooms = realloc(filtered_rooms, new_filtered_rooms_length * sizeof(room));;
+    filtered_rooms_length = new_filtered_rooms_length;
 }

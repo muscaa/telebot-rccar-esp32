@@ -31,30 +31,9 @@ To book a room, the user must specify the date and time.
 
 int menu_rooms();
     int menu_rooms_view();
-        int menu_rooms_view_allrooms();
         int menu_rooms_view_filter();
     int menu_rooms_add();
 int menu_bookings();
-
-int menu_no_rooms_available() {
-    int actions_index = 0;
-    program_action actions[] = {
-        BACK_TO(menu_rooms_view),
-        BACK_TO_MAIN_MENU,
-    };
-    option options[] = {
-        TITLE,
-        SEPARATOR,
-        builder_separator()
-                .name("No rooms available.")
-                .build(),
-        SEPARATOR,
-        option_selection_action(actions, &actions_index),
-        option_selection_action(actions, &actions_index),
-    };
-    option opt = vmenu(sizeof(options) / sizeof(option), options);
-    return action_performed(actions, opt);
-}
 
 int menu_room_info(room room) {
     int actions_index = 0;
@@ -89,10 +68,15 @@ void menu_name_filter(name_filter* filter) {
     int room_name_length = 0;
     char* room_name = malloc(51);
     room_name[0] = '\0';
+    if (filter->set) {
+        strcpy(room_name, filter->name);
+        room_name_length = strlen(room_name);
+    }
     bool redraw = true;
     int capture;
     while ((capture = read_capture()) != K_RETURN) {
         if (capture == K_ESCAPE) {
+            free(room_name);
             stop_capture();
             return;
         } else if (room_name_length > 0 && capture == K_BACKSPACE) {
@@ -117,43 +101,146 @@ void menu_name_filter(name_filter* filter) {
 
             println(TITLE.name);
             println("");
+            print("Name filter: ");
+            push_foreground(COLOR_BLUE);
+            println(room_name);
+            pop_foreground();
+            println("");
             println("(ESC to go back)");
-            println("Name filter: %s", room_name);
         }
     }
     if (room_name_length == 0) {
+        filter->set = false;
         filter->name = NULL;
     } else {
+        filter->set = true;
         filter->name = realloc(room_name, room_name_length + 1);
     }
     stop_capture();
 }
 
 void menu_capacity_filter(capacity_filter* filter) {
+    start_capture();
+    int room_capacity_length = 0;
+    char* room_capacity = malloc(7);
+    room_capacity[0] = '\0';
+    if (filter->set) {
+        strcpy(room_capacity, as_string(filter->capacity));
+        room_capacity_length = strlen(room_capacity);
+    }
+    bool redraw = true;
+    int capture;
+    while ((capture = read_capture()) != K_RETURN) {
+        if (capture == K_ESCAPE) {
+            free(room_capacity);
+            stop_capture();
+            return;
+        } else if (room_capacity_length > 0 && capture == K_BACKSPACE) {
+            room_capacity[--room_capacity_length] = '\0';
+            redraw = true;
+        } else if (room_capacity_length < 6) {
+            if (capture >= '0' && capture <= '9') {
+                    room_capacity[room_capacity_length++] = capture;
+                    room_capacity[room_capacity_length] = '\0';
+                    redraw = true;
+            }
+        }
 
+        if (redraw) {
+            redraw = false;
+
+            clear_screen();
+
+            println(TITLE.name);
+            println("");
+            print("Capacity filter: ");
+            push_foreground(COLOR_BLUE);
+            println(room_capacity);
+            pop_foreground();
+            println("");
+            println("(ESC to go back)");
+        }
+    }
+    if (room_capacity_length == 0) {
+        filter->set = false;
+        filter->capacity = 0;
+        filter->mode = 0;
+    } else {
+        int current = 0;
+        redraw = true;
+        while ((capture = read_capture()) != K_RETURN) {
+            if (capture == K_ESCAPE) {
+                free(room_capacity);
+                stop_capture();
+                return;
+            } else if (capture == K_RIGHT) {
+                current = (current + 1) % 3;
+                redraw = true;
+            } else if (capture == K_LEFT) {
+                current = (current + 2) % 3;
+                redraw = true;
+            }
+
+            if (redraw) {
+                redraw = false;
+
+                clear_screen();
+
+                println(TITLE.name);
+                println("");
+                print("Capacity filter: ");
+                push_foreground(COLOR_BLUE);
+                println(room_capacity);
+                pop_foreground();
+
+                print("Capacity mode: ");
+                push_foreground(current == 0 ? COLOR_BLUE : COLOR_WHITE);
+                print("Lower");
+                pop_foreground();
+                print(" ");
+                push_foreground(current == 1 ? COLOR_BLUE : COLOR_WHITE);
+                print("Equal");
+                pop_foreground();
+                print(" ");
+                push_foreground(current == 2 ? COLOR_BLUE : COLOR_WHITE);
+                println("Higher");
+                pop_foreground();
+                println("");
+                println("(ESC to go back)");
+            }
+        }
+
+        filter->set = true;
+        filter->capacity = atoi(room_capacity);
+        filter->mode = current;
+    }
+    free(room_capacity);
+    stop_capture();
 }
 
 void menu_availability_filter(availability_filter* filter) {
     
 }
 
-int menu_rooms_view_allrooms() {
-    if (get_rooms_length() == 0) {
-        return menu_no_rooms_available();
-    }
+int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int)) {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_rooms_view),
         BACK_TO_MAIN_MENU,
     };
     int i = 0;
-    option options[get_rooms_length() + 5];
+    option options[rooms_length + 5];
     options[i++] = TITLE;
     options[i++] = SEPARATOR;
-    for (; i < get_rooms_length() + 2; i++) {
+    for (; i < rooms_length + 2; i++) {
         room r = get_room(i - 2);
         options[i] = builder_selection(r.name)
                         .id(i)
+                        .build();
+    }
+    if (rooms_length == 0) {
+        options[i++] = builder_separator()
+                        .name("No rooms available.")
                         .build();
     }
     options[i++] = SEPARATOR;
@@ -167,9 +254,9 @@ int menu_rooms_view_allrooms() {
 }
 
 int menu_rooms_view_filter() {
-    name_filter name;
-    capacity_filter capacity;
-    availability_filter availability;
+    name_filter name = { false };
+    capacity_filter capacity = { false };
+    availability_filter availability = { false };
 
     while (true) {
         int actions_index = 0;
@@ -180,10 +267,13 @@ int menu_rooms_view_filter() {
         option options[] = {
             TITLE,
             SEPARATOR,
-            builder_selection("Name filter")
+            builder_selection(concat("Name filter",
+                            name.set ? concat(" (", concat(name.name, ")")) : ""))
                     .id(2)
                     .build(),
-            builder_selection("Capacity filter")
+            builder_selection(concat("Capacity filter",
+                            capacity.set ? concat(capacity.mode == CAPACITY_LOWER ? " (<=" : capacity.mode == CAPACITY_EQUAL ? " (=" : " (>=",
+                            concat(as_string(capacity.capacity), ")")) : ""))
                     .id(3)
                     .build(),
             builder_selection("Availability filter")
@@ -213,15 +303,17 @@ int menu_rooms_view_filter() {
         }
         return action_performed(actions, opt);
     }
-    println(name.name);
-    pause_console();
-    return 0;
+    filter_clear();
+    filter_rooms_by_name(name);
+    filter_rooms_by_capacity(capacity);
+    filter_rooms_by_availability(availability);
+    return menu_rooms_view_availablerooms(get_filtered_rooms_length(), get_filtered_room);
 }
 
 int menu_rooms_view() {
     int actions_index = 0;
     program_action actions[] = {
-        new_action("All rooms", menu_rooms_view_allrooms),
+        //new_action("All rooms", menu_rooms_view_allrooms),
         new_action("Filter", menu_rooms_view_filter),
         BACK_TO(menu_rooms),
         BACK_TO_MAIN_MENU,
@@ -229,13 +321,18 @@ int menu_rooms_view() {
     option options[] = {
         TITLE,
         SEPARATOR,
-        option_selection_action(actions, &actions_index),
+        builder_selection("All rooms")
+                .id(3)
+                .build(),
         option_selection_action(actions, &actions_index),
         SEPARATOR,
         option_selection_action(actions, &actions_index),
         option_selection_action(actions, &actions_index),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
+    if (opt.id == 3) {
+        return menu_rooms_view_availablerooms(get_rooms_length(), get_room);
+    }
     return action_performed(actions, opt);
 }
 
@@ -275,15 +372,12 @@ int menu_rooms_add() {
 
             println(TITLE.name);
             println("");
-            println("(ESC to go back)");
-            print("Room name (a-zA-Z0-9): ");
-            if (exists) {
-                push_foreground(COLOR_RED);
-            }
+            print("Room name: ");
+            push_foreground(exists ? COLOR_RED : COLOR_BLUE);
             println(room_name);
-            if (exists) {
-                pop_foreground();
-            }
+            pop_foreground();
+            println("");
+            println("(ESC to go back)");
         }
     }
     room_name = realloc(room_name, room_name_length + 1);
@@ -314,9 +408,16 @@ int menu_rooms_add() {
 
             println(TITLE.name);
             println("");
+            print("Room name: ");
+            push_foreground(COLOR_BLUE);
+            println(room_name);
+            pop_foreground();
+            print("Room capacity: ");
+            push_foreground(COLOR_BLUE);
+            println(room_capacity);
+            pop_foreground();
+            println("");
             println("(ESC to go back)");
-            println("Room name (a-zA-Z0-9): %s", room_name);
-            println("Room capacity (0-9): %s", room_capacity);
         }
     }
     room_capacity = realloc(room_capacity, room_capacity_length + 1);

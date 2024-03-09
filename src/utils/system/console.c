@@ -101,17 +101,18 @@ int read_capture() {
     ioctl(0, FIONREAD, &nbbytes); // 0 is STDIN
     if (!nbbytes) return 0; // no key pressed
     
-    int key = (int) getchar();
+    int key = getchar();
+    if (key == 27 && nbbytes == 1) return K_ESCAPE; // stupid fix
     if (key == 27 || key == 194 || key == 195) { // escape, 194/195 is escape for °ß´äöüÄÖÜ
-        key = (int) getchar();
+        key = getchar();
         if (key == 91) { // [ following escape
-            key = (int) getchar(); // get code of next char after \e[
+            key = getchar(); // get code of next char after \e[
             if (key == 49) { // F5-F8
-                key = 62 + (int) getchar(); // 53, 55-57
+                key = 62 + getchar(); // 53, 55-57
                 if (key == 115) key++; // F5 code is too low by 1
                 getchar(); // take in following ~ (126), but discard code
             } else if (key == 50) { // insert or F9-F12
-                key = (int) getchar();
+                key = getchar();
                 if (key == 126) { // insert
                     key = 45;
                 } else { // F9-F12
@@ -123,7 +124,9 @@ int read_capture() {
                 getchar(); // take in following ~ (126), but discard code
             }
         } else if (key == 79) { // F1-F4
-            key = 32 + (int) getchar(); // 80-83
+            key = 32 + getchar(); // 80-83
+        } else if (key == 10) {
+            key = 27;
         }
         key = -key; // use negative numbers for escaped keys
     }

@@ -38,6 +38,9 @@ option new_option();
 
 option_builder new_option_builder();
 
+option menu(const int options_length, option options[], const int increase_key, const int decrease_key,
+                void (*pre_draw)(), void (*draw)(int, option[], int, int), void (*post_draw)(int, option[], int));
+
 option vmenu(const int options_length, option options[]);
 
 option hmenu(const int options_length, option options[]);
