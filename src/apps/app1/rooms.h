@@ -59,6 +59,8 @@ int get_filtered_rooms_length();
 
 room get_filtered_room(int index);
 
+void cancel_booking(room r, booking b);
+
 void filter_clear();
 
 void filter_rooms_by_name(name_filter filter);

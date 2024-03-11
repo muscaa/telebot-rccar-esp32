@@ -1,6 +1,7 @@
 #include "date_time.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define DAYS_JANUARY 31
 #define DAYS_FEBRUARY 28 // 29

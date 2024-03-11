@@ -192,6 +192,22 @@ room get_filtered_room(int index) {
     return filtered_rooms[index];
 }
 
+void cancel_booking(room r, booking b) {
+    int index = find_room(r.name);
+    if (index == -1) return;
+
+    for (int i = 0; i < rooms[index].bookings_length; i++) {
+        if (compare_date_time(b.date_from, b.time_from, rooms[index].bookings[i].date_from, rooms[index].bookings[i].time_from) == 0
+                && compare_date_time(b.date_to, b.time_to, rooms[index].bookings[i].date_to, rooms[index].bookings[i].time_to) == 0) {
+            memcpy(&rooms[index].bookings[i], &rooms[index].bookings[i + 1], (rooms[index].bookings_length - i - 1) * sizeof(booking));
+            rooms[index].bookings_length--;
+            rooms[index].bookings = realloc(rooms[index].bookings, rooms[index].bookings_length * sizeof(booking));
+            save_rooms();
+            return;
+        }
+    }
+}
+
 void filter_clear() {
     if (filtered_rooms_length != -1) {
         free(filtered_rooms);

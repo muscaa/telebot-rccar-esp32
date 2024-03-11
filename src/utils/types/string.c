@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 // PUBLIC
 string concat(string s1, string s2) {
@@ -24,5 +25,17 @@ string as_string_len(long long int number, int len) {
     int length = snprintf(NULL, 0, "%0*lld", len, number);
     char* result = malloc(length + 1);
     sprintf(result, "%0*lld", len, number);
+    return result;
+}
+
+string format(string format, ...) {
+    va_list args;
+    va_start(args, format);
+    int length = vsnprintf(NULL, 0, format, args);
+    va_end(args);
+    char* result = malloc(length + 1);
+    va_start(args, format);
+    vsprintf(result, format, args);
+    va_end(args);
     return result;
 }
