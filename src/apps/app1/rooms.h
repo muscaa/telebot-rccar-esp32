@@ -49,6 +49,8 @@ bool add_room(string name, int capacity);
 
 void delete_room(room r);
 
+bool book_room(room r, date date_from, time time_from, date date_to, time time_to);
+
 room get_room(int index);
 
 bool room_exists(string name);

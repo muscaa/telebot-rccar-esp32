@@ -35,6 +35,101 @@ int menu_rooms();
     int menu_rooms_add();
 int menu_bookings();
 
+bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to) {
+    start_capture();
+
+    system_date(&date_from->day, &date_from->month, &date_from->year);
+    system_time(&time_from->hour, &time_from->minute);
+
+    for (int i = 0; i < 2; i++) {
+        date* date = i == 0 ? date_from : date_to;
+        time* time = i == 0 ? time_from : time_to;
+        if (i == 1) {
+            date->day = date_from->day;
+            date->month = date_from->month;
+            date->year = date_from->year;
+            time->hour = time_from->hour;
+            time->minute = time_from->minute;
+        }
+
+        int current = 0; // 01/01/2024 00:00
+        int capture;
+        bool redraw = true;
+        while ((capture = read_capture()) != K_RETURN) {
+            if (capture == K_ESCAPE) {
+                stop_capture();
+                return false;
+            } else if (capture == K_RIGHT) {
+                current = (current + 1) % 5;
+                redraw = true;
+            } else if (capture == K_LEFT) {
+                current = (current + 4) % 5;
+                redraw = true;
+            } else if (capture == K_UP) {
+                if (current <= 2) {
+                    date_increment(current, date);
+                } else {
+                    time_increment(current - 3, time);
+                }
+                redraw = true;
+            } else if (capture == K_DOWN) {
+                if (current <= 2) {
+                    date_decrement(current, date);
+                } else {
+                    time_decrement(current - 3, time);
+                }
+                redraw = true;
+            }
+
+            if (redraw) {
+                redraw = false;
+
+                clear_screen();
+
+                println(TITLE.name);
+                println("");
+                if (i == 1) {
+                    print("From: ");
+                    print(as_string_len(date_from->day, 2));
+                    print("/");
+                    print(as_string_len(date_from->month, 2));
+                    print("/");
+                    print(as_string(date_from->year));
+                    print(" ");
+                    print(as_string_len(time_from->hour, 2));
+                    print(":");
+                    println(as_string_len(time_from->minute, 2));
+                }
+
+                print(i == 0 ? "From: " : "To: ");
+                push_foreground(current == 0 ? COLOR_BLUE : COLOR_WHITE);
+                print(as_string_len(date->day, 2));
+                pop_foreground();
+                print("/");
+                push_foreground(current == 1 ? COLOR_BLUE : COLOR_WHITE);
+                print(as_string_len(date->month, 2));
+                pop_foreground();
+                print("/");
+                push_foreground(current == 2 ? COLOR_BLUE : COLOR_WHITE);
+                print(as_string(date->year));
+                pop_foreground();
+                print(" ");
+                push_foreground(current == 3 ? COLOR_BLUE : COLOR_WHITE);
+                print(as_string_len(time->hour, 2));
+                pop_foreground();
+                print(":");
+                push_foreground(current == 4 ? COLOR_BLUE : COLOR_WHITE);
+                println(as_string_len(time->minute, 2));
+                pop_foreground();
+                println("");
+                println("(ESC to go back)");
+            }
+        }
+    }
+    stop_capture();
+    return true;
+}
+
 int menu_room_info(room room) {
     int actions_index = 0;
     program_action actions[] = {
@@ -49,6 +144,9 @@ int menu_room_info(room room) {
                 .build(),
         builder_separator()
                 .name(concat("Room capacity: ", as_string(room.capacity)))
+                .build(),
+        builder_separator()
+                .name(concat("Room bookings: ", as_string(room.bookings_length)))
                 .build(),
         SEPARATOR,
         builder_selection("Delete")
@@ -66,7 +164,16 @@ int menu_room_info(room room) {
         delete_room(room);
         return menu_rooms_view();
     } else if (opt.id == 3) {
-        return 0;
+        date date_from;
+        time time_from;
+        date date_to;
+        time time_to;
+
+        if (menu_date_time_picker(&date_from, &time_from, &date_to, &time_to)) {
+            book_room(room, date_from, time_from, date_to, time_to);
+        }
+        
+        return menu_rooms_view();
     }
     return action_performed(actions, opt);
 }
@@ -227,7 +334,20 @@ void menu_capacity_filter(capacity_filter* filter) {
 }
 
 void menu_availability_filter(availability_filter* filter) {
-    
+    date date_from;
+    time time_from;
+    date date_to;
+    time time_to;
+
+    if (menu_date_time_picker(&date_from, &time_from, &date_to, &time_to)) {
+        filter->set = true;
+        filter->date_from = date_from;
+        filter->time_from = time_from;
+        filter->date_to = date_to;
+        filter->time_to = time_to;
+    } else {
+        filter->set = false;
+    }
 }
 
 int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int)) {

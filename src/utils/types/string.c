@@ -14,8 +14,15 @@ string concat(string s1, string s2) {
 }
 
 string as_string(long long int number) {
-    int length = snprintf( NULL, 0, "%lld", number );
-    char* result = malloc( length + 1 );
-    sprintf( result, "%lld", number );
+    int length = snprintf(NULL, 0, "%lld", number);
+    char* result = malloc(length + 1);
+    sprintf(result, "%lld", number);
+    return result;
+}
+
+string as_string_len(long long int number, int len) {
+    int length = snprintf(NULL, 0, "%0*lld", len, number);
+    char* result = malloc(length + 1);
+    sprintf(result, "%0*lld", len, number);
     return result;
 }

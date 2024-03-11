@@ -1,5 +1,7 @@
 #include "date_time.h"
 
+#include <stdio.h>
+
 #define DAYS_JANUARY 31
 #define DAYS_FEBRUARY 28 // 29
 #define DAYS_MARCH 31
@@ -28,6 +30,20 @@ int days[] = {
     DAYS_DECEMBER
 };
 
+// PRIVATE
+int clamp(int value, int min, int max) {
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
+}
+
+int clamp_bounds(int value, int min, int max) {
+    if (value < min) return max;
+    if (value > max) return min;
+    return value;
+}
+
+// PUBLIC
 date new_date(int day, int month, int year) {
     return (date) { day, month, year };
 }
@@ -75,4 +91,58 @@ int compare_date_time(date date1, time time1, date date2, time time2) {
     if (l1 < l2) return -1;
     if (l1 > l2) return 1;
     return 0;
+}
+
+void date_increment(int type, date *date) {
+    switch (type) {
+        case DATE_TYPE_DAY:
+            date->day = clamp_bounds(date->day + 1, 1, get_month_days(date->month, date->year));
+            break;
+        case DATE_TYPE_MONTH:
+            date->month = clamp_bounds(date->month + 1, 1, 12);
+            date->day = clamp(date->day, 1, get_month_days(date->month, date->year));
+            break;
+        case DATE_TYPE_YEAR:
+            date->year++;
+            date->day = clamp(date->day, 1, get_month_days(date->month, date->year));
+            break;
+    }
+}
+
+void date_decrement(int type, date *date) {
+    switch (type) {
+        case DATE_TYPE_DAY:
+            date->day = clamp_bounds(date->day - 1, 1, get_month_days(date->month, date->year));
+            break;
+        case DATE_TYPE_MONTH:
+            date->month = clamp_bounds(date->month - 1, 1, 12);
+            date->day = clamp(date->day, 1, get_month_days(date->month, date->year));
+            break;
+        case DATE_TYPE_YEAR:
+            date->year--;
+            date->day = clamp(date->day, 1, get_month_days(date->month, date->year));
+            break;
+    }
+}
+
+void time_increment(int type, time *time) {
+    switch (type) {
+        case TIME_TYPE_HOUR:
+            time->hour = clamp_bounds(time->hour + 1, 0, 23);
+            break;
+        case TIME_TYPE_MINUTE:
+            time->minute = clamp_bounds(time->minute + 1, 0, 59);
+            break;
+    }
+}
+
+void time_decrement(int type, time *time) {
+    switch (type) {
+        case TIME_TYPE_HOUR:
+            time->hour = clamp_bounds(time->hour - 1, 0, 23);
+            break;
+        case TIME_TYPE_MINUTE:
+            time->minute = clamp_bounds(time->minute - 1, 0, 59);
+            break;
+    }
 }

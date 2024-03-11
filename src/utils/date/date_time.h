@@ -17,6 +17,13 @@
 #define MONTH_NOVEMBER 11
 #define MONTH_DECEMBER 12
 
+#define DATE_TYPE_DAY 0
+#define DATE_TYPE_MONTH 1
+#define DATE_TYPE_YEAR 2
+
+#define TIME_TYPE_HOUR 0
+#define TIME_TYPE_MINUTE 1
+
 typedef struct {
     byte day;
     byte month;
@@ -37,3 +44,11 @@ bool is_leap_year(int year);
 int get_month_days(int month, int year);
 
 int compare_date_time(date date1, time time1, date date2, time time2);
+
+void date_increment(int type, date *date);
+
+void date_decrement(int type, date *date);
+
+void time_increment(int type, time *time);
+
+void time_decrement(int type, time *time);

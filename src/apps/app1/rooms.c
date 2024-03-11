@@ -32,12 +32,16 @@ bool is_room_available(room room, date date_from, time time_from, date date_to, 
     for (int i = 0; i < room.bookings_length; i++) {
         booking b = room.bookings[i];
 
-        if (compare_date_time(b.date_from, b.time_from, date_from, time_from) >= 0
-                && compare_date_time(b.date_from, b.time_from, date_to, time_to) < 0) {
+        if (compare_date_time(date_from, time_from, b.date_from, b.time_from) == 0
+                && compare_date_time(date_to, time_to, b.date_to, b.time_to) == 0) {
             return false;
         }
-        if (compare_date_time(b.date_to, b.time_to, date_from, time_from) > 0
-                && compare_date_time(b.date_to, b.time_to, date_to, time_to) <= 0) {
+        if (compare_date_time(date_from, time_from, b.date_from, b.time_from) >= 0
+                && compare_date_time(date_from, time_from, b.date_to, b.time_to) < 0) {
+            return false;
+        }
+        if (compare_date_time(date_to, time_to, b.date_from, b.time_from) > 0
+                && compare_date_time(date_to, time_to, b.date_to, b.time_to) <= 0) {
             return false;
         }
     }
@@ -92,40 +96,36 @@ void load_rooms() {
 
     config_reader r = push_load_config(CONFIG_FILE);
     rooms_length = r.Int();
-    if (rooms_length != 0) {
-        rooms = malloc((rooms_length + 1) * sizeof(room));
-        for (int i = 0; i < rooms_length; i++) {
-            room room;
+    rooms = malloc((rooms_length + 1) * sizeof(room));
+    for (int i = 0; i < rooms_length; i++) {
+        room room;
 
-            room.name = r.LenString();
-            room.capacity = r.Int();
+        room.name = r.LenString();
+        room.capacity = r.Int();
 
-            room.bookings_length = r.Int();
-            if (room.bookings_length != 0) {
-                room.bookings = malloc(room.bookings_length * sizeof(booking));
-                for (int j = 0; j < room.bookings_length; j++) {
-                    booking booking;
+        room.bookings_length = r.Int();
+        room.bookings = malloc((room.bookings_length + 1) * sizeof(booking));
+        for (int j = 0; j < room.bookings_length; j++) {
+            booking booking;
 
-                    booking.date_from.day = r.Byte();
-                    booking.date_from.month = r.Byte();
-                    booking.date_from.year = r.Int();
+            booking.date_from.day = r.Byte();
+            booking.date_from.month = r.Byte();
+            booking.date_from.year = r.Int();
 
-                    booking.time_from.hour = r.Byte();
-                    booking.time_from.minute = r.Byte();
+            booking.time_from.hour = r.Byte();
+            booking.time_from.minute = r.Byte();
 
-                    booking.date_to.day = r.Byte();
-                    booking.date_to.month = r.Byte();
-                    booking.date_to.year = r.Int();
+            booking.date_to.day = r.Byte();
+            booking.date_to.month = r.Byte();
+            booking.date_to.year = r.Int();
 
-                    booking.time_to.hour = r.Byte();
-                    booking.time_to.minute = r.Byte();
+            booking.time_to.hour = r.Byte();
+            booking.time_to.minute = r.Byte();
 
-                    room.bookings[j] = booking;
-                }
-            }
-
-            rooms[i] = room;
+            room.bookings[j] = booking;
         }
+
+        rooms[i] = room;
     }
     pop_load_config();
 }
@@ -136,9 +136,7 @@ int get_rooms_length() {
 
 bool add_room(string name, int capacity) {
     load_rooms();
-    if (rooms_length == 0) {
-        rooms = malloc(sizeof(room)); // 1 room
-    } else if (room_exists(name)) {
+    if (room_exists(name)) {
         return false;
     }
 
@@ -161,6 +159,21 @@ void delete_room(room r) {
     rooms_length--;
     rooms = realloc(rooms, rooms_length * sizeof(room));
     save_rooms();
+}
+
+bool book_room(room r, date date_from, time time_from, date date_to, time time_to) {
+    int index = find_room(r.name);
+    if (index == -1) return false;
+
+    load_rooms();
+    if (!is_room_available(r, date_from, time_from, date_to, time_to)) {
+        return false;
+    }
+
+    rooms[index].bookings[rooms[index].bookings_length++] = (booking) { date_from, time_from, date_to, time_to };
+
+    save_rooms();
+    return true;
 }
 
 room get_room(int index) {
