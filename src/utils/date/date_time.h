@@ -45,10 +45,10 @@ int get_month_days(int month, int year);
 
 int compare_date_time(date date1, time time1, date date2, time time2);
 
-void date_increment(int type, date *date);
+void date_increment(int type, date* date);
 
-void date_decrement(int type, date *date);
+void date_decrement(int type, date* date);
 
-void time_increment(int type, time *time);
+void time_increment(int type, time* time);
 
-void time_decrement(int type, time *time);
+void time_decrement(int type, time* time);
