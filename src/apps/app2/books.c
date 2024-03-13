@@ -22,7 +22,7 @@ void delete_book(book b) {
 
 }
 
-bool book_room(book b, date date_from, time time_from, date date_to, time time_to) {
+bool book_book(book b, date date_from, time time_from, date date_to, time time_to) {
 
 }
 

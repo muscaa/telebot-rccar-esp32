@@ -13,65 +13,58 @@ dialog_input_builder set_max_length(int max_length);
 dialog_input_builder set_allow_empty();
 dialog_input_builder set_allow_chars(char from, char to);
 dialog_input_builder set_allow_char(char value);
-dialog_input_builder set_prefix(string_array prefix);
-dialog_input_builder set_suffix(string_array suffix);
+dialog_input_builder set_draw(void (*draw)(string, bool));
 dialog_input build_dialog_input();
 
-dialog_input_builder builder = {
+dialog_input_builder builder_di = {
     set_value,
     set_exists,
     set_max_length,
     set_allow_empty,
     set_allow_chars,
     set_allow_char,
-    set_prefix,
-    set_suffix,
+    set_draw,
     build_dialog_input
 };
-dialog_input building;
+dialog_input building_di;
 
 dialog_input_builder set_value(string default_value) {
-    building.default_value = default_value;
-    return builder;
+    building_di.default_value = default_value;
+    return builder_di;
 }
 
 dialog_input_builder set_exists(bool (*value_exists)(string)) {
-    building.value_exists = value_exists;
-    return builder;
+    building_di.value_exists = value_exists;
+    return builder_di;
 }
 
 dialog_input_builder set_max_length(int max_length) {
-    building.max_length = max_length;
-    return builder;
+    building_di.max_length = max_length;
+    return builder_di;
 }
 
 dialog_input_builder set_allow_empty() {
-    building.allow_empty = true;
-    return builder;
+    building_di.allow_empty = true;
+    return builder_di;
 }
 
 dialog_input_builder set_allow_chars(char from, char to) {
-    building.filters = realloc(building.filters, (building.filters_length + 1) * sizeof(char_input_filter));
-    building.filters[building.filters_length++] = (char_input_filter) { from, to };
-    return builder;
+    building_di.filters = realloc(building_di.filters, (building_di.filters_length + 1) * sizeof(char_input_filter));
+    building_di.filters[building_di.filters_length++] = (char_input_filter) { from, to };
+    return builder_di;
 }
 
 dialog_input_builder set_allow_char(char value) {
     return set_allow_chars(value, 0);
 }
 
-dialog_input_builder set_prefix(string_array prefix) {
-    building.prefix = prefix;
-    return builder;
-}
-
-dialog_input_builder set_suffix(string_array suffix) {
-    building.suffix = suffix;
-    return builder;
+dialog_input_builder set_draw(void (*draw)(string, bool)) {
+    building_di.draw = draw;
+    return builder_di;
 }
 
 dialog_input build_dialog_input() {
-    return building;
+    return building_di;
 }
 
 // PUBLIC
@@ -83,14 +76,13 @@ dialog_input new_dialog_input() {
         false,
         0,
         malloc(sizeof(char_input_filter)),
-        (string_array) { 0, NULL },
-        (string_array) { 0, NULL }
+        NULL
     };
 }
 
 dialog_input_builder new_dialog_input_builder() {
-    building = new_dialog_input();
-    return builder;
+    building_di = new_dialog_input();
+    return builder_di;
 }
 
 string dialog_input_string(dialog_input input) {
@@ -106,8 +98,8 @@ string dialog_input_string(dialog_input input) {
     int capture;
     while ((capture = read_capture()) != K_RETURN || (result_length == 0 && !input.allow_empty) || exists) {
         if (capture == K_ESCAPE) {
-            stop_capture();
             free(result);
+            stop_capture();
             return NULL;
         } else if (result_length > 0 && capture == K_BACKSPACE) {
             result[--result_length] = '\0';
@@ -118,23 +110,14 @@ string dialog_input_string(dialog_input input) {
                 char_input_filter filter = input.filters[i];
 
                 if (filter.to == 0) {
-                    if (capture == filter.from) {
-                        result[result_length++] = capture;
-                        result[result_length] = '\0';
-                        exists = input.value_exists != NULL && input.value_exists(result);
-                        redraw = true;
-                        break;
-                    }
-                    continue;
-                }
+                    if (capture != filter.from) continue;
+                } else if (capture < filter.from || capture > filter.to) continue;
 
-                if (capture >= filter.from && capture <= filter.to) {
-                    result[result_length++] = capture;
-                    result[result_length] = '\0';
-                    exists = input.value_exists != NULL && input.value_exists(result);
-                    redraw = true;
-                    break;
-                }
+                result[result_length++] = capture;
+                result[result_length] = '\0';
+                exists = input.value_exists != NULL && input.value_exists(result);
+                redraw = true;
+                break;
             }
         }
 
@@ -143,18 +126,9 @@ string dialog_input_string(dialog_input input) {
 
             clear_screen();
 
-            if (input.prefix.length != 0) {
-                
+            if (input.draw != NULL) {
+                input.draw(result, exists);
             }
-
-            println(TITLE.name);
-            println("");
-            print("Book title: ");
-            push_foreground(exists ? COLOR_RED : COLOR_BLUE);
-            println(result);
-            pop_foreground();
-            println("");
-            println("(ESC to go back)");
         }
     }
     result = realloc(result, result_length + 1);

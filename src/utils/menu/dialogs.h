@@ -16,8 +16,7 @@ typedef struct {
     bool allow_empty;
     int filters_length;
     char_input_filter* filters;
-    string_array prefix;
-    string_array suffix;
+    void (*draw)(string, bool);
 } dialog_input;
 
 struct _dialog_input_builder;
@@ -29,8 +28,7 @@ struct _dialog_input_builder {
     dialog_input_builder (*allow_empty)();
     dialog_input_builder (*allow_chars)(char, char);
     dialog_input_builder (*allow_char)(char);
-    dialog_input_builder (*prefix)(string_array);
-    dialog_input_builder (*suffix)(string_array);
+    dialog_input_builder (*draw)(void (*draw)(string, bool));
     dialog_input (*build)();
 };
 

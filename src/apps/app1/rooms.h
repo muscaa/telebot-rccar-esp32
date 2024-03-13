@@ -2,6 +2,8 @@
 
 #include "../../utils/utils.h"
 
+#define CONFIG_DIR "meeting_rooms_reservation/"
+
 #define CAPACITY_LOWER 0
 #define CAPACITY_EQUAL 1
 #define CAPACITY_HIGHER 2

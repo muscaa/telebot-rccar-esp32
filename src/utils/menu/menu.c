@@ -28,7 +28,7 @@ option_builder set_separator();
 option_builder set_action(void (*action)());
 option build_option();
 
-option_builder builder = {
+option_builder builder_o = {
     set_id,
     set_name,
     set_name_hover,
@@ -41,60 +41,60 @@ option_builder builder = {
     set_action,
     build_option
 };
-option current_building_option;
+option building_o;
 
 option_builder set_id(int id) {
-    current_building_option.id = id;
-    return builder;
+    building_o.id = id;
+    return builder_o;
 }
 
 option_builder set_name(string name) {
-    current_building_option.name = name;
-    return builder;
+    building_o.name = name;
+    return builder_o;
 }
 
 option_builder set_name_hover(string name_hover) {
-    current_building_option.name_hover = name_hover;
-    return builder;
+    building_o.name_hover = name_hover;
+    return builder_o;
 }
 
 option_builder set_description(string description) {
-    current_building_option.description = description;
-    return builder;
+    building_o.description = description;
+    return builder_o;
 }
 
 option_builder set_foreground(int foreground) {
-    current_building_option.foreground = foreground;
-    return builder;
+    building_o.foreground = foreground;
+    return builder_o;
 }
 
 option_builder set_foreground_hover(int foreground_hover) {
-    current_building_option.foreground_hover = foreground_hover;
-    return builder;
+    building_o.foreground_hover = foreground_hover;
+    return builder_o;
 }
 
 option_builder set_background(int background) {
-    current_building_option.background = background;
-    return builder;
+    building_o.background = background;
+    return builder_o;
 }
 
 option_builder set_background_hover(int background_hover) {
-    current_building_option.background_hover = background_hover;
-    return builder;
+    building_o.background_hover = background_hover;
+    return builder_o;
 }
 
 option_builder set_separator() {
-    current_building_option.separator = true;
-    return builder;
+    building_o.separator = true;
+    return builder_o;
 }
 
 option_builder set_action(void (*action)()) {
-    current_building_option.action = action;
-    return builder;
+    building_o.action = action;
+    return builder_o;
 }
 
 option build_option() {
-    return current_building_option;
+    return building_o;
 }
 
 // PUBLIC
@@ -115,8 +115,8 @@ option new_option() {
 }
 
 option_builder new_option_builder() {
-    current_building_option = new_option();
-    return builder;
+    building_o = new_option();
+    return builder_o;
 }
 
 string get_option_name(option opt, bool hovered, int* background, int* foreground) {

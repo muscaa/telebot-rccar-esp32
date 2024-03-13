@@ -2,11 +2,12 @@
 
 #include "../../utils/utils.h"
 
+#define CONFIG_DIR "library_books_tracking/"
+
 typedef struct {
     string title;
     string author;
-    int types_length;
-    string types[];
+    string_array types;
 } book;
 
 void load_books();
@@ -17,7 +18,7 @@ bool add_book(string name, int capacity);
 
 void delete_book(book b);
 
-bool book_room(book b, date date_from, time time_from, date date_to, time time_to);
+bool book_book(book b, date date_from, time time_from, date date_to, time time_to);
 
 book get_book(int index);
 

@@ -28,7 +28,7 @@ int menu_books();
             //void menu_availability_filter(availability_filter* filter);
                 //bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to);
     int menu_books_add();
-int menu_bookings();
+int menu_bookingss();
     //int menu_booking_info(book book, booking booking);
 
 /*int menu_booking_info(book book, booking booking) {
@@ -202,15 +202,12 @@ int menu_book_info(book book) {
         TITLE,
         SEPARATOR,
         builder_separator()
-                .name(concat("book name: ", book.name))
+                .name(format("Book title: %s", book.title))
                 .build(),
         builder_separator()
-                .name(concat("book capacity: ", as_string(book.capacity)))
+                .name(format("Book author: %s", book.author))
                 .build(),
         SEPARATOR,
-        builder_selection(concat(concat("Bookings (", as_string(book.bookings_length)), ")"))
-                .id(2)
-                .build(),
         builder_selection("Book")
                 .id(3)
                 .build(),
@@ -223,16 +220,17 @@ int menu_book_info(book book) {
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
     if (opt.id == 2) {
-        return menu_book_bookings(book, menu_books_view);
+        //return menu_book_bookings(book, menu_books_view);
+        return 0;
     } else if (opt.id == 3) {
         date date_from;
         time time_from;
         date date_to;
         time time_to;
 
-        if (menu_date_time_picker(&date_from, &time_from, &date_to, &time_to)) {
+        /*if (menu_date_time_picker(&date_from, &time_from, &date_to, &time_to)) {
             book_book(book, date_from, time_from, date_to, time_to);
-        }
+        }*/
         
         return menu_books_view();
     } else if (opt.id == 4) {
@@ -500,6 +498,7 @@ int menu_books_view_filter() {
     filter_books_by_capacity(capacity);
     filter_books_by_availability(availability);
     return menu_books_view_availablebooks(get_filtered_books_length(), get_filtered_book);*/
+    return 0;
 }
 
 int menu_books_view() {
@@ -639,7 +638,7 @@ int menu_books() {
     return action_performed(actions, opt);
 }
 
-int menu_bookings() {
+int menu_bookingss() {
     /*int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_books_view),
@@ -670,6 +669,7 @@ int menu_bookings() {
         return menu_book_bookings(get_book(opt.id - 2), app1_main);
     }
     return action_performed(actions, opt);*/
+    return 0;
 }
 
 int app2_main() {
@@ -677,7 +677,7 @@ int app2_main() {
     int actions_index = 0;
     program_action actions[] = {
         new_action("Books", menu_books),
-        new_action("Bookings", menu_bookings),
+        new_action("Bookings", menu_bookingss),
         BACK_TO_MAIN_MENU,
     };
     option options[] = {
