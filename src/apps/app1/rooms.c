@@ -2,6 +2,7 @@
 
 #include "main.h"
 
+#define CONFIG_DIR "meeting_rooms_reservation/"
 #define CONFIG_FILE CONFIG_DIR "rooms.dat" // TODO mkdirs before fopen
 
 int rooms_length = 0;
@@ -91,8 +92,12 @@ void load_rooms() {
             }
         }
         free(rooms);
+        rooms_length = 0;
     }
-    if (!file_exists(CONFIG_FILE)) return;
+    if (!file_exists(CONFIG_FILE)) {
+        rooms = malloc((rooms_length + 1) * sizeof(room));
+        return;
+    }
 
     config_reader r = push_load_config(CONFIG_FILE);
     rooms_length = r.Int();

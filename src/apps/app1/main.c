@@ -13,6 +13,7 @@ To book a room, the user must specify the date and time.
 #include "../../utils/utils.h"
 #include "../../menus.h"
 #include "rooms.h"
+#include <string.h>
 
 #define TITLE builder_title("Meeting rooms reservation system").build()
 #define BACK_TO_MAIN_MENU new_action("Back to Main Menu", main_menu)
@@ -203,13 +204,13 @@ int menu_room_info(room room) {
         TITLE,
         SEPARATOR,
         builder_separator()
-                .name(concat("Room name: ", room.name))
+                .name(format("Room name: %s", room.name))
                 .build(),
         builder_separator()
-                .name(concat("Room capacity: ", as_string(room.capacity)))
+                .name(format("Room capacity: %d", room.capacity))
                 .build(),
         SEPARATOR,
-        builder_selection(concat(concat("Bookings (", as_string(room.bookings_length)), ")"))
+        builder_selection(format("Bookings (%d)", room.bookings_length))
                 .id(2)
                 .build(),
         builder_selection("Book")
@@ -243,114 +244,71 @@ int menu_room_info(room room) {
     return action_performed(actions, opt);
 }
 
+void draw_name_filter(dialog_input_info info) {
+    println(TITLE.name);
+    println("");
+    print("Name filter: ");
+    push_foreground(COLOR_BLUE);
+    println(info.result);
+    pop_foreground();
+    println("");
+    println("(ESC to go back)");
+}
+
 void menu_name_filter(name_filter* filter) {
-    start_capture();
-    int room_name_length = 0;
-    char* room_name = malloc(51);
-    room_name[0] = '\0';
-    if (filter->set) {
-        strcpy(room_name, filter->name);
-        room_name_length = strlen(room_name);
-    }
-    bool redraw = true;
-    int capture;
-    while ((capture = read_capture()) != K_RETURN) {
-        if (capture == K_ESCAPE) {
-            free(room_name);
-            stop_capture();
-            return;
-        } else if (room_name_length > 0 && capture == K_BACKSPACE) {
-            room_name[--room_name_length] = '\0';
-            redraw = true;
-        } else if (room_name_length < 50) {
-            if ((capture >= 'a' && capture <= 'z')
-                || (capture >= 'A' && capture <= 'Z')
-                || (capture >= '0' && capture <= '9')
-                || capture == ' '
-                || capture == '-') {
-                    room_name[room_name_length++] = capture;
-                    room_name[room_name_length] = '\0';
-                    redraw = true;
-            }
-        }
+    dialog_input name_filter_di = new_dialog_input_builder()
+                    .draw(draw_name_filter)
+                    .value(filter->set ? filter->name : "")
+                    .allow_empty()
+                    .accepts("az|AZ|09| |-")
+                    .max_length(50)
+                    .build();
+    string room_name = dialog_input_string(name_filter_di, NULL);
+    if (room_name == NULL) return;
 
-        if (redraw) {
-            redraw = false;
-
-            clear_screen();
-
-            println(TITLE.name);
-            println("");
-            print("Name filter: ");
-            push_foreground(COLOR_BLUE);
-            println(room_name);
-            pop_foreground();
-            println("");
-            println("(ESC to go back)");
-        }
-    }
-    if (room_name_length == 0) {
+    if (strlen(room_name) == 0) {
         filter->set = false;
         filter->name = NULL;
     } else {
         filter->set = true;
-        filter->name = realloc(room_name, room_name_length + 1);
+        filter->name = room_name;
     }
-    stop_capture();
+}
+
+void draw_capacity_filter(dialog_input_info info) {
+    println(TITLE.name);
+    println("");
+    print("Capacity filter: ");
+    push_foreground(COLOR_BLUE);
+    println(info.result);
+    pop_foreground();
+    println("");
+    println("(ESC to go back)");
 }
 
 void menu_capacity_filter(capacity_filter* filter) {
+    dialog_input capacity_filter_di = new_dialog_input_builder()
+                    .draw(draw_capacity_filter)
+                    .value(filter->set ? as_string(filter->capacity) : "")
+                    .allow_empty()
+                    .accepts("09")
+                    .max_length(6)
+                    .build();
+    string room_capacity = dialog_input_string(capacity_filter_di, NULL);
+    if (room_capacity == NULL) return;
+    int room_capacity_length = strlen(room_capacity);
+
     start_capture();
-    int room_capacity_length = 0;
-    char* room_capacity = malloc(7);
-    room_capacity[0] = '\0';
-    if (filter->set) {
-        strcpy(room_capacity, as_string(filter->capacity));
-        room_capacity_length = strlen(room_capacity);
-    }
-    bool redraw = true;
-    int capture;
-    while ((capture = read_capture()) != K_RETURN) {
-        if (capture == K_ESCAPE) {
-            free(room_capacity);
-            stop_capture();
-            return;
-        } else if (room_capacity_length > 0 && capture == K_BACKSPACE) {
-            room_capacity[--room_capacity_length] = '\0';
-            redraw = true;
-        } else if (room_capacity_length < 6) {
-            if (capture >= '0' && capture <= '9') {
-                    room_capacity[room_capacity_length++] = capture;
-                    room_capacity[room_capacity_length] = '\0';
-                    redraw = true;
-            }
-        }
-
-        if (redraw) {
-            redraw = false;
-
-            clear_screen();
-
-            println(TITLE.name);
-            println("");
-            print("Capacity filter: ");
-            push_foreground(COLOR_BLUE);
-            println(room_capacity);
-            pop_foreground();
-            println("");
-            println("(ESC to go back)");
-        }
-    }
     if (room_capacity_length == 0) {
         filter->set = false;
         filter->capacity = 0;
         filter->mode = 0;
     } else {
         int current = 0;
-        redraw = true;
+        int capture;
+        bool redraw = true;
         while ((capture = read_capture()) != K_RETURN) {
             if (capture == K_ESCAPE) {
-                free(room_capacity);
                 stop_capture();
                 return;
             } else if (capture == K_RIGHT) {
@@ -394,7 +352,6 @@ void menu_capacity_filter(capacity_filter* filter) {
         filter->capacity = atoi(room_capacity);
         filter->mode = current;
     }
-    free(room_capacity);
     stop_capture();
 }
 
@@ -460,16 +417,19 @@ int menu_rooms_view_filter() {
         option options[] = {
             TITLE,
             SEPARATOR,
-            builder_selection(concat("Name filter",
-                            name.set ? concat(" (", concat(name.name, ")")) : ""))
+            builder_selection(format("Name filter %s", name.set ? format("(%s)", name.name) : ""))
                     .id(2)
                     .build(),
-            builder_selection(concat("Capacity filter",
-                            capacity.set ? concat(capacity.mode == CAPACITY_LOWER ? " (<=" : capacity.mode == CAPACITY_EQUAL ? " (=" : " (>=",
-                            concat(as_string(capacity.capacity), ")")) : ""))
+            builder_selection(format("Capacity filter %s", capacity.set ? format("(%s %d)",
+                                    capacity.mode == CAPACITY_LOWER ? "<=" :
+                                    capacity.mode == CAPACITY_EQUAL ? "=" :
+                                    capacity.mode == CAPACITY_HIGHER ? ">=" : "",
+                                    capacity.capacity) : ""))
                     .id(3)
                     .build(),
-            builder_selection("Availability filter")
+            builder_selection(format("Availability filter %s", availability.set ? format("(%02d/%02d/%04d %02d:%02d - %02d/%02d/%04d %02d:%02d)",
+                                availability.date_from.day, availability.date_from.month, availability.date_from.year, availability.time_from.hour, availability.time_from.minute,
+                                availability.date_to.day, availability.date_to.month, availability.date_to.year, availability.time_to.hour, availability.time_to.minute) : ""))
                     .id(4)
                     .build(),
             SEPARATOR,
@@ -529,93 +489,51 @@ int menu_rooms_view() {
     return action_performed(actions, opt);
 }
 
+void draw_room_name(dialog_input_info info) {
+    println(TITLE.name);
+    println("");
+    print("Room name: ");
+    push_foreground(info.exists ? COLOR_RED : COLOR_BLUE);
+    println(info.result);
+    pop_foreground();
+    println("");
+    println("(ESC to go back)");
+}
+
+void draw_room_capacity(dialog_input_info info) {
+    string room_name = info.additional;
+    println(TITLE.name);
+    println("");
+    print("Room name: ");
+    push_foreground(COLOR_BLUE);
+    println(room_name);
+    pop_foreground();
+    print("Room capacity: ");
+    push_foreground(COLOR_BLUE);
+    println(info.result);
+    pop_foreground();
+    println("");
+    println("(ESC to go back)");
+}
+
 int menu_rooms_add() {
-    start_capture();
-    int room_name_length = 0;
-    char* room_name = malloc(51);
-    room_name[0] = '\0';
-    bool redraw = true;
-    bool exists = false;
-    int capture;
-    while ((capture = read_capture()) != K_RETURN || room_name_length == 0 || exists) {
-        if (capture == K_ESCAPE) {
-            stop_capture();
-            return menu_rooms();
-        } else if (room_name_length > 0 && capture == K_BACKSPACE) {
-            room_name[--room_name_length] = '\0';
-            exists = room_exists(room_name);
-            redraw = true;
-        } else if (room_name_length < 50) {
-            if ((capture >= 'a' && capture <= 'z')
-                || (capture >= 'A' && capture <= 'Z')
-                || (capture >= '0' && capture <= '9')
-                || capture == ' '
-                || capture == '-') {
-                    room_name[room_name_length++] = capture;
-                    room_name[room_name_length] = '\0';
-                    exists = room_exists(room_name);
-                    redraw = true;
-            }
-        }
+    dialog_input room_name_di = new_dialog_input_builder()
+                    .draw(draw_room_name)
+                    .exists(room_exists)
+                    .accepts("az|AZ|09| |-")
+                    .max_length(50)
+                    .build();
+    string room_name = dialog_input_string(room_name_di, NULL);
+    if (room_name == NULL) return menu_rooms();
 
-        if (redraw) {
-            redraw = false;
-
-            clear_screen();
-
-            println(TITLE.name);
-            println("");
-            print("Room name: ");
-            push_foreground(exists ? COLOR_RED : COLOR_BLUE);
-            println(room_name);
-            pop_foreground();
-            println("");
-            println("(ESC to go back)");
-        }
-    }
-    room_name = realloc(room_name, room_name_length + 1);
-
-    int room_capacity_length = 0;
-    char* room_capacity = malloc(7);
-    room_capacity[0] = '\0';
-    redraw = true;
-    while ((capture = read_capture()) != K_RETURN || room_capacity_length == 0) {
-        if (capture == K_ESCAPE) {
-            stop_capture();
-            return menu_rooms();
-        } else if (room_capacity_length > 0 && capture == K_BACKSPACE) {
-            room_capacity[--room_capacity_length] = '\0';
-            redraw = true;
-        } else if (room_capacity_length < 6) {
-            if (capture >= '0' && capture <= '9') {
-                    room_capacity[room_capacity_length++] = capture;
-                    room_capacity[room_capacity_length] = '\0';
-                    redraw = true;
-            }
-        }
-
-        if (redraw) {
-            redraw = false;
-
-            clear_screen();
-
-            println(TITLE.name);
-            println("");
-            print("Room name: ");
-            push_foreground(COLOR_BLUE);
-            println(room_name);
-            pop_foreground();
-            print("Room capacity: ");
-            push_foreground(COLOR_BLUE);
-            println(room_capacity);
-            pop_foreground();
-            println("");
-            println("(ESC to go back)");
-        }
-    }
-    room_capacity = realloc(room_capacity, room_capacity_length + 1);
-    stop_capture();
-
+    dialog_input room_capacity_di = new_dialog_input_builder()
+                    .draw(draw_room_capacity)
+                    .accepts("09")
+                    .max_length(6)
+                    .build();
+    string room_capacity = dialog_input_string(room_capacity_di, room_name);
+    if (room_capacity == NULL) return menu_rooms();
+    
     add_room(room_name, atoi(room_capacity));
     return menu_rooms();
 }
