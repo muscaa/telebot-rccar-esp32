@@ -4,8 +4,6 @@
 #include <string.h>
 
 #include "../system/console.h"
-#include "../system/colors.h"
-#include "menu.h"
 
 private dialog_input_builder set_value(string default_value);
 private dialog_input_builder set_exists(bool function(value_exists, string));

@@ -1,7 +1,5 @@
 #include "rooms.h"
 
-#include "main.h"
-
 #define CONFIG_DIR "meeting_rooms_reservation/"
 #define CONFIG_FILE CONFIG_DIR "rooms.dat" // TODO mkdirs before fopen
 

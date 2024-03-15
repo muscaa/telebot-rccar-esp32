@@ -22,7 +22,6 @@ books for a number of days and return borrowed books.
 
 #include "main.h"
 
-#include "../../utils/utils.h"
 #include "../../menus.h"
 #include "books.h"
 

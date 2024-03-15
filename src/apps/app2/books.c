@@ -1,7 +1,5 @@
 #include "books.h"
 
-#include "main.h"
-
 #define CONFIG_DIR "library_books_tracking/"
 #define CONFIG_FILE CONFIG_DIR "books.dat" // TODO mkdirs before fopen
 

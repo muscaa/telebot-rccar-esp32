@@ -1,4 +1,3 @@
-#include "utils/utils.h"
 #include "apps/apps.h"
 #include "menus.h"
 

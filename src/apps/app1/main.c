@@ -10,7 +10,6 @@ To book a room, the user must specify the date and time.
 
 #include "main.h"
 
-#include "../../utils/utils.h"
 #include "../../menus.h"
 #include "rooms.h"
 

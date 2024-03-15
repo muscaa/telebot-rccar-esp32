@@ -1,6 +1,5 @@
 #include "menus.h"
 
-#include "utils/utils.h"
 #include "apps/apps.h"
 
 override
