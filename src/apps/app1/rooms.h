@@ -39,8 +39,6 @@ typedef struct {
     time time_to;
 } availability_filter;
 
-//void save_rooms();
-
 void load_rooms();
 
 int get_rooms_length();

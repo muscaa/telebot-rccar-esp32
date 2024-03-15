@@ -13,27 +13,26 @@ To book a room, the user must specify the date and time.
 #include "../../utils/utils.h"
 #include "../../menus.h"
 #include "rooms.h"
-#include <string.h>
 
 #define TITLE builder_title("Meeting rooms reservation system").build()
 #define BACK_TO_MAIN_MENU new_action("Back to Main Menu", main_menu)
 #define BACK_TO(back_menu) new_action("Back", back_menu)
 
-int menu_rooms();
-    int menu_rooms_view();
-        int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int));
-            int menu_room_info(room room);
-                int menu_room_bookings(room room, int (*back)());
-        int menu_rooms_view_filter();
-            void menu_name_filter(name_filter* filter);
-            void menu_capacity_filter(capacity_filter* filter);
-            void menu_availability_filter(availability_filter* filter);
-                bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to);
-    int menu_rooms_add();
-int menu_bookings();
-    int menu_booking_info(room room, booking booking);
+private int menu_rooms();
+    private int menu_rooms_view();
+        private int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int));
+            private int menu_room_info(room room);
+                private int menu_room_bookings(room room, int (*back)());
+        private int menu_rooms_view_filter();
+            private void menu_name_filter(name_filter* filter);
+            private void menu_capacity_filter(capacity_filter* filter);
+            private void menu_availability_filter(availability_filter* filter);
+                private bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to);
+    private int menu_rooms_add();
+private int menu_bookings();
+    private int menu_booking_info(room room, booking booking);
 
-int menu_booking_info(room room, booking booking) {
+private int menu_booking_info(room room, booking booking) {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_rooms_view),
@@ -66,7 +65,7 @@ int menu_booking_info(room room, booking booking) {
     return action_performed(actions, opt);
 }
 
-bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to) {
+private bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to) {
     start_capture();
 
     system_date(&date_from->day, &date_from->month, &date_from->year);
@@ -161,7 +160,7 @@ bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time
     return true;
 }
 
-int menu_room_bookings(room room, int (*back)()) {
+private int menu_room_bookings(room room, int (*back)()) {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(back),
@@ -194,7 +193,7 @@ int menu_room_bookings(room room, int (*back)()) {
     return action_performed(actions, opt);
 }
 
-int menu_room_info(room room) {
+private int menu_room_info(room room) {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_rooms_view),
@@ -244,7 +243,7 @@ int menu_room_info(room room) {
     return action_performed(actions, opt);
 }
 
-void draw_name_filter(dialog_input_info info) {
+private void draw_name_filter(dialog_input_info info) {
     println(TITLE.name);
     println("");
     print("Name filter: ");
@@ -255,7 +254,7 @@ void draw_name_filter(dialog_input_info info) {
     println("(ESC to go back)");
 }
 
-void menu_name_filter(name_filter* filter) {
+private void menu_name_filter(name_filter* filter) {
     dialog_input name_filter_di = new_dialog_input_builder()
                     .draw(draw_name_filter)
                     .value(filter->set ? filter->name : "")
@@ -275,7 +274,7 @@ void menu_name_filter(name_filter* filter) {
     }
 }
 
-void draw_capacity_filter(dialog_input_info info) {
+private void draw_capacity_filter(dialog_input_info info) {
     println(TITLE.name);
     println("");
     print("Capacity filter: ");
@@ -286,7 +285,7 @@ void draw_capacity_filter(dialog_input_info info) {
     println("(ESC to go back)");
 }
 
-void menu_capacity_filter(capacity_filter* filter) {
+private void menu_capacity_filter(capacity_filter* filter) {
     dialog_input capacity_filter_di = new_dialog_input_builder()
                     .draw(draw_capacity_filter)
                     .value(filter->set ? as_string(filter->capacity) : "")
@@ -355,7 +354,7 @@ void menu_capacity_filter(capacity_filter* filter) {
     stop_capture();
 }
 
-void menu_availability_filter(availability_filter* filter) {
+private void menu_availability_filter(availability_filter* filter) {
     date date_from;
     time time_from;
     date date_to;
@@ -372,7 +371,7 @@ void menu_availability_filter(availability_filter* filter) {
     }
 }
 
-int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int)) {
+private int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int)) {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_rooms_view),
@@ -403,7 +402,7 @@ int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int)) {
     return action_performed(actions, opt);
 }
 
-int menu_rooms_view_filter() {
+private int menu_rooms_view_filter() {
     name_filter name = { false };
     capacity_filter capacity = { false };
     availability_filter availability = { false };
@@ -463,7 +462,7 @@ int menu_rooms_view_filter() {
     return menu_rooms_view_availablerooms(get_filtered_rooms_length(), get_filtered_room);
 }
 
-int menu_rooms_view() {
+private int menu_rooms_view() {
     int actions_index = 0;
     program_action actions[] = {
         //new_action("All rooms", menu_rooms_view_allrooms),
@@ -489,7 +488,7 @@ int menu_rooms_view() {
     return action_performed(actions, opt);
 }
 
-void draw_room_name(dialog_input_info info) {
+private void draw_room_name(dialog_input_info info) {
     println(TITLE.name);
     println("");
     print("Room name: ");
@@ -500,7 +499,7 @@ void draw_room_name(dialog_input_info info) {
     println("(ESC to go back)");
 }
 
-void draw_room_capacity(dialog_input_info info) {
+private void draw_room_capacity(dialog_input_info info) {
     string room_name = info.additional;
     println(TITLE.name);
     println("");
@@ -516,7 +515,7 @@ void draw_room_capacity(dialog_input_info info) {
     println("(ESC to go back)");
 }
 
-int menu_rooms_add() {
+private int menu_rooms_add() {
     dialog_input room_name_di = new_dialog_input_builder()
                     .draw(draw_room_name)
                     .exists(room_exists)
@@ -538,7 +537,7 @@ int menu_rooms_add() {
     return menu_rooms();
 }
 
-int menu_rooms() {
+private int menu_rooms() {
     int actions_index = 0;
     program_action actions[] = {
         new_action("View rooms", menu_rooms_view),
@@ -559,7 +558,7 @@ int menu_rooms() {
     return action_performed(actions, opt);
 }
 
-int menu_bookings() {
+private int menu_bookings() {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_rooms_view),
@@ -592,6 +591,7 @@ int menu_bookings() {
     return action_performed(actions, opt);
 }
 
+override
 int app1_main() {
     load_rooms();
     int actions_index = 0;

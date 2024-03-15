@@ -5,14 +5,13 @@
 #define CONFIG_DIR "meeting_rooms_reservation/"
 #define CONFIG_FILE CONFIG_DIR "rooms.dat" // TODO mkdirs before fopen
 
-int rooms_length = 0;
-room* rooms;
+private int rooms_length = 0;
+private room* rooms;
 
-int filtered_rooms_length = -1;
-room* filtered_rooms;
+private int filtered_rooms_length = -1;
+private room* filtered_rooms;
 
-// PRIVATE
-bool init_filter() {
+private bool init_filter() {
     if (filtered_rooms_length == -1) {
         filtered_rooms = malloc(rooms_length * sizeof(room));
         memcpy(filtered_rooms, rooms, rooms_length * sizeof(room));
@@ -22,14 +21,14 @@ bool init_filter() {
     return false;
 }
 
-int find_room(string name) {
+private int find_room(string name) {
     for (int i = 0; i < rooms_length; i++) {
         if (strcmp(rooms[i].name, name) == 0) return i;
     }
     return -1;
 }
 
-bool is_room_available(room room, date date_from, time time_from, date date_to, time time_to) {
+private bool is_room_available(room room, date date_from, time time_from, date date_to, time time_to) {
     for (int i = 0; i < room.bookings_length; i++) {
         booking b = room.bookings[i];
 
@@ -49,7 +48,7 @@ bool is_room_available(room room, date date_from, time time_from, date date_to, 
     return true;
 }
 
-void save_rooms() {
+private void save_rooms() {
     string parent = file_parent(CONFIG_FILE);
     if (parent != NULL) dir_create(parent);
 
@@ -83,7 +82,7 @@ void save_rooms() {
     pop_save_config();
 }
 
-// PUBLIC
+override
 void load_rooms() {
     if (rooms_length != 0) { // free memory
         for (int i = 0; i < rooms_length; i++) {
@@ -135,10 +134,12 @@ void load_rooms() {
     pop_load_config();
 }
 
+override
 int get_rooms_length() {
     return rooms_length;
 }
 
+override
 bool add_room(string name, int capacity) {
     load_rooms();
     if (room_exists(name)) {
@@ -155,6 +156,7 @@ bool add_room(string name, int capacity) {
     return true;
 }
 
+override
 void delete_room(room r) {
     int index = find_room(r.name);
     if (index == -1) return;
@@ -166,6 +168,7 @@ void delete_room(room r) {
     save_rooms();
 }
 
+override
 bool book_room(room r, date date_from, time time_from, date date_to, time time_to) {
     int index = find_room(r.name);
     if (index == -1) return false;
@@ -181,22 +184,27 @@ bool book_room(room r, date date_from, time time_from, date date_to, time time_t
     return true;
 }
 
+override
 room get_room(int index) {
     return rooms[index];
 }
 
+override
 bool room_exists(string name) {
     return find_room(name) != -1;
 }
 
+override
 int get_filtered_rooms_length() {
     return filtered_rooms_length;
 }
 
+override
 room get_filtered_room(int index) {
     return filtered_rooms[index];
 }
 
+override
 void cancel_booking(room r, booking b) {
     int index = find_room(r.name);
     if (index == -1) return;
@@ -213,6 +221,7 @@ void cancel_booking(room r, booking b) {
     }
 }
 
+override
 void filter_clear() {
     if (filtered_rooms_length != -1) {
         free(filtered_rooms);
@@ -221,6 +230,7 @@ void filter_clear() {
     }
 }
 
+override
 void filter_rooms_by_name(name_filter filter) {
     if (!init_filter() && filtered_rooms_length == 0) return;
     if (!filter.set) return;
@@ -236,6 +246,7 @@ void filter_rooms_by_name(name_filter filter) {
     filtered_rooms_length = new_filtered_rooms_length;
 }
 
+override
 void filter_rooms_by_capacity(capacity_filter filter) {
     if (!init_filter() && filtered_rooms_length == 0) return;
     if (!filter.set) return;
@@ -265,6 +276,7 @@ void filter_rooms_by_capacity(capacity_filter filter) {
     filtered_rooms_length = new_filtered_rooms_length;
 }
 
+override
 void filter_rooms_by_availability(availability_filter filter) {
     if (!init_filter() && filtered_rooms_length == 0) return;
     if (!filter.set) return;

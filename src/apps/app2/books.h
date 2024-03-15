@@ -2,8 +2,6 @@
 
 #include "../../utils/utils.h"
 
-#define CONFIG_DIR "library_books_tracking/"
-
 typedef struct {
     string title;
     string author;
@@ -14,7 +12,7 @@ void load_books();
 
 int get_books_length();
 
-bool add_book(string name, int capacity);
+bool add_book(string title, string author, string_array types);
 
 void delete_book(book b);
 
@@ -22,7 +20,7 @@ bool book_book(book b, date date_from, time time_from, date date_to, time time_t
 
 book get_book(int index);
 
-bool book_exists(string name);
+bool book_exists(string title);
 
 /*int get_filtered_rooms_length();
 

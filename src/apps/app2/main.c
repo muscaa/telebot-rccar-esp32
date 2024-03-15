@@ -30,18 +30,18 @@ books for a number of days and return borrowed books.
 #define BACK_TO_MAIN_MENU new_action("Back to Main Menu", main_menu)
 #define BACK_TO(back_menu) new_action("Back", back_menu)
 
-int menu_books();
-    int menu_books_view();
-        int menu_books_view_availablebooks(int books_length, book (*get_book)(int));
-            int menu_book_info(book book);
+private int menu_books();
+    private int menu_books_view();
+        private int menu_books_view_availablebooks(int books_length, book (*get_book)(int));
+            private int menu_book_info(book book);
                 //int menu_book_bookings(book book, int (*back)());
-        int menu_books_view_filter();
+        private int menu_books_view_filter();
             //void menu_name_filter(name_filter* filter);
             //void menu_capacity_filter(capacity_filter* filter);
             //void menu_availability_filter(availability_filter* filter);
                 //bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to);
-    int menu_books_add();
-int menu_bookingss();
+    private int menu_books_add();
+private int menu_bookingss();
     //int menu_booking_info(book book, booking booking);
 
 /*int menu_booking_info(book book, booking booking) {
@@ -205,7 +205,7 @@ int menu_bookingss();
     return action_performed(actions, opt);
 }*/
 
-int menu_book_info(book book) {
+private int menu_book_info(book book) {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_books_view),
@@ -425,7 +425,7 @@ int menu_book_info(book book) {
     }
 }*/
 
-int menu_books_view_availablebooks(int books_length, book (*get_book)(int)) {
+private int menu_books_view_availablebooks(int books_length, book (*get_book)(int)) {
     int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_books_view),
@@ -456,7 +456,7 @@ int menu_books_view_availablebooks(int books_length, book (*get_book)(int)) {
     return action_performed(actions, opt);
 }
 
-int menu_books_view_filter() {
+private int menu_books_view_filter() {
     /*name_filter name = { false };
     capacity_filter capacity = { false };
     availability_filter availability = { false };
@@ -514,7 +514,7 @@ int menu_books_view_filter() {
     return 0;
 }
 
-int menu_books_view() {
+private int menu_books_view() {
     int actions_index = 0;
     program_action actions[] = {
         new_action("Filter", menu_books_view_filter),
@@ -539,7 +539,7 @@ int menu_books_view() {
     return action_performed(actions, opt);
 }
 
-int menu_books_add() {
+private int menu_books_add() {
     start_capture();
     int book_title_length = 0;
     char* book_title = malloc(51);
@@ -626,11 +626,11 @@ int menu_books_add() {
     book_capacity = realloc(book_capacity, book_capacity_length + 1);
     stop_capture();
 
-    add_book(book_title, atoi(book_capacity));
+    //add_book(book_title, atoi(book_capacity));
     return menu_books();
 }
 
-int menu_books() {
+private int menu_books() {
     int actions_index = 0;
     program_action actions[] = {
         new_action("View books", menu_books_view),
@@ -651,7 +651,7 @@ int menu_books() {
     return action_performed(actions, opt);
 }
 
-int menu_bookingss() {
+private int menu_bookingss() {
     /*int actions_index = 0;
     program_action actions[] = {
         BACK_TO(menu_books_view),
@@ -685,6 +685,7 @@ int menu_bookingss() {
     return 0;
 }
 
+override
 int app2_main() {
     load_books();
     int actions_index = 0;

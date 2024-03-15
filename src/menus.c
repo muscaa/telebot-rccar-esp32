@@ -3,7 +3,7 @@
 #include "utils/utils.h"
 #include "apps/apps.h"
 
-// PUBLIC
+override
 int main_menu() {
     int len = 0;
     option options[4 + get_apps_length()];

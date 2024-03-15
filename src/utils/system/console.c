@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "../defines.h"
+
 #if WIN
     #include <Windows.h>
 #elif UNIX
@@ -12,7 +14,7 @@
     #include <sys/ioctl.h>
 #endif
 
-// PUBLIC
+override
 void clear_screen() {
     #if WIN
         system("cls");
@@ -21,6 +23,7 @@ void clear_screen() {
     #endif
 }
 
+override
 void set_console_title(string title) {
     #if WIN
         system(concat("title ", title));
@@ -29,10 +32,12 @@ void set_console_title(string title) {
     #endif
 }
 
+override
 void pause_console() {
     getchar();
 }
 
+override
 void print(string s, ...) {
     va_list args;
     va_start(args, s);
@@ -40,6 +45,7 @@ void print(string s, ...) {
     va_end(args);
 }
 
+override
 void println(string s, ...) {
     va_list args;
     va_start(args, s);
@@ -49,14 +55,16 @@ void println(string s, ...) {
 }
 
 #if WIN
-HANDLE hInput;
-INPUT_RECORD input_record;
-DWORD events_read;
+private HANDLE hInput;
+private INPUT_RECORD input_record;
+private DWORD events_read;
 
+override
 void start_capture() {
     hInput = GetStdHandle(STD_INPUT_HANDLE);
 }
 
+override
 int read_capture() {
     if (ReadConsoleInput(hInput, &input_record, 1, &events_read)) {
         if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown) {
@@ -83,11 +91,13 @@ int read_capture() {
     return 0;
 }
 
+override
 void stop_capture() {
 }
 #elif UNIX
-struct termios term;
+private struct termios term;
 
+override
 void start_capture() {
     tcgetattr(0, &term);
 
@@ -96,6 +106,7 @@ void start_capture() {
 }
 
 // https://stackoverflow.com/questions/421860/capture-characters-from-standard-input-without-waiting-for-enter-to-be-pressed
+override
 int read_capture() {
     int nbbytes;
     ioctl(0, FIONREAD, &nbbytes); // 0 is STDIN
@@ -163,6 +174,7 @@ int read_capture() {
     return key; // any other ASCII character
 }
 
+override
 void stop_capture() {
     term.c_lflag |= (ICANON | ECHO); // turn on line buffering and echoing
     tcsetattr(0, TCSANOW, &term);

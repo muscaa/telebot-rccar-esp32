@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-// PUBLIC
+#include "../defines.h"
+
+override
 string concat(string s1, string s2) {
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
@@ -14,6 +16,7 @@ string concat(string s1, string s2) {
     return result;
 }
 
+override
 string as_string(long long int number) {
     int length = snprintf(NULL, 0, "%lld", number);
     char* result = malloc(length + 1);
@@ -21,6 +24,7 @@ string as_string(long long int number) {
     return result;
 }
 
+override
 string as_string_len(long long int number, int len) {
     int length = snprintf(NULL, 0, "%0*lld", len, number);
     char* result = malloc(length + 1);
@@ -28,6 +32,7 @@ string as_string_len(long long int number, int len) {
     return result;
 }
 
+override
 string format(string format, ...) {
     va_list args;
     va_start(args, format);
@@ -40,6 +45,7 @@ string format(string format, ...) {
     return result;
 }
 
+override
 string_array new_string_array_sentinel(string str, ...) {
     string_array result;
     result.length = 0;

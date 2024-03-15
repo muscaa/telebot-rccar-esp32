@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../defines.h"
+
 #define DAYS_JANUARY 31
 #define DAYS_FEBRUARY 28 // 29
 #define DAYS_MARCH 31
@@ -16,7 +18,7 @@
 #define DAYS_NOVEMBER 30
 #define DAYS_DECEMBER 31
 
-int days[] = {
+private int days[] = {
     DAYS_JANUARY,
     DAYS_FEBRUARY,
     DAYS_MARCH,
@@ -31,50 +33,52 @@ int days[] = {
     DAYS_DECEMBER
 };
 
-// PRIVATE
-int clamp(int value, int min, int max) {
+private int clamp(int value, int min, int max) {
     if (value < min) return min;
     if (value > max) return max;
     return value;
 }
 
-int clamp_bounds(int value, int min, int max) {
+private int clamp_bounds(int value, int min, int max) {
     if (value < min) return max;
     if (value > max) return min;
     return value;
 }
 
-// PUBLIC
+override
 date new_date(int day, int month, int year) {
     return (date) { day, month, year };
 }
 
+override
 time new_time(int hour, int minute) {
     return (time) { hour, minute };
 }
 
+override
 bool is_leap_year(int year) {
     if (year % 400 == 0) return true;
     if (year % 100 == 0) return false;
     return year % 4 == 0;
 }
 
+override
 int get_month_days(int month, int year) {
     return month == MONTH_FEBRUARY && is_leap_year(year) ? 29 : days[month - 1];
 }
 
-int date_time_len;
-byte date_time_value[8];
+private int date_time_len;
+private byte date_time_value[8];
 
-void write_date_time_byte(byte b) {
+private void write_date_time_byte(byte b) {
     date_time_value[date_time_len++] = b;
 }
 
-byte read_date_time_byte() {
+private byte read_date_time_byte() {
     return date_time_value[date_time_len++];
 }
 
-long date_time_to_long(date d, time t) {
+private long date_time_to_long(date d, time t) {
     date_time_len = 0;
     int_to_bytes(d.year, write_date_time_byte);
     date_time_value[date_time_len++] = d.month;
@@ -85,6 +89,7 @@ long date_time_to_long(date d, time t) {
     return bytes_to_long(read_date_time_byte);
 }
 
+override
 int compare_date_time(date date1, time time1, date date2, time time2) {
     long l1 = date_time_to_long(date1, time1);
     long l2 = date_time_to_long(date2, time2);
@@ -94,6 +99,7 @@ int compare_date_time(date date1, time time1, date date2, time time2) {
     return 0;
 }
 
+override
 void date_increment(int type, date* date) {
     switch (type) {
         case DATE_TYPE_DAY:
@@ -110,6 +116,7 @@ void date_increment(int type, date* date) {
     }
 }
 
+override
 void date_decrement(int type, date* date) {
     switch (type) {
         case DATE_TYPE_DAY:
@@ -126,6 +133,7 @@ void date_decrement(int type, date* date) {
     }
 }
 
+override
 void time_increment(int type, time* time) {
     switch (type) {
         case TIME_TYPE_HOUR:
@@ -137,6 +145,7 @@ void time_increment(int type, time* time) {
     }
 }
 
+override
 void time_decrement(int type, time* time) {
     switch (type) {
         case TIME_TYPE_HOUR:

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "defines.h"
+
 #include "types/byte.h"
 #include "types/string.h"
 

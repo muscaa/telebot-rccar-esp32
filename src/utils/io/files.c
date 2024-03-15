@@ -4,12 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../defines.h"
+
 #if WIN
     #include <direct.h>
 #elif UNIX
     #include <sys/stat.h>
 #endif
 
+override
 bool file_exists(string path) {
     FILE* file = fopen(path, "r");
     if (file) {
@@ -19,6 +22,7 @@ bool file_exists(string path) {
     return false;
 }
 
+override
 bool file_create(string path) {
     FILE* file = fopen(path, "w");
     if (file) {
@@ -28,6 +32,7 @@ bool file_create(string path) {
     return false;
 }
 
+override
 string file_parent(string path) {
     int i;
     for (i = strlen(path) - 1; i >= 0; i--) {
@@ -42,6 +47,7 @@ string file_parent(string path) {
     return new_path;
 }
 
+override
 bool dir_create(string path) {
     #if WIN
         return _mkdir(path) == 0;

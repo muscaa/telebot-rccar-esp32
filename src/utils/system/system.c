@@ -2,6 +2,9 @@
 
 #include <time.h>
 
+#include "../defines.h"
+
+override
 void system_date(byte* day, byte* month, int* year) {
     time_t rawtime;
     struct tm* timeinfo;
@@ -14,6 +17,7 @@ void system_date(byte* day, byte* month, int* year) {
     *year = timeinfo->tm_year + 1900;
 }
 
+override
 void system_time(byte* hour, byte* minute) {
     time_t rawtime;
     struct tm* timeinfo;

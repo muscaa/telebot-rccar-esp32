@@ -3,32 +3,31 @@
 #include "../system/console.h"
 #include "../system/colors.h"
 
-// PRIVATE
-void decrease(int* current, const int options_length, option options[]) {
+private void decrease(int* current, const int options_length, option options[]) {
     do {
         *current = (*current - 1 + options_length) % options_length;
     } while (options[*current].separator);
 }
 
-void increase(int* current, const int options_length, option options[]) {
+private void increase(int* current, const int options_length, option options[]) {
     do {
         *current = (*current + 1) % options_length;
     } while (options[*current].separator);
 }
 
-option_builder set_id(int id);
-option_builder set_name(string name);
-option_builder set_name_hover(string name_hover);
-option_builder set_description(string description);
-option_builder set_foreground(int foreground);
-option_builder set_foreground_hover(int foreground);
-option_builder set_background(int background);
-option_builder set_background_hover(int background);
-option_builder set_separator();
-option_builder set_action(void (*action)());
-option build_option();
+private option_builder set_id(int id);
+private option_builder set_name(string name);
+private option_builder set_name_hover(string name_hover);
+private option_builder set_description(string description);
+private option_builder set_foreground(int foreground);
+private option_builder set_foreground_hover(int foreground);
+private option_builder set_background(int background);
+private option_builder set_background_hover(int background);
+private option_builder set_separator();
+private option_builder set_action(void function(action));
+private option build_option();
 
-option_builder builder_o = {
+private option_builder builder = {
     set_id,
     set_name,
     set_name_hover,
@@ -41,63 +40,63 @@ option_builder builder_o = {
     set_action,
     build_option
 };
-option building_o;
+private option building;
 
-option_builder set_id(int id) {
-    building_o.id = id;
-    return builder_o;
+private option_builder set_id(int id) {
+    building.id = id;
+    return builder;
 }
 
-option_builder set_name(string name) {
-    building_o.name = name;
-    return builder_o;
+private option_builder set_name(string name) {
+    building.name = name;
+    return builder;
 }
 
-option_builder set_name_hover(string name_hover) {
-    building_o.name_hover = name_hover;
-    return builder_o;
+private option_builder set_name_hover(string name_hover) {
+    building.name_hover = name_hover;
+    return builder;
 }
 
-option_builder set_description(string description) {
-    building_o.description = description;
-    return builder_o;
+private option_builder set_description(string description) {
+    building.description = description;
+    return builder;
 }
 
-option_builder set_foreground(int foreground) {
-    building_o.foreground = foreground;
-    return builder_o;
+private option_builder set_foreground(int foreground) {
+    building.foreground = foreground;
+    return builder;
 }
 
-option_builder set_foreground_hover(int foreground_hover) {
-    building_o.foreground_hover = foreground_hover;
-    return builder_o;
+private option_builder set_foreground_hover(int foreground_hover) {
+    building.foreground_hover = foreground_hover;
+    return builder;
 }
 
-option_builder set_background(int background) {
-    building_o.background = background;
-    return builder_o;
+private option_builder set_background(int background) {
+    building.background = background;
+    return builder;
 }
 
-option_builder set_background_hover(int background_hover) {
-    building_o.background_hover = background_hover;
-    return builder_o;
+private option_builder set_background_hover(int background_hover) {
+    building.background_hover = background_hover;
+    return builder;
 }
 
-option_builder set_separator() {
-    building_o.separator = true;
-    return builder_o;
+private option_builder set_separator() {
+    building.separator = true;
+    return builder;
 }
 
-option_builder set_action(void (*action)()) {
-    building_o.action = action;
-    return builder_o;
+private option_builder set_action(void function(action)) {
+    building.action = action;
+    return builder;
 }
 
-option build_option() {
-    return building_o;
+private option build_option() {
+    return building;
 }
 
-// PUBLIC
+override
 option new_option() {
     return (option) {
         -1,
@@ -114,12 +113,13 @@ option new_option() {
     };
 }
 
+override
 option_builder new_option_builder() {
-    building_o = new_option();
-    return builder_o;
+    building = new_option();
+    return builder;
 }
 
-string get_option_name(option opt, bool hovered, int* background, int* foreground) {
+private string get_option_name(option opt, bool hovered, int* background, int* foreground) {
     *background = -1;
     *foreground = -1;
     if (opt.background != -1) *background = opt.background;
@@ -138,12 +138,13 @@ string get_option_name(option opt, bool hovered, int* background, int* foregroun
     return name;
 }
 
-void menu_pre_draw() {
+private void menu_pre_draw() {
     clear_screen();
 }
 
+override
 option menu(const int options_length, option options[], const int increase_key, const int decrease_key,
-                void (*pre_draw)(), void (*draw)(int, option[], int, int), void (*post_draw)(int, option[], int)) {
+                void function(pre_draw), void function(draw, int, option[], int, int), void function(post_draw, int, option[], int)) {
     start_capture();
     int current = -1;
     increase(&current, options_length, options);
@@ -177,8 +178,7 @@ option menu(const int options_length, option options[], const int increase_key, 
     return opt;
 }
 
-// vertical menu start
-void vmenu_draw(const int options_length, option options[], int current, int i) {
+private void vmenu_draw(const int options_length, option options[], int current, int i) {
     option opt = options[i];
     
     int background;
@@ -194,20 +194,19 @@ void vmenu_draw(const int options_length, option options[], int current, int i) 
     if (background != -1) pop_background();
 }
 
-void vmenu_post_draw(const int options_length, option options[], int current) {
+private void vmenu_post_draw(const int options_length, option options[], int current) {
     string desc = options[current].description;
     if (desc != NULL) {
         println(desc);
     }
 }
 
+override
 option vmenu(const int options_length, option options[]) {
     return menu(options_length, options, K_DOWN, K_UP, menu_pre_draw, vmenu_draw, vmenu_post_draw);
 }
-// vertical menu end
 
-// horizontal menu start
-void hmenu_draw(const int options_length, option options[], int current, int i) {
+private void hmenu_draw(const int options_length, option options[], int current, int i) {
     option opt = options[i];
     
     int background;
@@ -223,7 +222,7 @@ void hmenu_draw(const int options_length, option options[], int current, int i) 
     if (background != -1) pop_background();
 }
 
-void hmenu_post_draw(const int options_length, option options[], int current) {
+private void hmenu_post_draw(const int options_length, option options[], int current) {
     string desc = options[current].description;
     if (desc != NULL) {
         print(desc);
@@ -232,7 +231,7 @@ void hmenu_post_draw(const int options_length, option options[], int current) {
     println("");
 }
 
+override
 option hmenu(const int options_length, option options[]) {
     return menu(options_length, options, K_RIGHT, K_LEFT, menu_pre_draw, hmenu_draw, hmenu_post_draw);
 }
-// horizontal menu end

@@ -7,15 +7,15 @@
 #include "../system/colors.h"
 #include "menu.h"
 
-dialog_input_builder set_value(string default_value);
-dialog_input_builder set_exists(bool (*value_exists)(string));
-dialog_input_builder set_max_length(int max_length);
-dialog_input_builder set_allow_empty();
-dialog_input_builder set_accepts(string chars);
-dialog_input_builder set_draw(void (*draw)(dialog_input_info));
-dialog_input build_dialog_input();
+private dialog_input_builder set_value(string default_value);
+private dialog_input_builder set_exists(bool function(value_exists, string));
+private dialog_input_builder set_max_length(int max_length);
+private dialog_input_builder set_allow_empty();
+private dialog_input_builder set_accepts(string chars);
+private dialog_input_builder set_draw(void function(draw, dialog_input_info));
+private dialog_input build_dialog_input();
 
-dialog_input_builder builder_di = {
+private dialog_input_builder builder = {
     set_value,
     set_exists,
     set_max_length,
@@ -24,49 +24,49 @@ dialog_input_builder builder_di = {
     set_draw,
     build_dialog_input
 };
-dialog_input building_di;
+private dialog_input building;
 
-dialog_input_builder set_value(string default_value) {
-    building_di.default_value = default_value;
-    return builder_di;
+private dialog_input_builder set_value(string default_value) {
+    building.default_value = default_value;
+    return builder;
 }
 
-dialog_input_builder set_exists(bool (*value_exists)(string)) {
-    building_di.value_exists = value_exists;
-    return builder_di;
+private dialog_input_builder set_exists(bool function(value_exists, string)) {
+    building.value_exists = value_exists;
+    return builder;
 }
 
-dialog_input_builder set_max_length(int max_length) {
-    building_di.max_length = max_length;
-    return builder_di;
+private dialog_input_builder set_max_length(int max_length) {
+    building.max_length = max_length;
+    return builder;
 }
 
-dialog_input_builder set_allow_empty() {
-    building_di.allow_empty = true;
-    return builder_di;
+private dialog_input_builder set_allow_empty() {
+    building.allow_empty = true;
+    return builder;
 }
 
-dialog_input_builder set_accepts(string chars) { // az|AZ|-||
+private dialog_input_builder set_accepts(string chars) { // az|AZ|-||
     for (int i = 0; i < strlen(chars); i += 2) {
         char from = chars[i];
         char to = chars[i + 1] != '|' ? chars[++i] : 0;
         
-        building_di.filters = realloc(building_di.filters, (building_di.filters_length + 1) * sizeof(char_input_filter));
-        building_di.filters[building_di.filters_length++] = (char_input_filter) { from, to };
+        building.filters = realloc(building.filters, (building.filters_length + 1) * sizeof(char_input_filter));
+        building.filters[building.filters_length++] = (char_input_filter) { from, to };
     }
-    return builder_di;
+    return builder;
 }
 
-dialog_input_builder set_draw(void (*draw)(dialog_input_info)) {
-    building_di.draw = draw;
-    return builder_di;
+private dialog_input_builder set_draw(void function(draw, dialog_input_info)) {
+    building.draw = draw;
+    return builder;
 }
 
-dialog_input build_dialog_input() {
-    return building_di;
+private dialog_input build_dialog_input() {
+    return building;
 }
 
-// PUBLIC
+override
 dialog_input new_dialog_input() {
     return (dialog_input) {
         NULL,
@@ -79,11 +79,13 @@ dialog_input new_dialog_input() {
     };
 }
 
+override
 dialog_input_builder new_dialog_input_builder() {
-    building_di = new_dialog_input();
-    return builder_di;
+    building = new_dialog_input();
+    return builder;
 }
 
+override
 string dialog_input_string(dialog_input input, const void* additional) {
     start_capture();
     int result_length = 0;

@@ -4,7 +4,7 @@
 
 typedef struct {
     string name;
-    int (*launch)();
+    int function(launch);
 } app;
 
 void init_apps();
