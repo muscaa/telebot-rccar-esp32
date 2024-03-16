@@ -3,6 +3,108 @@
 #include "../system/console.h"
 #include "../system/colors.h"
 
+private option_builder impl_function(option_builder, id, int v);
+private option_builder impl_function(option_builder, name, string v);
+private option_builder impl_function(option_builder, name_hover, string v);
+private option_builder impl_function(option_builder, description, string v);
+private option_builder impl_function(option_builder, foreground, int v);
+private option_builder impl_function(option_builder, foreground_hover, int v);
+private option_builder impl_function(option_builder, background, int v);
+private option_builder impl_function(option_builder, background_hover, int v);
+private option_builder impl_function(option_builder, separator);
+private option_builder impl_function(option_builder, on_action, void function(action, int));
+private option impl_function(option_builder, build);
+
+private option_builder builder = {
+    .id = get_impl(option_builder, id),
+    .name = get_impl(option_builder, name),
+    .name_hover = get_impl(option_builder, name_hover),
+    .description = get_impl(option_builder, description),
+    .foreground = get_impl(option_builder, foreground),
+    .foreground_hover = get_impl(option_builder, foreground_hover),
+    .background = get_impl(option_builder, background),
+    .background_hover = get_impl(option_builder, background_hover),
+    .separator = get_impl(option_builder, separator),
+    .on_action = get_impl(option_builder, on_action),
+    .build = get_impl(option_builder, build)
+};
+private option building;
+
+private option_builder impl_function(option_builder, id, int v) {
+    building.id = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, name, string v) {
+    building.name = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, name_hover, string v) {
+    building.name_hover = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, description, string v) {
+    building.description = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, foreground, int v) {
+    building.foreground = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, foreground_hover, int v) {
+    building.foreground_hover = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, background, int v) {
+    building.background = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, background_hover, int v) {
+    building.background_hover = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, separator) {
+    building.separator = true;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, on_action, void function(action, int)) {
+    building.action = action;
+    return builder;
+}
+
+private option impl_function(option_builder, build) {
+    return building;
+}
+
+constructor(option) {
+    return (option) {
+        .id = -1,
+        .index = -1,
+        .name = NULL,
+        .name_hover = NULL,
+        .description = NULL,
+        .foreground = COLOR_WHITE, // if not set, the system overrides it
+        .foreground_hover = COLOR_BLUE,
+        .background = -1,
+        .background_hover = -1,
+        .separator = false,
+        .action = NULL
+    };
+}
+
+constructor(option_builder) {
+    building = new_option();
+    return builder;
+}
+
 private void decrease(int* current, const int options_length, option options[]) {
     do {
         *current = (*current - 1 + options_length) % options_length;
@@ -13,110 +115,6 @@ private void increase(int* current, const int options_length, option options[]) 
     do {
         *current = (*current + 1) % options_length;
     } while (options[*current].separator);
-}
-
-private option_builder set_id(int id);
-private option_builder set_name(string name);
-private option_builder set_name_hover(string name_hover);
-private option_builder set_description(string description);
-private option_builder set_foreground(int foreground);
-private option_builder set_foreground_hover(int foreground);
-private option_builder set_background(int background);
-private option_builder set_background_hover(int background);
-private option_builder set_separator();
-private option_builder set_action(void function(action));
-private option build_option();
-
-private option_builder builder = {
-    set_id,
-    set_name,
-    set_name_hover,
-    set_description,
-    set_foreground,
-    set_foreground_hover,
-    set_background,
-    set_background_hover,
-    set_separator,
-    set_action,
-    build_option
-};
-private option building;
-
-private option_builder set_id(int id) {
-    building.id = id;
-    return builder;
-}
-
-private option_builder set_name(string name) {
-    building.name = name;
-    return builder;
-}
-
-private option_builder set_name_hover(string name_hover) {
-    building.name_hover = name_hover;
-    return builder;
-}
-
-private option_builder set_description(string description) {
-    building.description = description;
-    return builder;
-}
-
-private option_builder set_foreground(int foreground) {
-    building.foreground = foreground;
-    return builder;
-}
-
-private option_builder set_foreground_hover(int foreground_hover) {
-    building.foreground_hover = foreground_hover;
-    return builder;
-}
-
-private option_builder set_background(int background) {
-    building.background = background;
-    return builder;
-}
-
-private option_builder set_background_hover(int background_hover) {
-    building.background_hover = background_hover;
-    return builder;
-}
-
-private option_builder set_separator() {
-    building.separator = true;
-    return builder;
-}
-
-private option_builder set_action(void function(action)) {
-    building.action = action;
-    return builder;
-}
-
-private option build_option() {
-    return building;
-}
-
-override
-option new_option() {
-    return (option) {
-        -1,
-        -1,
-        NULL,
-        NULL,
-        NULL,
-        COLOR_WHITE, // if not set, the system overrides it
-        COLOR_BLUE,
-        -1,
-        -1,
-        false,
-        NULL
-    };
-}
-
-override
-option_builder new_option_builder() {
-    building = new_option();
-    return builder;
 }
 
 private string get_option_name(option opt, bool hovered, int* background, int* foreground) {

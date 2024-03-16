@@ -5,7 +5,8 @@
 #include "../defines.h"
 #include "../types/string.h"
 
-typedef struct {
+#define __TYPE__ option
+type(option) {
     int id;
     int index;
     string name;
@@ -17,10 +18,11 @@ typedef struct {
     int background_hover;
     bool separator;
     void function(action, int);
-} option;
+};
+#undef __TYPE__
 
-typedef struct _option_builder option_builder;
-struct _option_builder {
+#define __TYPE__ option_builder
+type(option_builder) {
     option_builder function(id, int);
     option_builder function(name, string);
     option_builder function(name_hover, string);
@@ -33,10 +35,7 @@ struct _option_builder {
     option_builder function(on_action, void function(action, int));
     option function(build);
 };
-
-option new_option();
-
-option_builder new_option_builder();
+#undef __TYPE__
 
 option menu(const int options_length, option options[], const int increase_key, const int decrease_key,
                 void function(pre_draw), void function(draw, int, option[], int, int), void function(post_draw, int, option[], int));
