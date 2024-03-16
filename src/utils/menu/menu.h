@@ -19,7 +19,6 @@ typedef struct {
     void function(action, int);
 } option;
 
-struct _option_builder;
 typedef struct _option_builder option_builder;
 struct _option_builder {
     option_builder function(id, int);

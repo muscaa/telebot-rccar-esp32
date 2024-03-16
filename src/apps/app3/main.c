@@ -10,6 +10,7 @@ return the borrowed bike.
 
 #include "main.h"
 
+override
 int app3_main() {
     return 0;
 }

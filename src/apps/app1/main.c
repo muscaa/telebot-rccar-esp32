@@ -256,7 +256,7 @@ private void draw_name_filter(dialog_input_info info) {
 private void menu_name_filter(name_filter* filter) {
     dialog_input name_filter_di = new_dialog_input_builder()
                     .draw(draw_name_filter)
-                    .value(filter->set ? filter->name : "")
+                    .value(filter->set ? filter->name : NULL)
                     .allow_empty()
                     .accepts("az|AZ|09| |-")
                     .max_length(50)
@@ -287,7 +287,7 @@ private void draw_capacity_filter(dialog_input_info info) {
 private void menu_capacity_filter(capacity_filter* filter) {
     dialog_input capacity_filter_di = new_dialog_input_builder()
                     .draw(draw_capacity_filter)
-                    .value(filter->set ? as_string(filter->capacity) : "")
+                    .value(filter->set ? as_string(filter->capacity) : NULL)
                     .allow_empty()
                     .accepts("09")
                     .max_length(6)
