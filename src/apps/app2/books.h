@@ -2,7 +2,7 @@
 
 #include "../../utils/utils.h"
 
-typedef struct {
+/*typedef struct {
     string title;
     string author;
     string_array types;
@@ -20,7 +20,7 @@ bool book_book(book b, date date_from, time time_from, date date_to, time time_t
 
 book get_book(int index);
 
-bool book_exists(string title);
+bool book_exists(string title);*/
 
 /*int get_filtered_rooms_length();
 

@@ -6,7 +6,7 @@
 #define CAPACITY_EQUAL 1
 #define CAPACITY_HIGHER 2
 
-typedef struct {
+/*typedef struct {
     date date_from;
     time time_from;
     date date_to;
@@ -65,4 +65,4 @@ void filter_rooms_by_name(name_filter filter);
 
 void filter_rooms_by_capacity(capacity_filter filter);
 
-void filter_rooms_by_availability(availability_filter filter);
+void filter_rooms_by_availability(availability_filter filter);*/

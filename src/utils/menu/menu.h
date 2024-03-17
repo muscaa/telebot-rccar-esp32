@@ -5,7 +5,6 @@
 #include "../defines.h"
 #include "../types/string.h"
 
-#define __TYPE__ option
 type(option) {
     int id;
     int index;
@@ -19,9 +18,7 @@ type(option) {
     bool separator;
     void function(action, int);
 };
-#undef __TYPE__
 
-#define __TYPE__ option_builder
 type(option_builder) {
     option_builder function(id, int);
     option_builder function(name, string);
@@ -35,7 +32,6 @@ type(option_builder) {
     option_builder function(on_action, void function(action, int));
     option function(build);
 };
-#undef __TYPE__
 
 option menu(const int options_length, option options[], const int increase_key, const int decrease_key,
                 void function(pre_draw), void function(draw, int, option[], int, int), void function(post_draw, int, option[], int));

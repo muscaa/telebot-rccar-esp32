@@ -6,6 +6,8 @@
 
 #include "../defines.h"
 
+impl_arraydef(string);
+
 override
 string concat(string s1, string s2) {
     const size_t len1 = strlen(s1);
@@ -42,26 +44,5 @@ string format(string format, ...) {
     va_start(args, format);
     vsprintf(result, format, args);
     va_end(args);
-    return result;
-}
-
-override
-string_array new_string_array_sentinel(string str, ...) {
-    string_array result;
-    result.length = 0;
-    result.values = malloc(sizeof(string));
-    result.values[0] = NULL;
-
-    va_list args;
-    va_start(args, str);
-    while (str) {
-        result.values = realloc(result.values, (result.length + 2) * sizeof(string)); // one more
-        result.values[result.length++] = str;
-        result.values[result.length] = NULL;
-
-        str = va_arg(args, string);
-    }
-    va_end(args);
-
     return result;
 }

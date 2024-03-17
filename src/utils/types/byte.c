@@ -2,6 +2,8 @@
 
 #include <limits.h>
 
+impl_arraydef(byte);
+
 private bool is_big_endian() {
     int big_endian = 1;
     return *((byte*) &big_endian) == 1;

@@ -3,10 +3,13 @@
 #include <stdbool.h>
 
 #include "../defines.h"
+#include "../array/array.h"
 
 #define byte _Byte
 
 typedef unsigned char _Byte;
+
+arraydef(byte);
 
 // to bytes (to big endian)
 void bool_to_bytes(bool v, void function(out, byte));

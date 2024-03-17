@@ -61,9 +61,9 @@ private void write_len_string(string v) {
 }
 
 private void write_string_array(string_array v) {
-    write_int(v.length);
-    for (int i = 0; i < v.length; i++) {
-        write_len_string(v.values[i]);
+    write_int(v->length);
+    for (int i = 0; i < v->length; i++) {
+        write_len_string(v->values[i]);
     }
 }
 
@@ -111,13 +111,13 @@ private string read_len_string() {
 }
 
 private string_array read_string_array() {
-    string_array a;
-    a.length = read_int();
-    a.values = malloc((a.length + 1) * sizeof(string));
-    for (int i = 0; i < a.length; i++) {
-        a.values[i] = read_len_string();
+    string_array a = new(string_array);
+    a->length = read_int();
+    a->values = malloc((a->length + 1) * sizeof(string));
+    for (int i = 0; i < a->length; i++) {
+        a->values[i] = read_len_string();
     }
-    a.values[a.length] = NULL;
+    a->values[a->length] = NULL;
     return a;
 }
 

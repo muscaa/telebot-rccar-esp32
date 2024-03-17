@@ -4,7 +4,7 @@
 
 #include "../defines.h"
 
-#define SEPARATOR builder_separator().build()
+#define SEPARATOR builder_separator()->build()
 
 typedef struct {
     string name;
