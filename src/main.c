@@ -3,10 +3,12 @@
 
 int main() {
     render_stack = new(screen_renderer);
-    push_foreground(COLOR_WHITE);
     init_apps();
-    int exit = main_menu();
-    pop_foreground();
+
+    main_menu();
+
+    mcall0(render_stack, tick);
+
     delete(render_stack);
-    return exit;
+    return exit_code;
 }

@@ -4,6 +4,21 @@
 
 #include "../defines.h"
 
+private bool running = true;
+
+int exit_code = 0;
+
+override
+bool system_running() {
+    return running;
+}
+
+override
+void system_exit(int code) {
+    exit_code = code;
+    running = false;
+}
+
 override
 void system_date(byte* day, byte* month, int* year) {
     time_t rawtime;

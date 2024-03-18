@@ -8,6 +8,12 @@
 
 #include "../types/byte.h"
 
+extern int exit_code;
+
+bool system_running();
+
+void system_exit(int code);
+
 void system_date(byte* day, byte* month, int* year);
 
 void system_time(byte* hour, byte* minute);

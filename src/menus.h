@@ -1,3 +1,3 @@
 #pragma once
 
-int main_menu();
+void main_menu();

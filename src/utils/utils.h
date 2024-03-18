@@ -15,8 +15,9 @@
 #include "system/colors.h"
 #include "system/console.h"
 
-#include "menu/menu.h"
+#include "screen/screen.h"
+#include "screen/components.h"
+
 #include "menu/dialogs.h"
-#include "menu/options.h"
 
 #include "date/date_time.h"

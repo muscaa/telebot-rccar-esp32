@@ -2,10 +2,11 @@
 
 #define private static
 #define override // empty (used for readability)
+#define abstract // empty (used for readability)
 
 #define type(type_name, ...) \
     typedef struct __##type_name* type_name; \
-    type_name new_##type_name(__VA_ARGS__); \
+    type_name construct(type_name, __VA_ARGS__); \
     struct __##type_name
 #define sizeoftype(type_name) sizeof(struct __##type_name)
 
@@ -23,11 +24,12 @@
 #define impl_method(type_name, method_name, ...) impl_function(type_name, method_name, type_name obj, __VA_ARGS__)
 #define impl_method0(type_name, method_name) impl_function(type_name, method_name, type_name obj)
 
-#define constructor(type_name, ...) type_name new_##type_name(__VA_ARGS__)
+#define construct(type_name, ...) new_##type_name(__VA_ARGS__)
+#define constructor(type_name, ...) type_name construct(type_name, __VA_ARGS__)
 #define new(type_name, ...) new_##type_name(__VA_ARGS__)
 
-#define destructor(type_name) private void impl_method0(type_name, __destruct)
 #define destruct(type_name) void method0(type_name, __destruct)
+#define destructor(type_name) private void impl_method0(type_name, __destruct)
 #define delete(obj) \
     mcall0(obj, __destruct); \
     free(obj)

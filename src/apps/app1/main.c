@@ -17,7 +17,7 @@ To book a room, the user must specify the date and time.
 #define BACK_TO_MAIN_MENU new_action("Back to Main Menu", main_menu)
 #define BACK_TO(back_menu) new_action("Back", back_menu)
 
-private int menu_rooms();
+/*private int menu_rooms();
     private int menu_rooms_view();
         private int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int));
             private int menu_room_info(room room);
@@ -588,11 +588,11 @@ private int menu_bookings() {
         return menu_room_bookings(get_room(opt->id - 2), app1_main);
     }
     return action_performed(actions, opt);
-}
+}*/
 
 override
 int app1_main() {
-    load_rooms();
+    /*load_rooms();
     int actions_index = 0;
     program_action actions[] = {
         new_action("Rooms", menu_rooms),
@@ -608,5 +608,6 @@ int app1_main() {
         option_selection_action(actions, &actions_index),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    return action_performed(actions, opt);
+    return action_performed(actions, opt);*/
+    return 0;
 }

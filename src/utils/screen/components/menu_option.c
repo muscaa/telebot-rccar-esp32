@@ -1,0 +1,146 @@
+#include "menu_option.h"
+
+impl_arraydef(option);
+
+constructor(option) {
+    option obj = malloc(sizeoftype(option));
+    obj->id = -1;
+    obj->index = -1;
+    obj->name = NULL;
+    obj->name_hover = NULL;
+    obj->description = NULL;
+    obj->foreground = COLOR_WHITE;
+    obj->foreground_hover = COLOR_BLUE;
+    obj->background = COLOR_UNDEFINED;
+    obj->background_hover = COLOR_UNDEFINED;
+    obj->separator = false;
+    obj->action = NULL;
+    return obj;
+}
+
+private option_builder impl_function(option_builder, id, int v);
+private option_builder impl_function(option_builder, name, string v);
+private option_builder impl_function(option_builder, name_hover, string v);
+private option_builder impl_function(option_builder, description, string v);
+private option_builder impl_function(option_builder, foreground, int v);
+private option_builder impl_function(option_builder, foreground_hover, int v);
+private option_builder impl_function(option_builder, background, int v);
+private option_builder impl_function(option_builder, background_hover, int v);
+private option_builder impl_function(option_builder, separator);
+private option_builder impl_function(option_builder, on_action, void function(action, int));
+private option impl_function(option_builder, build);
+
+private option_builder builder = NULL;
+private option building;
+
+private option_builder impl_function(option_builder, id, int v) {
+    building->id = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, name, string v) {
+    building->name = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, name_hover, string v) {
+    building->name_hover = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, description, string v) {
+    building->description = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, foreground, int v) {
+    building->foreground = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, foreground_hover, int v) {
+    building->foreground_hover = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, background, int v) {
+    building->background = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, background_hover, int v) {
+    building->background_hover = v;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, separator) {
+    building->separator = true;
+    return builder;
+}
+
+private option_builder impl_function(option_builder, on_action, void function(action, int)) {
+    building->action = action;
+    return builder;
+}
+
+private option impl_function(option_builder, build) {
+    return building;
+}
+
+constructor(option_builder) {
+    building = new(option);
+    if (builder == NULL) {
+        builder = malloc(sizeoftype(option_builder));
+        set_impl(option_builder, builder, id);
+        set_impl(option_builder, builder, name);
+        set_impl(option_builder, builder, name_hover);
+        set_impl(option_builder, builder, description);
+        set_impl(option_builder, builder, foreground);
+        set_impl(option_builder, builder, foreground_hover);
+        set_impl(option_builder, builder, background);
+        set_impl(option_builder, builder, background_hover);
+        set_impl(option_builder, builder, separator);
+        set_impl(option_builder, builder, on_action);
+        set_impl(option_builder, builder, build);
+    }
+    return builder;
+}
+
+override
+program_action new_action(string name, int function(on_action)) {
+    return (program_action) { name, on_action };
+}
+
+override
+option option_selection_action(program_action actions[], int* i) {
+    (*i)++; // weird compile warnings...
+    return builder_selection(actions[*i - 1].name)->id(*i - 1)->build();
+}
+
+override
+int action_performed(program_action actions[], option opt) {
+    return actions[opt->id].on_action();
+}
+
+override
+option_builder builder_title(string title) {
+    return new_option_builder()
+            ->name(concat(concat(">>>  ", title), "  <<<"))
+            ->separator()
+            ;
+}
+
+override
+option_builder builder_separator() {
+    return new_option_builder()
+            ->separator()
+            ;
+}
+
+override
+option_builder builder_selection(string name) {
+    return new_option_builder()
+            ->name(concat(" ", name))
+            ->name_hover(concat("> ", name))
+            ;
+}
