@@ -113,11 +113,10 @@ private string read_len_string() {
 private string_array read_string_array() {
     string_array a = new(string_array);
     a->length = read_int();
-    a->values = malloc((a->length + 1) * sizeof(string));
+    a->values = malloc(a->length * sizeof(string));
     for (int i = 0; i < a->length; i++) {
         a->values[i] = read_len_string();
     }
-    a->values[a->length] = NULL;
     return a;
 }
 

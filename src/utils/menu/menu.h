@@ -4,6 +4,7 @@
 
 #include "../defines.h"
 #include "../types/string.h"
+#include "../system/console.h"
 
 type(option) {
     int id;
@@ -18,6 +19,8 @@ type(option) {
     bool separator;
     void function(action, int);
 };
+
+arraydef(option);
 
 type(option_builder) {
     option_builder function(id, int);
@@ -39,3 +42,14 @@ option menu(const int options_length, option options[], const int increase_key, 
 option vmenu(const int options_length, option options[]);
 
 option hmenu(const int options_length, option options[]);
+
+type(menuu, const int increase_key, const int decrease_key, option_array options) {
+    int increase_key;
+    int decrease_key;
+    option_array options;
+    void function(pre_draw, screen s);
+    void function(draw, screen s, option_array options, int current, int i);
+    void function(post_draw, screen s, option_array options, int current);
+    option method(menuu, show, screen s);
+    destruct(menuu);
+};

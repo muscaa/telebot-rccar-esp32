@@ -3,7 +3,7 @@
 #define CONFIG_DIR "meeting_rooms_reservation/"
 #define CONFIG_FILE CONFIG_DIR "rooms.dat" // TODO mkdirs before fopen
 
-/*private int rooms_length = 0;
+private int rooms_length = 0;
 private room* rooms;
 
 private int filtered_rooms_length = -1;
@@ -288,4 +288,4 @@ void filter_rooms_by_availability(availability_filter filter) {
     }
     filtered_rooms = realloc(filtered_rooms, new_filtered_rooms_length * sizeof(room));;
     filtered_rooms_length = new_filtered_rooms_length;
-}*/
+}

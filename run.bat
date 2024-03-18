@@ -9,6 +9,6 @@ if exist build\program.exe (
     echo.
     echo.
     echo.
-    echo Program exited with code %exit%.
+    echo Program exited with code !exit!.
     echo.
 )

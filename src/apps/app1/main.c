@@ -13,11 +13,11 @@ To book a room, the user must specify the date and time.
 #include "../../menus.h"
 #include "rooms.h"
 
-#define TITLE builder_title("Meeting rooms reservation system").build()
+#define TITLE builder_title("Meeting rooms reservation system")->build()
 #define BACK_TO_MAIN_MENU new_action("Back to Main Menu", main_menu)
 #define BACK_TO(back_menu) new_action("Back", back_menu)
 
-/*private int menu_rooms();
+private int menu_rooms();
     private int menu_rooms_view();
         private int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int));
             private int menu_room_info(room room);
@@ -41,23 +41,23 @@ private int menu_booking_info(room room, booking booking) {
         TITLE,
         SEPARATOR,
         builder_separator()
-                .name(format("Booking from: %02d/%02d/%04d %02d:%02d",
+                ->name(format("Booking from: %02d/%02d/%04d %02d:%02d",
                         booking.date_from.day, booking.date_from.month, booking.date_from.year, booking.time_from.hour, booking.time_from.minute))
-                .build(),
+                ->build(),
         builder_separator()
-                .name(format("Booking to: %02d/%02d/%04d %02d:%02d",
+                ->name(format("Booking to: %02d/%02d/%04d %02d:%02d",
                         booking.date_to.day, booking.date_to.month, booking.date_to.year, booking.time_to.hour, booking.time_to.minute))
-                .build(),
+                ->build(),
         SEPARATOR,
         builder_selection("Cancel")
-                .id(2)
-                .build(),
+                ->id(2)
+                ->build(),
         SEPARATOR,
         option_selection_action(actions, &actions_index),
         option_selection_action(actions, &actions_index),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    if (opt.id == 2) {
+    if (opt->id == 2) {
         cancel_booking(room, booking);
         return menu_rooms_view();
     }
@@ -115,7 +115,7 @@ private bool menu_date_time_picker(date* date_from, time* time_from, date* date_
 
                 clear_screen();
 
-                println(TITLE.name);
+                println(TITLE->name);
                 println("");
                 if (i == 1) {
                     print("From: ");
@@ -174,20 +174,20 @@ private int menu_room_bookings(room room, int (*back)()) {
         options[i] = builder_selection(format("(%02d/%02d/%04d %02d:%02d - %02d/%02d/%04d %02d:%02d)",
                                 b.date_from.day, b.date_from.month, b.date_from.year, b.time_from.hour, b.time_from.minute,
                                 b.date_to.day, b.date_to.month, b.date_to.year, b.time_to.hour, b.time_to.minute))
-                        .id(i)
-                        .build();
+                        ->id(i)
+                        ->build();
     }
     if (room.bookings_length == 0) {
         options[i++] = builder_separator()
-                        .name("No bookings.")
-                        .build();
+                        ->name("No bookings.")
+                        ->build();
     }
     options[i++] = SEPARATOR;
     options[i++] = option_selection_action(actions, &actions_index);
     options[i++] = option_selection_action(actions, &actions_index);
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    if (opt.id >= 2) {
-        return menu_booking_info(room, room.bookings[opt.id - 2]);
+    if (opt->id >= 2) {
+        return menu_booking_info(room, room.bookings[opt->id - 2]);
     }
     return action_performed(actions, opt);
 }
@@ -202,29 +202,29 @@ private int menu_room_info(room room) {
         TITLE,
         SEPARATOR,
         builder_separator()
-                .name(format("Room name: %s", room.name))
-                .build(),
+                ->name(format("Room name: %s", room.name))
+                ->build(),
         builder_separator()
-                .name(format("Room capacity: %d", room.capacity))
-                .build(),
+                ->name(format("Room capacity: %d", room.capacity))
+                ->build(),
         SEPARATOR,
         builder_selection(format("Bookings (%d)", room.bookings_length))
-                .id(2)
-                .build(),
+                ->id(2)
+                ->build(),
         builder_selection("Book")
-                .id(3)
-                .build(),
+                ->id(3)
+                ->build(),
         builder_selection("Delete")
-                .id(4)
-                .build(),
+                ->id(4)
+                ->build(),
         SEPARATOR,
         option_selection_action(actions, &actions_index),
         option_selection_action(actions, &actions_index),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    if (opt.id == 2) {
+    if (opt->id == 2) {
         return menu_room_bookings(room, menu_rooms_view);
-    } else if (opt.id == 3) {
+    } else if (opt->id == 3) {
         date date_from;
         time time_from;
         date date_to;
@@ -235,7 +235,7 @@ private int menu_room_info(room room) {
         }
         
         return menu_rooms_view();
-    } else if (opt.id == 4) {
+    } else if (opt->id == 4) {
         delete_room(room);
         return menu_rooms_view();
     }
@@ -243,7 +243,7 @@ private int menu_room_info(room room) {
 }
 
 private void draw_name_filter(dialog_input_info info) {
-    println(TITLE.name);
+    println(TITLE->name);
     println("");
     print("Name filter: ");
     push_foreground(COLOR_BLUE);
@@ -274,7 +274,7 @@ private void menu_name_filter(name_filter* filter) {
 }
 
 private void draw_capacity_filter(dialog_input_info info) {
-    println(TITLE.name);
+    println(TITLE->name);
     println("");
     print("Capacity filter: ");
     push_foreground(COLOR_BLUE);
@@ -322,7 +322,7 @@ private void menu_capacity_filter(capacity_filter* filter) {
 
                 clear_screen();
 
-                println(TITLE.name);
+                println(TITLE->name);
                 println("");
                 print("Capacity filter: ");
                 push_foreground(COLOR_BLUE);
@@ -383,20 +383,20 @@ private int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(in
     for (; i < rooms_length + 2; i++) {
         room r = get_room(i - 2);
         options[i] = builder_selection(r.name)
-                        .id(i)
-                        .build();
+                        ->id(i)
+                        ->build();
     }
     if (rooms_length == 0) {
         options[i++] = builder_separator()
-                        .name("No rooms available.")
-                        .build();
+                        ->name("No rooms available.")
+                        ->build();
     }
     options[i++] = SEPARATOR;
     options[i++] = option_selection_action(actions, &actions_index);
     options[i++] = option_selection_action(actions, &actions_index);
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    if (opt.id >= 2) {
-        return menu_room_info(get_room(opt.id - 2));
+    if (opt->id >= 2) {
+        return menu_room_info(get_room(opt->id - 2));
     }
     return action_performed(actions, opt);
 }
@@ -416,39 +416,39 @@ private int menu_rooms_view_filter() {
             TITLE,
             SEPARATOR,
             builder_selection(format("Name filter %s", name.set ? format("(%s)", name.name) : ""))
-                    .id(2)
-                    .build(),
+                    ->id(2)
+                    ->build(),
             builder_selection(format("Capacity filter %s", capacity.set ? format("(%s %d)",
                                     capacity.mode == CAPACITY_LOWER ? "<=" :
                                     capacity.mode == CAPACITY_EQUAL ? "=" :
                                     capacity.mode == CAPACITY_HIGHER ? ">=" : "",
                                     capacity.capacity) : ""))
-                    .id(3)
-                    .build(),
+                    ->id(3)
+                    ->build(),
             builder_selection(format("Availability filter %s", availability.set ? format("(%02d/%02d/%04d %02d:%02d - %02d/%02d/%04d %02d:%02d)",
                                 availability.date_from.day, availability.date_from.month, availability.date_from.year, availability.time_from.hour, availability.time_from.minute,
                                 availability.date_to.day, availability.date_to.month, availability.date_to.year, availability.time_to.hour, availability.time_to.minute) : ""))
-                    .id(4)
-                    .build(),
+                    ->id(4)
+                    ->build(),
             SEPARATOR,
             builder_selection("Apply")
-                    .id(5)
-                    .build(),
+                    ->id(5)
+                    ->build(),
             SEPARATOR,
             option_selection_action(actions, &actions_index),
             option_selection_action(actions, &actions_index),
         };
         option opt = vmenu(sizeof(options) / sizeof(option), options);
-        if (opt.id == 5) break;
-        if (opt.id == 4) {
+        if (opt->id == 5) break;
+        if (opt->id == 4) {
             menu_availability_filter(&availability);
             continue;
         }
-        if (opt.id == 3) {
+        if (opt->id == 3) {
             menu_capacity_filter(&capacity);
             continue;
         }
-        if (opt.id == 2) {
+        if (opt->id == 2) {
             menu_name_filter(&name);
             continue;
         }
@@ -473,22 +473,22 @@ private int menu_rooms_view() {
         TITLE,
         SEPARATOR,
         builder_selection("All rooms")
-                .id(3)
-                .build(),
+                ->id(3)
+                ->build(),
         option_selection_action(actions, &actions_index),
         SEPARATOR,
         option_selection_action(actions, &actions_index),
         option_selection_action(actions, &actions_index),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    if (opt.id == 3) {
+    if (opt->id == 3) {
         return menu_rooms_view_availablerooms(get_rooms_length(), get_room);
     }
     return action_performed(actions, opt);
 }
 
 private void draw_room_name(dialog_input_info info) {
-    println(TITLE.name);
+    println(TITLE->name);
     println("");
     print("Room name: ");
     push_foreground(info.exists ? COLOR_RED : COLOR_BLUE);
@@ -500,7 +500,7 @@ private void draw_room_name(dialog_input_info info) {
 
 private void draw_room_capacity(dialog_input_info info) {
     string room_name = info.additional;
-    println(TITLE.name);
+    println(TITLE->name);
     println("");
     print("Room name: ");
     push_foreground(COLOR_BLUE);
@@ -572,27 +572,27 @@ private int menu_bookings() {
         if (r.bookings_length == 0) continue;
 
         options[i++] = builder_selection(format("%s (%d bookings)", r.name, r.bookings_length))
-                        .id(j + 2)
-                        .build();
+                        ->id(j + 2)
+                        ->build();
     }
     if (get_rooms_length() == 0) {
         options[i++] = builder_separator()
-                        .name("No bookings available.")
-                        .build();
+                        ->name("No bookings available.")
+                        ->build();
     }
     options[i++] = SEPARATOR;
     options[i++] = option_selection_action(actions, &actions_index);
     options[i++] = option_selection_action(actions, &actions_index);
     option opt = vmenu(i, options);
-    if (opt.id >= 2) {
-        return menu_room_bookings(get_room(opt.id - 2), app1_main);
+    if (opt->id >= 2) {
+        return menu_room_bookings(get_room(opt->id - 2), app1_main);
     }
     return action_performed(actions, opt);
-}*/
+}
 
 override
 int app1_main() {
-    /*load_rooms();
+    load_rooms();
     int actions_index = 0;
     program_action actions[] = {
         new_action("Rooms", menu_rooms),
@@ -608,6 +608,5 @@ int app1_main() {
         option_selection_action(actions, &actions_index),
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
-    return action_performed(actions, opt);*/
-    return 0;
+    return action_performed(actions, opt);
 }

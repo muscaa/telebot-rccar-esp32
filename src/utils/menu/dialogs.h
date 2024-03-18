@@ -13,7 +13,7 @@ typedef struct {
 typedef struct {
     string result;
     bool exists;
-    const void* additional;
+    void* additional;
 } dialog_input_info;
 
 typedef struct {
@@ -42,4 +42,4 @@ dialog_input new_dialog_input();
 
 dialog_input_builder new_dialog_input_builder();
 
-string dialog_input_string(dialog_input input, const void* additional);
+string dialog_input_string(dialog_input input, void* additional);

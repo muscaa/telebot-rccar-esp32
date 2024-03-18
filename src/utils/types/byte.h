@@ -9,6 +9,7 @@
 
 typedef unsigned char _Byte;
 
+arraydef(bool);
 arraydef(byte);
 
 // to bytes (to big endian)

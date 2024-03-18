@@ -1,8 +1,9 @@
 #include "menu.h"
 
-#include "../system/console.h"
 #include "../system/colors.h"
 #include <stdlib.h>
+
+impl_arraydef(option);
 
 private option_builder impl_function(option_builder, id, int v);
 private option_builder impl_function(option_builder, name, string v);
@@ -116,6 +117,18 @@ private void increase(int* current, const int options_length, option options[]) 
     do {
         *current = (*current + 1) % options_length;
     } while (options[*current]->separator);
+}
+
+private void decrease0(int* current, option_array options) {
+    do {
+        *current = (*current - 1 + options->length) % options->length;
+    } while (mcall(options, get, *current)->separator);
+}
+
+private void increase0(int* current, option_array options) {
+    do {
+        *current = (*current + 1) % options->length;
+    } while (mcall(options, get, *current)->separator);
 }
 
 private string get_option_name(option opt, bool hovered, int* background, int* foreground) {
@@ -233,4 +246,60 @@ private void hmenu_post_draw(const int options_length, option options[], int cur
 override
 option hmenu(const int options_length, option options[]) {
     return menu(options_length, options, K_RIGHT, K_LEFT, menu_pre_draw, hmenu_draw, hmenu_post_draw);
+}
+
+private option impl_method(menuu, show, screen s) {
+    start_capture();
+    int current = -1;
+    increase0(&current, obj->options);
+    bool redraw = true;
+    int capture;
+    while ((capture = read_capture()) != K_RETURN) {
+        if (capture == obj->increase_key) {
+            increase0(&current, obj->options);
+            redraw = true;
+        } else if (capture == obj->decrease_key) {
+            decrease0(&current, obj->options);
+            redraw = true;
+        }
+        
+        if (redraw) {
+            redraw = false;
+            
+            mcall0(s, push);
+
+            obj->pre_draw(s);
+            for (int i = 0; i < obj->options->length; i++) {
+                obj->draw(s, obj->options, current, i);
+            }
+            obj->post_draw(s, obj->options, current);
+            
+            mcall0(render_stack, render);
+            mcall0(s, pop);
+        }
+    }
+    stop_capture();
+
+    option opt = mcall(obj->options, get, current);
+    opt->index = current;
+    if (opt->action != NULL) opt->action(current);
+
+    return opt;
+}
+
+destructor(menuu) {
+    for (int i = 0; i < obj->options->length; i++) {
+        free(mcall(obj->options, get, i));
+    }
+    delete(obj->options);
+}
+
+constructor(menuu, const int increase_key, const int decrease_key, option_array options) {
+    menuu obj = malloc(sizeoftype(menuu));
+    obj->increase_key = increase_key;
+    obj->decrease_key = decrease_key;
+    obj->options = options;
+    set_impl(menuu, obj, show);
+    set_impl(menuu, obj, __destruct);
+    return obj;
 }

@@ -2,6 +2,7 @@
 
 #include <limits.h>
 
+impl_arraydef(bool);
 impl_arraydef(byte);
 
 private bool is_big_endian() {

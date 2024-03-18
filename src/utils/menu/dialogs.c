@@ -84,7 +84,7 @@ dialog_input_builder new_dialog_input_builder() {
 }
 
 override
-string dialog_input_string(dialog_input input, const void* additional) {
+string dialog_input_string(dialog_input input, void* additional) {
     start_capture();
     int result_length = 0;
     char* result = malloc(input.max_length + 1);

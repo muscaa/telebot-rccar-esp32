@@ -5,6 +5,7 @@
 #include <stdarg.h>
 
 #include "../defines.h"
+#include "colors.h"
 
 #if WIN
     #include <Windows.h>
@@ -13,6 +14,114 @@
     #include <termios.h>
     #include <sys/ioctl.h>
 #endif
+
+impl_arraydef(screen);
+
+private void impl_method0(screen, push) {
+    mcall(obj->stack, add, obj->lines->length);
+}
+
+private void impl_method(screen, append, string line) {
+    if (obj->lines->length == 0) {
+        mcall(obj->lines, add, copy(line));
+        return;
+    }
+    string old = mcall(obj->lines, get, obj->lines->length - 1);
+    mcall(obj->lines, set, obj->lines->length - 1, concat(old, line));
+    free(old);
+}
+
+private void impl_method0(screen, new_line) {
+    mcall(obj->lines, add, copy(""));
+}
+
+private void impl_method0(screen, pop) {
+    int index = mcall(obj->stack, remove, obj->stack->length - 1);
+    for (int i = obj->lines->length - 1; i >= index; i--) {
+        string line = mcall(obj->lines, remove, i);
+        free(line);
+    }
+}
+
+private void impl_method(screen, push_foreground, const int color_code) {
+    mcall(obj, append, push_foreground_noprint(color_code));
+}
+
+private void impl_method0(screen, pop_foreground) {
+    mcall(obj, append, pop_foreground_noprint());
+}
+
+private void impl_method(screen, push_background, const int color_code) {
+    mcall(obj, append, push_background_noprint(color_code));
+}
+
+private void impl_method0(screen, pop_background) {
+    mcall(obj, append, pop_background_noprint());
+}
+
+destructor(screen) {
+    for (int i = 0; i < obj->lines->length; i++) {
+        string line = mcall(obj->lines, get, i);
+        free(line);
+    }
+    delete(obj->lines);
+}
+
+constructor(screen) {
+    screen obj = malloc(sizeoftype(screen));
+    obj->lines = new(string_array);
+    obj->stack = new(int_array);
+    set_impl(screen, obj, push);
+    set_impl(screen, obj, append);
+    set_impl(screen, obj, new_line);
+    set_impl(screen, obj, pop);
+    set_impl(screen, obj, push_foreground);
+    set_impl(screen, obj, pop_foreground);
+    set_impl(screen, obj, push_background);
+    set_impl(screen, obj, pop_background);
+    set_impl(screen, obj, __destruct);
+    return obj;
+}
+
+private screen impl_method0(screen_renderer, push) {
+    screen s = new(screen);
+    mcall(obj->screens, add, s);
+    return s;
+}
+
+private void impl_method0(screen_renderer, pop) {
+    screen s = mcall(obj->screens, remove, obj->screens->length - 1);
+    delete(s);
+}
+
+private void impl_method0(screen_renderer, render) {
+    clear_screen();
+    screen s = mcall(obj->screens, get, obj->screens->length - 1);
+    for (int i = 0; i < s->lines->length; i++) {
+        string line = mcall(s->lines, get, i);
+        println(line);
+    }
+}
+
+destructor(screen_renderer) {
+    for (int i = 0; i < obj->screens->length; i++) {
+        screen s = mcall(obj->screens, get, i);
+        delete(s);
+    }
+    delete(obj->screens);
+}
+
+constructor(screen_renderer) {
+    screen_renderer obj = malloc(sizeoftype(screen_renderer));
+    obj->screens = new(screen_array);
+    set_impl(screen_renderer, obj, push);
+    set_impl(screen_renderer, obj, pop);
+    set_impl(screen_renderer, obj, render);
+    set_impl(screen_renderer, obj, __destruct);
+    return obj;
+}
+
+screen_renderer render_stack;
 
 override
 void clear_screen() {
