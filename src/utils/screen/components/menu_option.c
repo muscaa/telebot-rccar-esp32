@@ -18,18 +18,6 @@ constructor(option) {
     return obj;
 }
 
-private option_builder impl_function(option_builder, id, int v);
-private option_builder impl_function(option_builder, name, string v);
-private option_builder impl_function(option_builder, name_hover, string v);
-private option_builder impl_function(option_builder, description, string v);
-private option_builder impl_function(option_builder, foreground, int v);
-private option_builder impl_function(option_builder, foreground_hover, int v);
-private option_builder impl_function(option_builder, background, int v);
-private option_builder impl_function(option_builder, background_hover, int v);
-private option_builder impl_function(option_builder, separator);
-private option_builder impl_function(option_builder, on_action, void function(action, int));
-private option impl_function(option_builder, build);
-
 private option_builder builder = NULL;
 private option building;
 

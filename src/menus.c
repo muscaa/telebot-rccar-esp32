@@ -2,14 +2,36 @@
 
 #include "apps/apps.h"
 
+private void on_input(component c) {
+    if (c->id == 0) {
+        input d = c->data;
+        printf("Input: %s\n", d->result);
+        mcall0(render_stack, pop);
+    }
+}
+
+private void input_test() {
+    screen s = mcall(render_stack, push, on_input);
+
+    add_component(input, 0, s, new(input_builder, "Input Test: ")
+            ->value("Value")
+            ->max_length(10)
+            ->accepts("az|AZ|09")
+            ->build()
+    );
+}
+
 private void on_action(component c) {
     if (c->id == 0) {
-        menu m = c->data;
+        menu d = c->data;
 
-        option opt = mcall(m->options, get, m->current);
+        option opt = mcall(d->options, get, d->current);
 
         if (opt->id != -1) {
-            println("launching %d", opt->id);
+            if (opt->id == 1) {
+                input_test();
+                return;
+            }
             get_app(opt->id).launch();
         }
 

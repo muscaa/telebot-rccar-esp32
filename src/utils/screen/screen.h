@@ -11,6 +11,7 @@ type(screen);
 abstract type(component,
     int id,
     void* data,
+    void method0(component, init),
     void method0(component, render),
     bool method(component, key_event, int key, bool consumed),
     destruct(component)
@@ -19,6 +20,7 @@ abstract type(component,
     void* data;
     screen parent;
 
+    abstract void method0(component, init);
     abstract void method0(component, render);
     abstract bool method(component, key_event, int key, bool consumed);
 

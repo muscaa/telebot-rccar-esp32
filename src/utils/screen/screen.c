@@ -10,6 +10,7 @@ screen_renderer render_stack;
 constructor(component,
     int id,
     void* data,
+    void method0(component, init),
     void method0(component, render),
     bool method(component, key_event, int key, bool consumed),
     destruct(component)
@@ -17,6 +18,7 @@ constructor(component,
     component obj = malloc(sizeoftype(component));
     obj->id = id;
     obj->data = data;
+    obj->init = init;
     obj->render = render;
     obj->key_event = key_event;
     obj->__destruct = __destruct;
@@ -44,6 +46,7 @@ private void impl_method(screen, key_event, int key) {
 
 private void impl_method(screen, add, component c) {
     c->parent = obj;
+    mcall0(c, init);
     mcall(obj->components, add, c);
 }
 
@@ -111,10 +114,6 @@ private void impl_method0(screen_renderer, tick) {
     while (system_running() && obj->screens->length > 0) {
         screen s = mcall(obj->screens, get, obj->screens->length - 1);
 
-        capture = read_capture();
-        
-        mcall(s, key_event, capture);
-
         if (render) {
             render = false;
 
@@ -126,6 +125,10 @@ private void impl_method0(screen_renderer, tick) {
 
             pop_foreground();
         }
+
+        capture = read_capture();
+        
+        mcall(s, key_event, capture);
     }
     stop_capture();
 }
@@ -137,12 +140,17 @@ private void impl_method0(screen_renderer, refresh) {
 private screen impl_method(screen_renderer, push, void function(on_action, component c)) {
     screen s = new(screen, on_action);
     mcall(obj->screens, add, s);
+
+    mcall0(render_stack, refresh);
+    
     return s;
 }
 
 private void impl_method0(screen_renderer, pop) {
     screen s = mcall(obj->screens, remove, obj->screens->length - 1);
     delete(s);
+
+    mcall0(render_stack, refresh);
 }
 
 destructor(screen_renderer) {

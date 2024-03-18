@@ -61,30 +61,37 @@ private void vrender(screen s, option_array options, int current, int i) {
     mcall0(s, new_line);
 }
 
-impl_render(menu) {
-    menu m = obj->data;
-
-    for (int i = 0; i < m->options->length; i++) {
-        vrender(obj->parent, m->options, m->current, i); // TOTO hrender
+impl_init(menu) {
+    menu d = obj->data;
+    if (mcall(d->options, get, d->current)->separator) {
+        increase(&d->current, d->options);
     }
-    post_render(obj->parent, m->options, m->current);
+}
+
+impl_render(menu) {
+    menu d = obj->data;
+
+    for (int i = 0; i < d->options->length; i++) {
+        vrender(obj->parent, d->options, d->current, i); // TODO hrender
+    }
+    post_render(obj->parent, d->options, d->current);
 }
 
 impl_key_event(menu) {
     if (consumed) return false;
 
-    menu m = obj->data;
+    menu d = obj->data;
 
-    if (key == m->increase_key) {
-        increase(&m->current, m->options);
-        mcall0(render_stack, refresh);
-        return true;
-    } else if (key == m->decrease_key) {
-        decrease(&m->current, m->options);
-        mcall0(render_stack, refresh);
-        return true;
-    } else if (key == K_RETURN) {
+    if (key == K_RETURN) {
         call_action(obj);
+        return true;
+    } else if (key == d->increase_key) {
+        increase(&d->current, d->options);
+        mcall0(render_stack, refresh);
+        return true;
+    } else if (key == d->decrease_key) {
+        decrease(&d->current, d->options);
+        mcall0(render_stack, refresh);
         return true;
     }
 
@@ -108,8 +115,7 @@ constructor(menu,
     obj->increase_key = increase_key;
     obj->decrease_key = decrease_key;
     obj->options = options;
-    obj->current = -1;
-    increase(&obj->current, options);
+    obj->current = 0;
     set_component_methods(menu, obj);
     return obj;
 }

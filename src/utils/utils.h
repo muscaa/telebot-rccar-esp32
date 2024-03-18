@@ -18,6 +18,4 @@
 #include "screen/screen.h"
 #include "screen/components.h"
 
-#include "menu/dialogs.h"
-
 #include "date/date_time.h"

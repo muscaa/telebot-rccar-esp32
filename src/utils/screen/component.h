@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 #include "../defines.h"
@@ -10,6 +12,7 @@
 #include "../system/colors.h"
 #include "screen.h"
 
+#define impl_init(type_name) private void impl_method0(component, init_##type_name)
 #define impl_render(type_name) private void impl_method0(component, render_##type_name)
 #define impl_key_event(type_name) private bool impl_method(component, key_event_##type_name, int key, bool consumed)
 #define impl_component_methods(type_name) \
@@ -21,6 +24,7 @@
         return new(component, \
                 id, \
                 obj, \
+                get_impl(component, init_##type_name), \
                 get_impl(component, render_##type_name), \
                 get_impl(component, key_event_##type_name), \
                 get_impl(component, __destruct_##type_name) \
