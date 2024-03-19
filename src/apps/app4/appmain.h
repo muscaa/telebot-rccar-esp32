@@ -1,5 +1,5 @@
 #pragma once
 
-#include "../apps.h"
+#include "../app.h"
 
-int app4_main();
+void app4_main();

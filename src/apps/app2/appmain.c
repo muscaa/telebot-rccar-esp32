@@ -22,7 +22,6 @@ books for a number of days and return borrowed books.
 
 #include "appmain.h"
 
-#include "../../menus.h"
 #include "books.h"
 
 #define TITLE builder_title("Library books tracking system").build()
@@ -264,7 +263,7 @@ private int menu_bookingss() {
 }*/
 
 override
-int app2_main() {
+void app2_main() {
     /*load_books();
     int actions_index = 0;
     program_action actions[] = {
@@ -282,5 +281,4 @@ int app2_main() {
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
     return action_performed(actions, opt);*/
-    return 0;
 }

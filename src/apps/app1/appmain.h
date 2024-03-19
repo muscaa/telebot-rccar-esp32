@@ -1,3 +1,5 @@
 #pragma once
 
-int app1_main();
+#include "../app.h"
+
+void app1_main();

@@ -6,30 +6,38 @@
 #include "app4/appmain.h"
 #include "app5/appmain.h"
 
-#define MAX_APPS_LENGTH 5
+impl_arraydef(app);
 
-private int apps_length = 0;
-private app apps[MAX_APPS_LENGTH];
-
-private app new_app(string name, int function(launch)) {
-    return (app) { name, launch };
-}
+private app_array apps = NULL;
 
 override
 void init_apps() {
-    apps[apps_length++] = new_app("Meeting rooms reservation system", app1_main);
-    apps[apps_length++] = new_app("Library books tracking system", app2_main);
-    apps[apps_length++] = new_app("Bicycle reservation system", app3_main);
-    apps[apps_length++] = new_app("Pharmacy products booking system", app4_main);
-    apps[apps_length++] = new_app("Train wagons tracking system", app5_main);
+    if (apps != NULL) return;
+    apps = new(app_array);
+
+    mcall(apps, add, new(app, "Meeting rooms reservation system", app1_main));
+    mcall(apps, add, new(app, "Library books tracking system", app2_main));
+    mcall(apps, add, new(app, "Bicycle reservation system", app3_main));
+    mcall(apps, add, new(app, "Pharmacy products booking system", app4_main));
+    mcall(apps, add, new(app, "Train wagons tracking system", app5_main));
 }
 
 override
 int get_apps_length() {
-    return apps_length;
+    return apps->length;
 }
 
 override
-app get_app(int index) {    
-    return apps[index];
+app get_app(int index) {
+    return mcall(apps, get, index);
+}
+
+constructor(app,
+    string name,
+    void function(launch)
+) {
+    app obj = malloc(sizeoftype(app));
+    obj->name = name;
+    obj->launch = launch;
+    return obj;
 }

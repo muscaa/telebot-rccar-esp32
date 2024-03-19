@@ -2,10 +2,15 @@
 
 #include "../utils/utils.h"
 
-typedef struct {
+type(app,
+    string name,
+    void function(launch)
+) {
     string name;
-    int function(launch);
-} app;
+    void function(launch);
+};
+
+arraydef(app);
 
 void init_apps();
 

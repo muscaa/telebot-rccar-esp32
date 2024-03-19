@@ -16,6 +16,6 @@ Create a program that allows the following operations:
 
 #include "appmain.h"
 
-int app5_main() {
-    return 0;
+override
+void app5_main() {
 }

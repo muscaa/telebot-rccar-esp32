@@ -1,5 +1,5 @@
 #include "apps/apps.h"
-#include "menus.h"
+#include "screen_main_menu.h"
 
 int main() {
     render_stack = new(screen_renderer);

@@ -8,6 +8,6 @@ products by name and availability, can display reserved products.
 
 #include "appmain.h"
 
-int app4_main() {
-    return 0;
+override
+void app4_main() {
 }

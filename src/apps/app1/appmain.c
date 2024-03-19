@@ -10,7 +10,6 @@ To book a room, the user must specify the date and time.
 
 #include "appmain.h"
 
-#include "../../menus.h"
 #include "rooms.h"
 
 #define TITLE builder_title("Meeting rooms reservation system")->build()
@@ -591,7 +590,7 @@ private int menu_bookings() {
 }*/
 
 override
-int app1_main() {
+void app1_main() {
     /*load_rooms();
     int actions_index = 0;
     program_action actions[] = {
@@ -609,5 +608,4 @@ int app1_main() {
     };
     option opt = vmenu(sizeof(options) / sizeof(option), options);
     return action_performed(actions, opt);*/
-    return 0;
 }

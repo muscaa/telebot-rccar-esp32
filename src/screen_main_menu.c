@@ -1,42 +1,16 @@
-#include "menus.h"
+#include "screen_main_menu.h"
 
 #include "apps/apps.h"
 #include "utils/screen/components.h"
 
-private void on_input(component c) {
-    if (c->id == 1) {
-        //input d = c->data;
-    } else if (c->id == 0) {
-        mcall0(render_stack, pop);
-    }
-}
-
-private void input_test() {
-    screen s = mcall(render_stack, push, on_input);
-
-    add_component(s, 0, trigger, new(trigger, "(ESC to go back)", K_ESCAPE));
-
-    insert_component(s, 0, 1, input, new(input_builder, "Input Test: ")
-            ->value("Value")
-            ->max_length(10)
-            ->accepts("az|AZ|09")
-            ->build()
-    );
-    insert_component(s, 0, -1, separator, new(separator));
-}
-
 private void on_action(component c) {
     if (c->id == 1) {
         menu d = c->data;
-
         option opt = mcall(d->options, get, d->current);
 
         if (opt->id != -1) {
-            if (opt->id == 1) {
-                input_test();
-                return;
-            }
-            get_app(opt->id).launch();
+            get_app(opt->id)->launch();
+            return;
         }
 
         mcall0(render_stack, pop);
@@ -48,10 +22,9 @@ void main_menu() {
     screen s = mcall(render_stack, push, on_action);
     
     option_array options = new(option_array);
-    mcall(options, add, SEPARATOR);
     for (int i = 0; i < get_apps_length(); i++) {
         app app = get_app(i);
-        mcall(options, add, option_selection(app.name)
+        mcall(options, add, option_selection(app->name)
                             ->id(i)
                             ->build());
     }
@@ -61,5 +34,6 @@ void main_menu() {
                         ->build());
     
     add_component(s, 0, title, new(title, "Main Menu"));
+    add_component(s, -1, separator, new(separator));
     add_component(s, 1, menu, new(vmenu, options));
 }
