@@ -17,6 +17,8 @@
 #define K_PAGE_UP -33
 #define K_PAGE_DOWN -34
 
+void get_screen_size(int* width, int* height);
+
 void clear_screen();
 
 void set_console_title(string title);

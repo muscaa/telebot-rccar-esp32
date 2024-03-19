@@ -1,5 +1,4 @@
 #include "title.h"
-#include <stdlib.h>
 
 impl_init(title) {
     title d = obj->data;

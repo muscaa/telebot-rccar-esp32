@@ -35,12 +35,16 @@ type(screen,
     component_array components;
     void function(on_action, component c);
 
+    bool marked_for_deletion;
+
+    void method(screen, init, component c);
     void method0(screen, render);
     void method(screen, key_event, int key);
 
     void method(screen, add, component c);
     component method(screen, remove, int id);
     component method(screen, replace, int id, component c);
+    void method(screen, insert, int id, component c);
 
     void method(screen, append, string line);
     void method0(screen, new_line);

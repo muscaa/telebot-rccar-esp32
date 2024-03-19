@@ -15,6 +15,23 @@
 #endif
 
 override
+void get_screen_size(int* width, int* height) {
+    #if WIN
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        
+        *width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        *height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    #elif UNIX
+        struct winsize w;
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+        *width = w.ws_col;
+        *height = w.ws_row;
+    #endif
+}
+
+override
 void clear_screen() {
     #if WIN
         system("cls");

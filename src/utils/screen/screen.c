@@ -25,6 +25,11 @@ constructor(component,
     return obj;
 }
 
+private void impl_method(screen, init, component c) {
+    c->parent = obj;
+    mcall0(c, init);
+}
+
 private void impl_method0(screen, render) {
     for (int i = 0; i < obj->components->length; i++) {
         component c = mcall(obj->components, get, i);
@@ -45,8 +50,7 @@ private void impl_method(screen, key_event, int key) {
 }
 
 private void impl_method(screen, add, component c) {
-    c->parent = obj;
-    mcall0(c, init);
+    mcall(obj, init, c);
     mcall(obj->components, add, c);
 }
 
@@ -64,11 +68,22 @@ private component impl_method(screen, replace, int id, component c) {
     for (int i = 0; i < obj->components->length; i++) {
         component old = mcall(obj->components, get, i);
         if (old->id == id) {
-            mcall0(c, init);
+            mcall(obj, init, c);
             return mcall(obj->components, set, i, c);
         }
     }
     return NULL;
+}
+
+private void impl_method(screen, insert, int id, component c) {
+    for (int i = 0; i < obj->components->length; i++) {
+        component old = mcall(obj->components, get, i);
+        if (old->id == id) {
+            mcall(obj, init, c);
+            mcall(obj->components, insert, i, c);
+            break;
+        }
+    }
 }
 
 private void impl_method(screen, append, string line) {
@@ -96,7 +111,7 @@ private void impl_method0(screen, pop_background) {
 }
 
 destructor(screen) {
-    for (int i = 0; i < obj->components->length; i++) {
+    for (int i = obj->components->length - 1; i >= 0; i--) {
         component c = mcall(obj->components, get, i);
         delete(c);
     }
@@ -110,12 +125,16 @@ constructor(screen,
     obj->components = new(component_array);
     obj->on_action = on_action;
 
+    obj->marked_for_deletion = false;
+
+    set_impl(screen, obj, init);
     set_impl(screen, obj, render);
     set_impl(screen, obj, key_event);
 
     set_impl(screen, obj, add);
     set_impl(screen, obj, remove);
     set_impl(screen, obj, replace);
+    set_impl(screen, obj, insert);
 
     set_impl(screen, obj, append);
     set_impl(screen, obj, new_line);
@@ -134,7 +153,12 @@ private bool render = true;
 private void impl_method0(screen_renderer, tick) {
     start_capture();
     int capture;
+
+    int screen_width;
+    int screen_height;
     while (system_running() && obj->screens->length > 0) {
+        get_screen_size(&screen_width, &screen_height);
+
         screen s = mcall(obj->screens, get, obj->screens->length - 1);
 
         if (render) {
@@ -152,6 +176,10 @@ private void impl_method0(screen_renderer, tick) {
         capture = read_capture();
         
         mcall(s, key_event, capture);
+
+        if (s->marked_for_deletion) {
+            delete(s);
+        }
     }
     stop_capture();
 }
@@ -171,13 +199,13 @@ private screen impl_method(screen_renderer, push, void function(on_action, compo
 
 private void impl_method0(screen_renderer, pop) {
     screen s = mcall(obj->screens, remove, obj->screens->length - 1);
-    delete(s);
+    s->marked_for_deletion = true;
 
     mcall0(render_stack, refresh);
 }
 
 destructor(screen_renderer) {
-    for (int i = 0; i < obj->screens->length; i++) {
+    for (int i = obj->screens->length - 1; i >= 0; i--) {
         screen s = mcall(obj->screens, get, i);
         delete(s);
     }

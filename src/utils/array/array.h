@@ -11,6 +11,7 @@
         type_name method(type_name##_array, get, int index); \
         void method(type_name##_array, add, type_name value); \
         type_name method(type_name##_array, set, int index, type_name value); \
+        void method(type_name##_array, insert, int index, type_name value); \
         type_name method(type_name##_array, remove, int index); \
         void method0(type_name##_array, clear); \
         destruct(type_name##_array); \
@@ -29,6 +30,14 @@
         type_name old = obj->values[index]; \
         obj->values[index] = value; \
         return old; \
+    } \
+    private void impl_method(type_name##_array, insert, int index, type_name value) { \
+        obj->length++; \
+        obj->values = realloc(obj->values, obj->length * sizeof(type_name)); \
+        for (int i = obj->length - 1; i > index; i--) { \
+            obj->values[i] = obj->values[i - 1]; \
+        } \
+        obj->values[index] = value; \
     } \
     private type_name impl_method(type_name##_array, remove, int index) { \
         type_name value = obj->values[index]; \
@@ -54,6 +63,7 @@
         set_impl(type_name##_array, obj, get); \
         set_impl(type_name##_array, obj, add); \
         set_impl(type_name##_array, obj, set); \
+        set_impl(type_name##_array, obj, insert); \
         set_impl(type_name##_array, obj, remove); \
         set_impl(type_name##_array, obj, clear); \
         set_impl(type_name##_array, obj, __destruct); \

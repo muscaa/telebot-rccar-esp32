@@ -83,6 +83,9 @@ impl_key_event(menu) {
     menu d = obj->data;
 
     if (key == K_RETURN) {
+        option opt = mcall(d->options, get, d->current);
+        if (opt->action != NULL) opt->action(opt->id);
+        
         call_action(obj);
         return true;
     } else if (key == d->increase_key) {

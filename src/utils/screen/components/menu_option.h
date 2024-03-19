@@ -41,21 +41,10 @@ type(option_builder) {
     option function(build);
 };
 
-#define SEPARATOR builder_separator()->build()
+#define SEPARATOR option_separator()->build()
 
-typedef struct {
-    string name;
-    int function(on_action);
-} program_action; // easier that working with ids
+option_builder option_title(string title);
 
-program_action new_action(string name, int function(on_action));
+option_builder option_separator();
 
-option option_selection_action(program_action actions[], int* i);
-
-int action_performed(program_action actions[], option opt);
-
-option_builder builder_title(string title);
-
-option_builder builder_separator();
-
-option_builder builder_selection(string name);
+option_builder option_selection(string name);
