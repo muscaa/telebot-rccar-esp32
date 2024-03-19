@@ -4,6 +4,7 @@
 #include "components/input.h"
 #include "components/title.h"
 #include "components/trigger.h"
+#include "components/separator.h"
 
 #define add_component(screen, id, type_name, c) mcall(screen, add, create_component_##type_name(c, id))
 #define remove_component(screen, id) mcall(screen, remove, id)

@@ -4,9 +4,9 @@
 #include "utils/screen/components.h"
 
 private void on_input(component c) {
-    if (c->id == 0) {
+    if (c->id == 1) {
         //input d = c->data;
-    } else if (c->id == -1) {
+    } else if (c->id == 0) {
         mcall0(render_stack, pop);
     }
 }
@@ -14,13 +14,15 @@ private void on_input(component c) {
 private void input_test() {
     screen s = mcall(render_stack, push, on_input);
 
-    add_component(s, 0, input, new(input_builder, "Input Test: ")
+    add_component(s, 0, trigger, new(trigger, "(ESC to go back)", K_ESCAPE));
+
+    insert_component(s, 0, 1, input, new(input_builder, "Input Test: ")
             ->value("Value")
             ->max_length(10)
             ->accepts("az|AZ|09")
             ->build()
     );
-    add_component(s, -1, trigger, new(trigger, "(ESC to go back)", K_ESCAPE));
+    insert_component(s, 0, -1, separator, new(separator));
 }
 
 private void on_action(component c) {
