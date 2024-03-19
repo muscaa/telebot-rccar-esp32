@@ -35,8 +35,6 @@ type(screen,
     component_array components;
     void function(on_action, component c);
 
-    bool marked_for_deletion;
-
     void method(screen, init, component c);
     void method0(screen, render);
     void method(screen, key_event, int key);
@@ -61,12 +59,14 @@ arraydef(screen);
 
 type(screen_renderer) {
     screen_array screens;
+    screen_array screens_to_delete;
 
     void method0(screen_renderer, tick);
     void method0(screen_renderer, refresh);
 
     screen method(screen_renderer, push, void function(on_action, component c));
     void method0(screen_renderer, pop);
+    void method(screen_renderer, pop_to, int length);
 
     destruct(screen_renderer);
 };

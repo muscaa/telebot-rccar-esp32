@@ -1,12 +1,11 @@
 #include "apps.h"
 
+#include "app.h"
 #include "app1/appmain.h"
 #include "app2/appmain.h"
 #include "app3/appmain.h"
 #include "app4/appmain.h"
 #include "app5/appmain.h"
-
-impl_arraydef(app);
 
 private app_array apps = NULL;
 
@@ -32,12 +31,9 @@ app get_app(int index) {
     return mcall(apps, get, index);
 }
 
-constructor(app,
-    string name,
-    void function(launch)
-) {
-    app obj = malloc(sizeoftype(app));
-    obj->name = name;
-    obj->launch = launch;
-    return obj;
+void launch_app(int index) {
+    app a = get_app(index);
+
+    launched_app = a;
+    a->launch(a);
 }

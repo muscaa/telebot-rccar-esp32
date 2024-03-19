@@ -125,8 +125,6 @@ constructor(screen,
     obj->components = new(component_array);
     obj->on_action = on_action;
 
-    obj->marked_for_deletion = false;
-
     set_impl(screen, obj, init);
     set_impl(screen, obj, render);
     set_impl(screen, obj, key_event);
@@ -177,9 +175,11 @@ private void impl_method0(screen_renderer, tick) {
         
         mcall(s, key_event, capture);
 
-        if (s->marked_for_deletion) {
+        for (int i = 0; i < obj->screens_to_delete->length; i++) {
+            screen s = mcall(obj->screens_to_delete, get, i);
             delete(s);
         }
+        mcall0(obj->screens_to_delete, clear);
     }
     stop_capture();
 }
@@ -199,9 +199,15 @@ private screen impl_method(screen_renderer, push, void function(on_action, compo
 
 private void impl_method0(screen_renderer, pop) {
     screen s = mcall(obj->screens, remove, obj->screens->length - 1);
-    s->marked_for_deletion = true;
+    mcall(obj->screens_to_delete, add, s);
 
     mcall0(render_stack, refresh);
+}
+
+private void impl_method(screen_renderer, pop_to, int length) {
+    for (int i = obj->screens->length; i > length; i--) {
+        mcall0(obj, pop);
+    }
 }
 
 destructor(screen_renderer) {
@@ -215,10 +221,12 @@ destructor(screen_renderer) {
 constructor(screen_renderer) {
     screen_renderer obj = malloc(sizeoftype(screen_renderer));
     obj->screens = new(screen_array);
+    obj->screens_to_delete = new(screen_array);
     set_impl(screen_renderer, obj, tick);
     set_impl(screen_renderer, obj, refresh);
     set_impl(screen_renderer, obj, push);
     set_impl(screen_renderer, obj, pop);
+    set_impl(screen_renderer, obj, pop_to);
     set_impl(screen_renderer, obj, __destruct);
     return obj;
 }

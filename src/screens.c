@@ -1,4 +1,4 @@
-#include "screen_main_menu.h"
+#include "screens.h"
 
 #include "apps/apps.h"
 #include "utils/screen/components.h"
@@ -9,7 +9,7 @@ private void on_action(component c) {
         option opt = mcall(d->options, get, d->current);
 
         if (opt->id != -1) {
-            get_app(opt->id)->launch();
+            launch_app(opt->id);
             return;
         }
 
@@ -18,7 +18,7 @@ private void on_action(component c) {
 }
 
 override
-void main_menu() {
+void screen_main_menu() {
     screen s = mcall(render_stack, push, on_action);
     
     option_array options = new(option_array);

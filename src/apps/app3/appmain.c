@@ -11,5 +11,5 @@ return the borrowed bike.
 #include "appmain.h"
 
 override
-void app3_main() {
+void app3_main(app a) {
 }

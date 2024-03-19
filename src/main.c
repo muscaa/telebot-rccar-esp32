@@ -1,11 +1,11 @@
 #include "apps/apps.h"
-#include "screen_main_menu.h"
+#include "screens.h"
 
 int main() {
     render_stack = new(screen_renderer);
     init_apps();
 
-    main_menu();
+    screen_main_menu();
 
     mcall0(render_stack, tick);
 

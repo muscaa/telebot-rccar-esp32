@@ -2,4 +2,4 @@
 
 #include "../app.h"
 
-void app1_main();
+void app1_main(app a);

@@ -9,5 +9,5 @@ trains, add/remove wagons from/to the front/back of the train.
 #include "appmain.h"
 
 override
-void app5_main() {
+void app5_main(app a) {
 }

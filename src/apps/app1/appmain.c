@@ -10,10 +10,10 @@ To book a room, the user must specify the date and time.
 
 #include "appmain.h"
 
+#include "appmenus.h"
 #include "rooms.h"
 
 #define TITLE builder_title("Meeting rooms reservation system")->build()
-#define BACK_TO_MAIN_MENU new_action("Back to Main Menu", main_menu)
 #define BACK_TO(back_menu) new_action("Back", back_menu)
 
 /*private int menu_rooms();
@@ -589,23 +589,29 @@ private int menu_bookings() {
     return action_performed(actions, opt);
 }*/
 
+private void main_menu_action(component c) {
+    if (c->id != ID_MAIN_MENU) return;
+
+    menu m = c->data;
+    option opt = mcall(m->options, get, m->current);
+
+    switch (opt->id) {
+        case ID_BACK_TO_MAIN_MENU:
+            mcall(render_stack, pop_to, 1);
+            break;
+        case ID_MAIN_MENU_ROOMS:
+
+            break;
+        case ID_MAIN_MENU_BOOKINGS:
+
+            break;
+    }
+}
+
 override
-void app1_main() {
-    /*load_rooms();
-    int actions_index = 0;
-    program_action actions[] = {
-        new_action("Rooms", menu_rooms),
-        new_action("Bookings", menu_bookings),
-        BACK_TO_MAIN_MENU,
-    };
-    option options[] = {
-        TITLE,
-        SEPARATOR,
-        option_selection_action(actions, &actions_index),
-        option_selection_action(actions, &actions_index),
-        SEPARATOR,
-        option_selection_action(actions, &actions_index),
-    };
-    option opt = vmenu(sizeof(options) / sizeof(option), options);
-    return action_performed(actions, opt);*/
+void app1_main(app a) {
+    load_rooms();
+
+    screen s = app_screen(main_menu_action);
+    add_component(s, ID_MAIN_MENU, menu, main_menu());
 }

@@ -25,7 +25,6 @@ books for a number of days and return borrowed books.
 #include "books.h"
 
 #define TITLE builder_title("Library books tracking system").build()
-#define BACK_TO_MAIN_MENU new_action("Back to Main Menu", main_menu)
 #define BACK_TO(back_menu) new_action("Back", back_menu)
 
 /*private int menu_books();
@@ -263,7 +262,7 @@ private int menu_bookingss() {
 }*/
 
 override
-void app2_main() {
+void app2_main(app a) {
     /*load_books();
     int actions_index = 0;
     program_action actions[] = {
