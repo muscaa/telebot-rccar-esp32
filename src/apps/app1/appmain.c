@@ -13,9 +13,6 @@ To book a room, the user must specify the date and time.
 #include "appmenus.h"
 #include "rooms.h"
 
-#define TITLE builder_title("Meeting rooms reservation system")->build()
-#define BACK_TO(back_menu) new_action("Back", back_menu)
-
 /*private int menu_rooms();
     private int menu_rooms_view();
         private int menu_rooms_view_availablerooms(int rooms_length, room (*get_room)(int));
@@ -534,79 +531,22 @@ private int menu_rooms_add() {
     add_room(room_name, atoi(room_capacity));
     return menu_rooms();
 }
+*/
 
-private int menu_rooms() {
-    int actions_index = 0;
-    program_action actions[] = {
-        new_action("View rooms", menu_rooms_view),
-        new_action("Add room", menu_rooms_add),
-        BACK_TO(app1_main),
-        BACK_TO_MAIN_MENU,
-    };
-    option options[] = {
-        TITLE,
-        SEPARATOR,
-        option_selection_action(actions, &actions_index),
-        option_selection_action(actions, &actions_index),
-        SEPARATOR,
-        option_selection_action(actions, &actions_index),
-        option_selection_action(actions, &actions_index),
-    };
-    option opt = vmenu(sizeof(options) / sizeof(option), options);
-    return action_performed(actions, opt);
-}
+MENU(view_rooms, ID_VIEW_ROOMS_MENU,
+);
 
-private int menu_bookings() {
-    int actions_index = 0;
-    program_action actions[] = {
-        BACK_TO(menu_rooms_view),
-        BACK_TO_MAIN_MENU,
-    };
-    int i = 0;
-    option options[get_rooms_length() + 5];
-    options[i++] = TITLE;
-    options[i++] = SEPARATOR;
-    for (int j = 0; j < get_rooms_length(); j++) {
-        room r = get_room(j);
-        if (r.bookings_length == 0) continue;
+MENU(bookings, ID_BOOKINGS_MENU,
+);
 
-        options[i++] = builder_selection(format("%s (%d bookings)", r.name, r.bookings_length))
-                        ->id(j + 2)
-                        ->build();
-    }
-    if (get_rooms_length() == 0) {
-        options[i++] = builder_separator()
-                        ->name("No bookings available.")
-                        ->build();
-    }
-    options[i++] = SEPARATOR;
-    options[i++] = option_selection_action(actions, &actions_index);
-    options[i++] = option_selection_action(actions, &actions_index);
-    option opt = vmenu(i, options);
-    if (opt->id >= 2) {
-        return menu_room_bookings(get_room(opt->id - 2), app1_main);
-    }
-    return action_performed(actions, opt);
-}*/
+MENU(rooms, ID_ROOMS_MENU,
+    CASE(ID_ROOMS_MENU_VIEW, view_rooms, ID_VIEW_ROOMS_MENU)
+);
 
-private void main_menu_action(component c) {
-    if (c->id != ID_MAIN_MENU) return;
-
-    menu m = c->data;
-    option opt = mcall(m->options, get, m->current);
-
-    switch (opt->id) {
-        case ID_BACK_TO_MAIN_MENU:
-            mcall(render_stack, pop_to, 1);
-            break;
-        case ID_MAIN_MENU_ROOMS:
-
-            break;
-        case ID_MAIN_MENU_BOOKINGS:
-
-            break;
-    }
-}
+MENU(main, ID_MAIN_MENU,
+    CASE(ID_MAIN_MENU_ROOMS, rooms, ID_ROOMS_MENU)
+    CASE(ID_MAIN_MENU_BOOKINGS, bookings, ID_BOOKINGS_MENU)
+);
 
 override
 void app1_main(app a) {
