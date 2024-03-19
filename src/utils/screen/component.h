@@ -15,12 +15,13 @@
 #define impl_init(type_name) private void impl_method0(component, init_##type_name)
 #define impl_render(type_name) private void impl_method0(component, render_##type_name)
 #define impl_key_event(type_name) private bool impl_method(component, key_event_##type_name, int key, bool consumed)
-#define impl_component_methods(type_name) \
+#define impl_create_component(type_name) \
     private void impl_method0(component, __destruct_##type_name) { \
         type_name d = obj->data; \
         delete(d); \
     } \
-    private component impl_method(type_name, create_component, int id) { \
+    override \
+    component create_component_##type_name(type_name obj, int id) { \
         return new(component, \
                 id, \
                 obj, \
@@ -31,9 +32,7 @@
         ); \
     }
 
-#define component_methods(type_name) \
-    component method(type_name, create_component, int id); \
-    destruct(type_name);
+#define create_component(type_name) component create_component_##type_name(type_name obj, int id)
 #define set_component_methods(type_name, obj) \
     set_impl(type_name, obj, create_component); \
     set_impl(type_name, obj, __destruct)

@@ -50,6 +50,27 @@ private void impl_method(screen, add, component c) {
     mcall(obj->components, add, c);
 }
 
+private component impl_method(screen, remove, int id) {
+    for (int i = 0; i < obj->components->length; i++) {
+        component old = mcall(obj->components, get, i);
+        if (old->id == id) {
+            return mcall(obj->components, remove, i);
+        }
+    }
+    return NULL;
+}
+
+private component impl_method(screen, replace, int id, component c) {
+    for (int i = 0; i < obj->components->length; i++) {
+        component old = mcall(obj->components, get, i);
+        if (old->id == id) {
+            mcall0(c, init);
+            return mcall(obj->components, set, i, c);
+        }
+    }
+    return NULL;
+}
+
 private void impl_method(screen, append, string line) {
     print(line);
 }
@@ -93,6 +114,8 @@ constructor(screen,
     set_impl(screen, obj, key_event);
 
     set_impl(screen, obj, add);
+    set_impl(screen, obj, remove);
+    set_impl(screen, obj, replace);
 
     set_impl(screen, obj, append);
     set_impl(screen, obj, new_line);

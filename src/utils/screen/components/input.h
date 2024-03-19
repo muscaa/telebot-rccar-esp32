@@ -2,14 +2,6 @@
 
 #include "../component.h"
 
-/*
-typedef struct {
-    string result;
-    bool exists;
-    void* additional;
-} dialog_input_info;
-*/
-
 typedef struct {
     char from;
     char to;
@@ -29,8 +21,9 @@ type(input,
     
     string result;
 
-    component_methods(input);
+    destruct(input);
 };
+create_component(input);
 
 type(input_builder,
     string name

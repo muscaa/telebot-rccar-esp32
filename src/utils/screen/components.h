@@ -2,8 +2,8 @@
 
 #include "components/menu.h"
 #include "components/input.h"
+#include "components/title.h"
 
-#define add_component(type_name, id, screen, c) \
-    type_name type_name##_##id = c; \
-    component type_name##_##id##_component = mcall(type_name##_##id, create_component, id); \
-    mcall(screen, add, type_name##_##id##_component)
+#define add_component(screen, id, type_name, c) mcall(screen, add, create_component_##type_name(c, id))
+#define remove_component(screen, id) mcall(screen, remove, id)
+#define replace_component(screen, id, type_name, c) mcall(screen, replace, id, create_component_##type_name(c, id))

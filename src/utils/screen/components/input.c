@@ -63,7 +63,7 @@ destructor(input) {
 
 }
 
-impl_component_methods(input);
+impl_create_component(input);
 constructor(input,
     string name
 ) {
@@ -75,7 +75,7 @@ constructor(input,
     obj->allow_empty = false;
     obj->filters = new(input_filter_array);
     obj->result = NULL;
-    set_component_methods(input, obj);
+    set_impl(input, obj, __destruct);
     return obj;
 }
 

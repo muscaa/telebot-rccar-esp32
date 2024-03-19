@@ -39,12 +39,12 @@ private void post_render(screen s, option_array options, int current) {
     }
 }
 
-private void hrender(screen s, option_array options, int current, int i) {
-    option opt = mcall(options, get, i);
+private void hrender(screen s, menu m, int i) {
+    option opt = mcall(m->options, get, i);
     
     int background;
     int foreground;
-    string name = option_name(opt, current == i, &background, &foreground);
+    string name = option_name(opt, m->current == i, &background, &foreground);
 
     if (background != COLOR_UNDEFINED) mcall(s, push_background, background);
     if (foreground != COLOR_UNDEFINED) mcall(s, push_foreground, foreground);
@@ -55,8 +55,8 @@ private void hrender(screen s, option_array options, int current, int i) {
     if (background != COLOR_UNDEFINED) mcall0(s, pop_background);
 }
 
-private void vrender(screen s, option_array options, int current, int i) {
-    hrender(s, options, current, i);
+private void vrender(screen s, menu m, int i) {
+    hrender(s, m, i);
 
     mcall0(s, new_line);
 }
@@ -72,7 +72,7 @@ impl_render(menu) {
     menu d = obj->data;
 
     for (int i = 0; i < d->options->length; i++) {
-        vrender(obj->parent, d->options, d->current, i); // TODO hrender
+        d->render(obj->parent, d, i); // TODO hrender
     }
     post_render(obj->parent, d->options, d->current);
 }
@@ -105,18 +105,20 @@ destructor(menu) {
     delete(obj->options);
 }
 
-impl_component_methods(menu);
+impl_create_component(menu);
 constructor(menu,
     const int increase_key,
     const int decrease_key,
-    option_array options
+    option_array options,
+    void function(render, screen s, menu m, int i)
 ) {
     menu obj = malloc(sizeoftype(menu));
     obj->increase_key = increase_key;
     obj->decrease_key = decrease_key;
     obj->options = options;
+    obj->render = render;
     obj->current = 0;
-    set_component_methods(menu, obj);
+    set_impl(menu, obj, __destruct);
     return obj;
 }
 
@@ -124,7 +126,8 @@ menu construct(hmenu, option_array options) {
     return new(menu,
         K_RIGHT,
         K_LEFT,
-        options
+        options,
+        hrender
     );
 }
 
@@ -132,6 +135,7 @@ menu construct(vmenu, option_array options) {
     return new(menu,
         K_DOWN,
         K_UP,
-        options
+        options,
+        vrender
     );
 }

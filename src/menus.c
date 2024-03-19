@@ -1,6 +1,7 @@
 #include "menus.h"
 
 #include "apps/apps.h"
+#include "utils/screen/components.h"
 
 private void on_input(component c) {
     if (c->id == 0) {
@@ -13,7 +14,7 @@ private void on_input(component c) {
 private void input_test() {
     screen s = mcall(render_stack, push, on_input);
 
-    add_component(input, 0, s, new(input_builder, "Input Test: ")
+    add_component(s, 0, input, new(input_builder, "Input Test: ")
             ->value("Value")
             ->max_length(10)
             ->accepts("az|AZ|09")
@@ -22,7 +23,7 @@ private void input_test() {
 }
 
 private void on_action(component c) {
-    if (c->id == 0) {
+    if (c->id == 1) {
         menu d = c->data;
 
         option opt = mcall(d->options, get, d->current);
@@ -44,8 +45,6 @@ void main_menu() {
     screen s = mcall(render_stack, push, on_action);
     
     option_array options = new(option_array);
-    mcall(options, add, builder_title("Main Menu")
-                    ->build());
     mcall(options, add, SEPARATOR);
     for (int i = 0; i < get_apps_length(); i++) {
         app app = get_app(i);
@@ -58,5 +57,7 @@ void main_menu() {
                         ->foreground_hover(COLOR_RED)
                         ->build());
     
-    add_component(menu, 0, s, new(vmenu, options));
+    //add_component(s, 0, title, new(title, "Main Menu"));
+    add_component(s, 1, menu, new(vmenu, options));
+    //replace_component(s, 0, title, new(title, "hello there"));
 }

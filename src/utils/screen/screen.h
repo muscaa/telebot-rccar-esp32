@@ -39,6 +39,8 @@ type(screen,
     void method(screen, key_event, int key);
 
     void method(screen, add, component c);
+    component method(screen, remove, int id);
+    component method(screen, replace, int id, component c);
 
     void method(screen, append, string line);
     void method0(screen, new_line);
