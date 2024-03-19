@@ -8,7 +8,7 @@ type and availability, borrow a bike for a number of hours and
 return the borrowed bike.
 */
 
-#include "main.h"
+#include "appmain.h"
 
 override
 int app3_main() {

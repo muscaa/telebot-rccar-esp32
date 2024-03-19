@@ -20,7 +20,7 @@ books for a number of days and return borrowed books.
     - types
 */
 
-#include "main.h"
+#include "appmain.h"
 
 #include "../../menus.h"
 #include "books.h"

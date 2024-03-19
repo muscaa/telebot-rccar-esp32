@@ -8,7 +8,7 @@ capacity and availability, booking the room and canceling the booking.
 To book a room, the user must specify the date and time.
 */
 
-#include "main.h"
+#include "appmain.h"
 
 #include "../../menus.h"
 #include "rooms.h"
