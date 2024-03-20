@@ -13,7 +13,10 @@ enum Menus {
     filter, // filter_menu
     filter_name, // filter_name_menu
     filter_capacity, // filter_capacity_menu
-    filter_availability // filter_availability_menu
+    filter_availability, // filter_availability_menu
+    room_info, // room_info_menu
+    room_bookings, // room_bookings_menu
+    booking_info, // booking_info_menu
 };
 
 #define ID_MAIN_MENU_ROOMS 0
@@ -32,7 +35,7 @@ menu view_rooms_menu();
 
 menu add_room_menu();
 
-menu all_rooms_menu();
+menu available_rooms_menu(int rooms_length, room function(get_room, int index));
 
 #define ID_FILTER_MENU_FILTER_NAME 0
 #define ID_FILTER_MENU_FILTER_CAPACITY 1
@@ -45,3 +48,13 @@ menu filter_name_menu();
 menu filter_capacity_menu();
 
 menu filter_availability_menu();
+
+#define ID_ROOM_INFO_MENU_BOOKINGS 0
+#define ID_ROOM_INFO_MENU_BOOK 1
+#define ID_ROOM_INFO_MENU_DELETE 2
+menu room_info_menu(room r);
+
+menu room_bookings_menu(room r);
+
+#define ID_BOOKING_INFO_MENU_CANCEL 0
+menu booking_info_menu(room r, booking b);

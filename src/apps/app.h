@@ -2,13 +2,13 @@
 
 #include "../utils/utils.h"
 
-#define SELECTION(option_name, option_id) option_selection(option_name)->id(option_id)->build()
+#define SELECTION(option_id, option_name) option_selection(option_name)->id(option_id)->build()
 
 #define ID_BACK -1
 #define ID_BACK_TO_MAIN_MENU -2
 
-#define BACK SELECTION("Back", ID_BACK)
-#define BACK_TO_MAIN_MENU SELECTION("Back to Main Menu", ID_BACK_TO_MAIN_MENU)
+#define BACK SELECTION(ID_BACK, "Back")
+#define BACK_TO_MAIN_MENU SELECTION(ID_BACK_TO_MAIN_MENU, "Back to Main Menu")
 
 #define MENU_SCREEN(menu_name, menu_component) \
     screen menu_name##_menu_screen = app_screen(menu_name##_menu_action); \
@@ -37,12 +37,16 @@
         } \
     }
 
-#define CASE(case_id, menu_name) \
-    case case_id: \
-    { \
-        MENU_SCREEN(menu_name, menu_name##_menu()); \
+#define CASE(case_id, content) \
+    case case_id: { \
+        content \
         break; \
     }
+
+#define CASE_MENU(case_id, menu_name) \
+    CASE(case_id, \
+        MENU_SCREEN(menu_name, menu_name##_menu()); \
+    )
 
 type(app,
     string name,
