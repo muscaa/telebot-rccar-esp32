@@ -10,9 +10,14 @@
 #define BACK SELECTION("Back", ID_BACK)
 #define BACK_TO_MAIN_MENU SELECTION("Back to Main Menu", ID_BACK_TO_MAIN_MENU)
 
-#define MENU(menu_name, menu_id, cases) \
+#define MENU_SCREEN(menu_name, menu_component) \
+    screen menu_name##_menu_screen = app_screen(menu_name##_menu_action); \
+    add_component(menu_name##_menu_screen, menu_name, menu, menu_component)
+
+#define MENU(menu_name, cases, ...) \
+    __VA_ARGS__ \
     private void menu_name##_menu_action(component c) { \
-        if (c->id != menu_id) return; \
+        if (c->id != menu_name) return; \
         \
         menu m = c->data; \
         option opt = mcall(m->options, get, m->current); \
@@ -32,11 +37,10 @@
         } \
     }
 
-#define CASE(case_id, menu_name, menu_id) \
+#define CASE(case_id, menu_name) \
     case case_id: \
     { \
-        screen menu_name##_menu_screen = app_screen(menu_name##_menu_action); \
-        add_component(menu_name##_menu_screen, menu_id, menu, menu_name##_menu()); \
+        MENU_SCREEN(menu_name, menu_name##_menu()); \
         break; \
     }
 

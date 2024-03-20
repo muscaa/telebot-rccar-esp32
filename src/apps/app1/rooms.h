@@ -39,30 +39,30 @@ typedef struct {
     time time_to;
 } availability_filter;
 
-void load_rooms();
+void _load_rooms();
 
-int get_rooms_length();
+int _get_rooms_length();
 
-bool add_room(string name, int capacity);
+bool _add_room(string name, int capacity);
 
-void delete_room(room r);
+void _delete_room(room r);
 
-bool book_room(room r, date date_from, time time_from, date date_to, time time_to);
+bool _book_room(room r, date date_from, time time_from, date date_to, time time_to);
 
-room get_room(int index);
+room _get_room(int index);
 
-bool room_exists(string name);
+bool _room_exists(string name);
 
-int get_filtered_rooms_length();
+int _get_filtered_rooms_length();
 
-room get_filtered_room(int index);
+room _get_filtered_room(int index);
 
-void cancel_booking(room r, booking b);
+void _cancel_booking(room r, booking b);
 
-void filter_clear();
+void _filter_clear();
 
-void filter_rooms_by_name(name_filter filter);
+void _filter_rooms_by_name(name_filter filter);
 
-void filter_rooms_by_capacity(capacity_filter filter);
+void _filter_rooms_by_capacity(capacity_filter filter);
 
-void filter_rooms_by_availability(availability_filter filter);
+void _filter_rooms_by_availability(availability_filter filter);

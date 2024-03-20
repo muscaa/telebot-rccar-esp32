@@ -81,7 +81,7 @@ private void save_rooms() {
 }
 
 override
-void load_rooms() {
+void _load_rooms() {
     if (rooms_length != 0) { // free memory
         for (int i = 0; i < rooms_length; i++) {
             if (rooms[i].bookings_length != 0) {
@@ -133,14 +133,14 @@ void load_rooms() {
 }
 
 override
-int get_rooms_length() {
+int _get_rooms_length() {
     return rooms_length;
 }
 
 override
-bool add_room(string name, int capacity) {
-    load_rooms();
-    if (room_exists(name)) {
+bool _add_room(string name, int capacity) {
+    _load_rooms();
+    if (_room_exists(name)) {
         return false;
     }
 
@@ -155,7 +155,7 @@ bool add_room(string name, int capacity) {
 }
 
 override
-void delete_room(room r) {
+void _delete_room(room r) {
     int index = find_room(r.name);
     if (index == -1) return;
 
@@ -167,11 +167,11 @@ void delete_room(room r) {
 }
 
 override
-bool book_room(room r, date date_from, time time_from, date date_to, time time_to) {
+bool _book_room(room r, date date_from, time time_from, date date_to, time time_to) {
     int index = find_room(r.name);
     if (index == -1) return false;
 
-    load_rooms();
+    _load_rooms();
     if (!is_room_available(r, date_from, time_from, date_to, time_to)) {
         return false;
     }
@@ -183,27 +183,27 @@ bool book_room(room r, date date_from, time time_from, date date_to, time time_t
 }
 
 override
-room get_room(int index) {
+room _get_room(int index) {
     return rooms[index];
 }
 
 override
-bool room_exists(string name) {
+bool _room_exists(string name) {
     return find_room(name) != -1;
 }
 
 override
-int get_filtered_rooms_length() {
+int _get_filtered_rooms_length() {
     return filtered_rooms_length;
 }
 
 override
-room get_filtered_room(int index) {
+room _get_filtered_room(int index) {
     return filtered_rooms[index];
 }
 
 override
-void cancel_booking(room r, booking b) {
+void _cancel_booking(room r, booking b) {
     int index = find_room(r.name);
     if (index == -1) return;
 
@@ -220,7 +220,7 @@ void cancel_booking(room r, booking b) {
 }
 
 override
-void filter_clear() {
+void _filter_clear() {
     if (filtered_rooms_length != -1) {
         free(filtered_rooms);
         filtered_rooms = NULL;
@@ -229,7 +229,7 @@ void filter_clear() {
 }
 
 override
-void filter_rooms_by_name(name_filter filter) {
+void _filter_rooms_by_name(name_filter filter) {
     if (!init_filter() && filtered_rooms_length == 0) return;
     if (!filter.set) return;
     int new_filtered_rooms_length = 0;
@@ -245,7 +245,7 @@ void filter_rooms_by_name(name_filter filter) {
 }
 
 override
-void filter_rooms_by_capacity(capacity_filter filter) {
+void _filter_rooms_by_capacity(capacity_filter filter) {
     if (!init_filter() && filtered_rooms_length == 0) return;
     if (!filter.set) return;
     int new_filtered_rooms_length = 0;
@@ -275,7 +275,7 @@ void filter_rooms_by_capacity(capacity_filter filter) {
 }
 
 override
-void filter_rooms_by_availability(availability_filter filter) {
+void _filter_rooms_by_availability(availability_filter filter) {
     if (!init_filter() && filtered_rooms_length == 0) return;
     if (!filter.set) return;
     int new_filtered_rooms_length = 0;
