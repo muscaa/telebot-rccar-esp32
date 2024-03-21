@@ -1,5 +1,5 @@
 /*
-#1. Meeting rooms reservation system
+#1. Meeting rooms booking system
 
 The app allows adding/deleting a room with name and capacity,
 displaying all rooms and bookings, searching for a room by name,
@@ -33,33 +33,17 @@ MENU(rooms_main,
                 //CASE_MENU(ID_FILTER_MENU_CAPACITY, rooms_filter_capacity)
                 //CASE_MENU(ID_FILTER_MENU_AVAILABILITY, rooms_filter_availability)
                 CASE(ID_FILTER_MENU_APPLY,
-                    // apply filter
                 )
                 ,
-                MENU(rooms_filter_name,
-                    // filter name input
-                )
-                MENU(rooms_filter_capacity,
-                    // filter capacity input
-                )
-                MENU(rooms_filter_availability,
-                    // filter availability input
-                )
+                //MENU(rooms_filter_name,)
+                //MENU(rooms_filter_capacity,)
+                //MENU(rooms_filter_availability,)
             )
         )
-        MENU(rooms_add,
-            // room name input
-            // room capacity input
-        )
-        MENU(rooms_room_info,
-            // view bookings, book room, delete room
-            ,
-            MENU(rooms_room_bookings,
-            )
-        )
+        //MENU(rooms_add,)
+        //MENU(rooms_room_info,)
     )
     MENU(rooms_bookings,
-        // open specific booking menu
     )
 )
 

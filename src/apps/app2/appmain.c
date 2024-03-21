@@ -24,32 +24,26 @@ MENU(books_main,
             )
             CASE_MENU(ID_VIEW_MENU_FILTER, books_filter)
             ,
-            MENU(books_all,
-            )
+            //MENU(books_all,)
             MENU(books_filter,
                 //CASE_MENU(ID_FILTER_MENU_TITLE, books_filter_title)
                 //CASE_MENU(ID_FILTER_MENU_AUTHOR, books_filter_author)
                 //CASE_MENU(ID_FILTER_MENU_TYPE, books_filter_type)
                 //CASE_MENU(ID_FILTER_MENU_LOCATION, books_filter_location)
                 //CASE_MENU(ID_FILTER_MENU_AVAILABILITY, books_filter_availability)
+                CASE(ID_FILTER_MENU_APPLY,
+                )
                 ,
-                MENU(books_filter_title,
-                )
-                MENU(books_filter_author,
-                )
-                MENU(books_filter_type,
-                )
-                MENU(books_filter_location,
-                )
-                MENU(books_filter_availability,
-                )
+                //MENU(books_filter_title,)
+                //MENU(books_filter_author,)
+                //MENU(books_filter_type,)
+                //MENU(books_filter_location,)
+                //MENU(books_filter_availability,)
             )
         )
-        MENU(books_add,
-        )
+        //MENU(books_add,)
     )
-    MENU(books_borrowed,
-    )
+    //MENU(books_borrowed,)
 )
 
 override

@@ -14,10 +14,10 @@ void init_apps() {
     if (apps != NULL) return;
     apps = new(app_array);
 
-    mcall(apps, add, new(app, "Meeting rooms reservation system", app1_main));
+    mcall(apps, add, new(app, "Meeting rooms booking system", app1_main));
     mcall(apps, add, new(app, "Library books tracking system", app2_main));
     mcall(apps, add, new(app, "Bicycle reservation system", app3_main));
-    mcall(apps, add, new(app, "Pharmacy products booking system", app4_main));
+    mcall(apps, add, new(app, "Pharmacy products reservation system", app4_main));
     mcall(apps, add, new(app, "Train wagons tracking system", app5_main));
 }
 

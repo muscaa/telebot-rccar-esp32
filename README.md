@@ -5,7 +5,7 @@
 
 ## Requested Applications
 
-### #1. Meeting rooms reservation system
+### #1. Meeting rooms booking system
 
 The app allows adding/deleting a room with name and capacity,
 displaying all rooms and bookings, searching for a room by name,
@@ -23,11 +23,11 @@ The app allows adding/deleting a bike with type and location,
 displaying all bikes and reservations, searching for a bike by type
 and availability, reserving the bike and canceling the reservation.
 
-### #4. Pharmacy products booking system
+### #4. Pharmacy products reservation system
 
 The app allows adding/deleting a product with name, type and location,
-displaying all products and bookings, searching for a product by name
-and availability, booking the product and canceling the booking.
+displaying all products and reservations, searching for a product by name
+and availability, reserving the product and canceling the reservation.
 
 ### #5. Train wagons tracking system
 
