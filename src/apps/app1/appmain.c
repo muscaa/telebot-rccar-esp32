@@ -1,11 +1,9 @@
 /*
 #1. Meeting rooms reservation system
 
-The user can view the available rooms and book a room.
 The app allows adding/deleting a room with name and capacity,
 displaying all rooms and bookings, searching for a room by name,
 capacity and availability, booking the room and canceling the booking.
-To book a room, the user must specify the date and time.
 */
 
 #include "appmain.h"
@@ -13,51 +11,54 @@ To book a room, the user must specify the date and time.
 #include "appmenus.h"
 #include "rooms.h"
 
-MENU(main,
+MENU(rooms_main,
     CASE_MENU(ID_MAIN_MENU_ROOMS, rooms)
-    CASE_MENU(ID_MAIN_MENU_BOOKINGS, bookings)
+    CASE_MENU(ID_MAIN_MENU_BOOKINGS, rooms_bookings)
     ,
     MENU(rooms,
-        CASE_MENU(ID_ROOMS_MENU_VIEW, view_rooms)
-        CASE_MENU(ID_ROOMS_MENU_ADD, add_room)
+        CASE_MENU(ID_ROOMS_MENU_VIEW, rooms_view)
+        //CASE_MENU(ID_ROOMS_MENU_ADD, rooms_add)
         ,
-        MENU(view_rooms,
-            CASE(ID_VIEW_ROOMS_MENU_ALL_ROOMS,
-                MENU_SCREEN(all_rooms, available_rooms_menu(_get_rooms_length(), _get_room));
+        MENU(rooms_view,
+            CASE(ID_VIEW_MENU_ALL,
+                MENU_SCREEN(rooms_all, rooms_available_menu(_get_rooms_length(), _get_room));
             )
-            CASE_MENU(ID_VIEW_ROOMS_MENU_FILTER, filter)
+            CASE_MENU(ID_VIEW_MENU_FILTER, rooms_filter)
             ,
-            MENU(all_rooms,
+            MENU(rooms_all,
                 // open specific room menu
             )
-            MENU(filter,
-                CASE_MENU(ID_FILTER_MENU_FILTER_NAME, filter_name)
-                CASE_MENU(ID_FILTER_MENU_FILTER_CAPACITY, filter_capacity)
-                CASE_MENU(ID_FILTER_MENU_FILTER_AVAILABILITY, filter_availability)
+            MENU(rooms_filter,
+                //CASE_MENU(ID_FILTER_MENU_NAME, rooms_filter_name)
+                //CASE_MENU(ID_FILTER_MENU_CAPACITY, rooms_filter_capacity)
+                //CASE_MENU(ID_FILTER_MENU_AVAILABILITY, rooms_filter_availability)
                 CASE(ID_FILTER_MENU_APPLY,
                     // apply filter
                 )
                 ,
-                MENU(filter_name,
+                MENU(rooms_filter_name,
                     // filter name input
                 )
-                MENU(filter_capacity,
+                MENU(rooms_filter_capacity,
                     // filter capacity input
                 )
-                MENU(filter_availability,
+                MENU(rooms_filter_availability,
                     // filter availability input
                 )
             )
         )
-        MENU(add_room,
+        MENU(rooms_add,
             // room name input
             // room capacity input
         )
-        MENU(room_info,
+        MENU(rooms_room_info,
             // view bookings, book room, delete room
+            ,
+            MENU(rooms_room_bookings,
+            )
         )
     )
-    MENU(bookings,
+    MENU(rooms_bookings,
         // open specific booking menu
     )
 )
@@ -66,5 +67,5 @@ override
 void app1_main(app a) {
     _load_rooms();
 
-    MENU_SCREEN(main, main_menu());
+    MENU_SCREEN(rooms_main, rooms_main_menu());
 }

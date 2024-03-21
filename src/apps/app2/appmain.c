@@ -1,10 +1,9 @@
 /*
 #2. Library books tracking system
 
-The system allows to store the data of the books in a library.
-The user can add books by specifying title, author, types and location,
-search and display books by title, author and availability, borrow
-books for a number of days and return borrowed books.
+The app allows adding/deleting a book with title, author, type and location,
+displaying all books and borrowed books, searching for a book by title,
+author and availability, borrowing the book and returning the borrowed book.
 */
 
 #include "appmain.h"
@@ -13,26 +12,26 @@ books for a number of days and return borrowed books.
 
 MENU(books_main,
     CASE_MENU(ID_MAIN_MENU_BOOKS, books)
-    CASE_MENU(ID_MAIN_MENU_BORROWED, borrowed_books)
+    //CASE_MENU(ID_MAIN_MENU_BORROWED, borrowed_books)
     ,
     MENU(books,
-        CASE_MENU(ID_BOOKS_MENU_VIEW, view_books)
-        CASE_MENU(ID_BOOKS_MENU_ADD, add_book)
+        CASE_MENU(ID_BOOKS_MENU_VIEW, books_view)
+        //CASE_MENU(ID_BOOKS_MENU_ADD, add_book)
         ,
-        MENU(view_books,
-            CASE(ID_VIEW_BOOKS_MENU_ALL_BOOKS,
-                MENU_SCREEN(all_books, available_books_menu());
+        MENU(books_view,
+            CASE(ID_VIEW_MENU_ALL,
+                //MENU_SCREEN(all_books, available_books_menu());
             )
-            CASE_MENU(ID_VIEW_BOOKS_MENU_FILTER, books_filter)
+            CASE_MENU(ID_VIEW_MENU_FILTER, books_filter)
             ,
-            MENU(all_books,
+            MENU(books_all,
             )
             MENU(books_filter,
-                CASE_MENU(ID_FILTER_MENU_TITLE, books_filter_title)
-                CASE_MENU(ID_FILTER_MENU_AUTHOR, books_filter_author)
-                CASE_MENU(ID_FILTER_MENU_TYPE, books_filter_type)
-                CASE_MENU(ID_FILTER_MENU_LOCATION, books_filter_location)
-                CASE_MENU(ID_FILTER_MENU_AVAILABILITY, books_filter_availability)
+                //CASE_MENU(ID_FILTER_MENU_TITLE, books_filter_title)
+                //CASE_MENU(ID_FILTER_MENU_AUTHOR, books_filter_author)
+                //CASE_MENU(ID_FILTER_MENU_TYPE, books_filter_type)
+                //CASE_MENU(ID_FILTER_MENU_LOCATION, books_filter_location)
+                //CASE_MENU(ID_FILTER_MENU_AVAILABILITY, books_filter_availability)
                 ,
                 MENU(books_filter_title,
                 )
@@ -46,10 +45,10 @@ MENU(books_main,
                 )
             )
         )
-        MENU(add_book,
+        MENU(books_add,
         )
     )
-    MENU(borrowed_books,
+    MENU(books_borrowed,
     )
 )
 

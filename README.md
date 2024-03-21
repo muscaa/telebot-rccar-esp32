@@ -7,38 +7,33 @@
 
 ### #1. Meeting rooms reservation system
 
-The user can view the available rooms and book a room.
 The app allows adding/deleting a room with name and capacity,
 displaying all rooms and bookings, searching for a room by name,
 capacity and availability, booking the room and canceling the booking.
-To book a room, the user must specify the date and time.
 
 ### #2. Library books tracking system
 
-The system allows to store the data of the books in a library.
-The user can add books by specifying title, author, types and location,
-search and display books by title, author and availability, borrow
-books for a number of days and return borrowed books.
+The app allows adding/deleting a book with title, author, type and location,
+displaying all books and borrowed books, searching for a book by title,
+author and availability, borrowing the book and returning the borrowed book.
 
 ### #3. Bicycle reservation system
 
-The user can view the number of bikes available and their type
-and reserve a bike. The user can add bikes by specifying the type
-(city, mountain, road, etc.) and location, search for bikes by
-type and availability, borrow a bike for a number of hours and
-return the borrowed bike.
+The app allows adding/deleting a bike with type and location,
+displaying all bikes and reservations, searching for a bike by type
+and availability, reserving the bike and canceling the reservation.
 
 ### #4. Pharmacy products booking system
 
-The user can view available products and book products to
-pick up from the pharmacy. The user can add/delete products, search for
-products by name and availability, can display reserved products.
+The app allows adding/deleting a product with name, type and location,
+displaying all products and bookings, searching for a product by name
+and availability, booking the product and canceling the booking.
 
 ### #5. Train wagons tracking system
 
-The user can view trains and wagons, search for wagons by id and type
-(cereal, oil ...), count how many wagons of type x there are, add/remove
-trains, add/remove wagons from/to the front/back of the train.
+The app allows adding/deleting a train with an id, adding/deleting
+a wagon with id and type, displaying all trains and wagons, searching
+for a wagon by id and type, coupling/decoupling wagons from/to a train.
 
 ## Building/Running from source with `gcc`
 

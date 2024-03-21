@@ -6,7 +6,6 @@ menu books_main_menu() {
     mcall(options, add, SELECTION(ID_MAIN_MENU_BOOKS, "Books"));
     mcall(options, add, SELECTION(ID_MAIN_MENU_BORROWED, "Borrowed books"));
     mcall(options, add, SEPARATOR);
-    mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
     return new(vmenu, options);
 }
@@ -23,15 +22,15 @@ menu books_menu() {
 }
 
 override
-menu borrowed_books_menu() {
+menu books_borrowed_menu() {
     return NULL;
 }
 
 override
-menu view_books_menu() {
+menu books_view_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_VIEW_BOOKS_MENU_ALL_BOOKS, "All books"));
-    mcall(options, add, SELECTION(ID_VIEW_BOOKS_MENU_FILTER, "Filter"));
+    mcall(options, add, SELECTION(ID_VIEW_MENU_ALL, "All books"));
+    mcall(options, add, SELECTION(ID_VIEW_MENU_FILTER, "Filter"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -39,12 +38,12 @@ menu view_books_menu() {
 }
 
 override
-menu add_book_menu() {
+menu books_add_menu() {
     return NULL;
 }
 
 override
-menu available_books_menu() {
+menu books_available_menu() {
     return NULL;
 }
 

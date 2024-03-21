@@ -1,7 +1,7 @@
 #include "appmenus.h"
 
 override
-menu main_menu() {
+menu rooms_main_menu() {
     option_array options = new(option_array);
     mcall(options, add, SELECTION(ID_MAIN_MENU_ROOMS, "Rooms"));
     mcall(options, add, SELECTION(ID_MAIN_MENU_BOOKINGS, "Bookings"));
@@ -22,7 +22,7 @@ menu rooms_menu() {
 }
 
 override
-menu bookings_menu() {
+menu rooms_bookings_menu() {
     option_array options = new(option_array);
     for (int i = 0; i < _get_rooms_length(); i++) {
         room r = _get_room(i);
@@ -42,10 +42,10 @@ menu bookings_menu() {
 }
 
 override
-menu view_rooms_menu() {
+menu rooms_view_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_VIEW_ROOMS_MENU_ALL_ROOMS, "All rooms"));
-    mcall(options, add, SELECTION(ID_VIEW_ROOMS_MENU_FILTER, "Filter"));
+    mcall(options, add, SELECTION(ID_VIEW_MENU_ALL, "All rooms"));
+    mcall(options, add, SELECTION(ID_VIEW_MENU_FILTER, "Filter"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -53,7 +53,7 @@ menu view_rooms_menu() {
 }
 
 override
-menu add_room_menu() {
+menu rooms_add_menu() {
     return NULL;
     /*
 private int menu_rooms_add() {
@@ -81,7 +81,7 @@ private int menu_rooms_add() {
 }
 
 override
-menu available_rooms_menu(int rooms_length, room function(get_room, int index)) {
+menu rooms_available_menu(int rooms_length, room function(get_room, int index)) {
     option_array options = new(option_array);
     for (int i = 0; i < rooms_length; i++) {
         room r = get_room(i);
@@ -100,17 +100,17 @@ menu available_rooms_menu(int rooms_length, room function(get_room, int index)) 
 }
 
 override
-menu filter_menu() { // room filters as args, then when applying, go back 2 screens, show this one with modified filters
+menu rooms_filter_menu() { // room filters as args, then when applying, go back 2 screens, show this one with modified filters
     name_filter name = { false };
     capacity_filter capacity = { false };
     availability_filter availability = { false };
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_FILTER_MENU_FILTER_NAME, format("Name filter %s", name.set ? format("(%s)", name.name) : "")));
-    mcall(options, add, SELECTION(ID_FILTER_MENU_FILTER_CAPACITY, format("Capacity filter %s", capacity.set ? format("(%s %d)",
+    mcall(options, add, SELECTION(ID_FILTER_MENU_NAME, format("Name filter %s", name.set ? format("(%s)", name.name) : "")));
+    mcall(options, add, SELECTION(ID_FILTER_MENU_CAPACITY, format("Capacity filter %s", capacity.set ? format("(%s %d)",
                                     capacity.mode == CAPACITY_LOWER ? "<=" :
                                     capacity.mode == CAPACITY_EQUAL ? "=" :
                                     capacity.mode == CAPACITY_HIGHER ? ">=" : "", capacity.capacity) : "")));
-    mcall(options, add, SELECTION(ID_FILTER_MENU_FILTER_AVAILABILITY, format("Availability filter %s", availability.set ? format("(%02d/%02d/%04d %02d:%02d - %02d/%02d/%04d %02d:%02d)",
+    mcall(options, add, SELECTION(ID_FILTER_MENU_AVAILABILITY, format("Availability filter %s", availability.set ? format("(%02d/%02d/%04d %02d:%02d - %02d/%02d/%04d %02d:%02d)",
                                 availability.date_from.day, availability.date_from.month, availability.date_from.year, availability.time_from.hour, availability.time_from.minute,
                                 availability.date_to.day, availability.date_to.month, availability.date_to.year, availability.time_to.hour, availability.time_to.minute) : "")));
     mcall(options, add, SEPARATOR);
@@ -129,7 +129,7 @@ menu filter_menu() { // room filters as args, then when applying, go back 2 scre
 }
 
 override
-menu filter_name_menu() {
+menu rooms_filter_name_menu() {
     return NULL;
     /*
 private void menu_name_filter(name_filter* filter) {
@@ -155,7 +155,7 @@ private void menu_name_filter(name_filter* filter) {
 }
 
 override
-menu filter_capacity_menu() {
+menu rooms_filter_capacity_menu() {
     return NULL;
     /*
 private void menu_capacity_filter(capacity_filter* filter) {
@@ -230,7 +230,7 @@ private void menu_capacity_filter(capacity_filter* filter) {
 }
 
 override
-menu filter_availability_menu() {
+menu rooms_filter_availability_menu() {
     return NULL;
     /*
 private bool menu_date_time_picker(date* date_from, time* time_from, date* date_to, time* time_to) {
@@ -347,7 +347,7 @@ private void menu_availability_filter(availability_filter* filter) {
 }
 
 override
-menu room_info_menu(room r) {
+menu rooms_room_info_menu(room r) {
     option_array options = new(option_array);
     mcall(options, add, option_separator()
                     ->name(format("Room name: %s", r.name))
@@ -383,7 +383,7 @@ menu room_info_menu(room r) {
 }
 
 override
-menu room_bookings_menu(room r) {
+menu rooms_room_bookings_menu(room r) {
     option_array options = new(option_array);
     mcall(options, add, SELECTION(ID_ROOM_INFO_MENU_BOOKINGS, format("Bookings (%d)", r.bookings_length)));
     mcall(options, add, SELECTION(ID_ROOM_INFO_MENU_BOOK, format("Book", r.bookings_length)));
@@ -407,7 +407,7 @@ menu room_bookings_menu(room r) {
 }
 
 override
-menu booking_info_menu(room r, booking b) {
+menu rooms_booking_info_menu(room r, booking b) {
     option_array options = new(option_array);
     mcall(options, add, option_separator()
                     ->name(format("Booking from: %02d/%02d/%04d %02d:%02d",

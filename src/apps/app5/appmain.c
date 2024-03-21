@@ -1,9 +1,9 @@
 /*
 #5. Train wagons tracking system
 
-The user can view trains and wagons, search for wagons by id and type
-(cereal, oil ...), count how many wagons of type x there are, add/remove
-trains, add/remove wagons from/to the front/back of the train.
+The app allows adding/deleting a train with an id, adding/deleting
+a wagon with id and type, displaying all trains and wagons, searching
+for a wagon by id and type, coupling/decoupling wagons from/to a train.
 */
 
 #include "appmain.h"

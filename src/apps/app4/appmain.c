@@ -1,9 +1,9 @@
 /*
 #4. Pharmacy products booking system
 
-The user can view available products and book products to
-pick up from the pharmacy. The user can add/delete products, search for
-products by name and availability, can display reserved products.
+The app allows adding/deleting a product with name, type and location,
+displaying all products and bookings, searching for a product by name
+and availability, booking the product and canceling the booking.
 */
 
 #include "appmain.h"
