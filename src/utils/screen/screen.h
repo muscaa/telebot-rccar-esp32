@@ -39,6 +39,7 @@ type(screen,
     void method0(screen, render);
     void method(screen, key_event, int key);
 
+    component method(screen, get, int id);
     void method(screen, add, component c);
     component method(screen, remove, int id);
     component method(screen, replace, int id, component c);

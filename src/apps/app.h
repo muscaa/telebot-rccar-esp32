@@ -19,6 +19,9 @@
     private void menu_name##_menu_action(component c) { \
         if (c->id != menu_name) return; \
         \
+        screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2); \
+        menu prev_menu = mcall(prev_screen->components, get, 2)->data; \
+        \
         menu m = c->data; \
         option opt = mcall(m->options, get, m->current); \
         \

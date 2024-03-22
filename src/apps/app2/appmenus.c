@@ -56,6 +56,8 @@ menu books_filter_menu() {
     mcall(options, add, SELECTION(ID_FILTER_MENU_LOCATION, "Location filter"));
     mcall(options, add, SELECTION(ID_FILTER_MENU_AVAILABILITY, "Availability filter"));
     mcall(options, add, SEPARATOR);
+    mcall(options, add, SELECTION(ID_FILTER_MENU_APPLY, "Apply"));
+    mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
     return new(vmenu, options);

@@ -18,7 +18,7 @@ void init_apps() {
     mcall(apps, add, new(app, "Library books tracking system", app2_main));
     mcall(apps, add, new(app, "Bicycle reservation system", app3_main));
     mcall(apps, add, new(app, "Pharmacy products reservation system", app4_main));
-    mcall(apps, add, new(app, "Train wagons tracking system", app5_main));
+    mcall(apps, add, new(app, "Train tracking system", app5_main));
 }
 
 override

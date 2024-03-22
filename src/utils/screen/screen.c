@@ -49,6 +49,16 @@ private void impl_method(screen, key_event, int key) {
     }
 }
 
+private component impl_method(screen, get, int id) {
+    for (int i = 0; i < obj->components->length; i++) {
+        component c = mcall(obj->components, get, i);
+        if (c->id == id) {
+            return c;
+        }
+    }
+    return NULL;
+}
+
 private void impl_method(screen, add, component c) {
     mcall(obj, init, c);
     mcall(obj->components, add, c);
@@ -129,6 +139,7 @@ constructor(screen,
     set_impl(screen, obj, render);
     set_impl(screen, obj, key_event);
 
+    set_impl(screen, obj, get);
     set_impl(screen, obj, add);
     set_impl(screen, obj, remove);
     set_impl(screen, obj, replace);

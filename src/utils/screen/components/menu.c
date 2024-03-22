@@ -61,18 +61,17 @@ private void vrender(screen s, menu m, int i) {
     mcall0(s, new_line);
 }
 
-impl_init(menu) {
-    menu d = obj->data;
-    if (mcall(d->options, get, d->current)->separator) {
-        increase(&d->current, d->options);
-    }
-}
+impl_init(menu) {}
 
 impl_render(menu) {
     menu d = obj->data;
 
+    if (mcall(d->options, get, d->current)->separator) { // better before render because options can change
+        increase(&d->current, d->options);
+    }
+
     for (int i = 0; i < d->options->length; i++) {
-        d->render(obj->parent, d, i); // TODO hrender
+        d->render(obj->parent, d, i);
     }
     post_render(obj->parent, d->options, d->current);
 }

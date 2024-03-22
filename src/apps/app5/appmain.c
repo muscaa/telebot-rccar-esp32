@@ -1,14 +1,16 @@
 /*
-#5. Train wagons tracking system
+#5. Train tracking system
 
-The app allows adding/deleting a train with an id, adding/deleting
-a wagon with id and type, displaying all trains and wagons, searching
-for a wagon by id and type, coupling/decoupling wagons from/to a train.
+The app allows adding/deleting a locomotive with an id, adding/deleting
+a wagon with id and type, displaying all locomotives and wagons, searching
+for a locomotive by id, searching for a wagon by id and type, creating trains by
+coupling/decoupling wagons from/to a locomotive.
 */
 
 #include "appmain.h"
 
 #include "appmenus.h"
+#include "trains.h"
 
 MENU(trains_main,
     CASE_MENU(ID_MAIN_MENU_TRAINS, trains)
@@ -17,6 +19,9 @@ MENU(trains_main,
     MENU(trains,
         CASE_MENU(ID_TRAINS_MENU_VIEW, trains_view)
         //CASE_MENU(ID_TRAINS_MENU_ADD, trains_add)
+        CASE(ID_TRAINS_MENU_ADD,
+            
+        )
         ,
         MENU(trains_view,
             CASE(ID_TRAINS_VIEW_MENU_ALL,
@@ -62,5 +67,7 @@ MENU(trains_main,
 
 override
 void app5_main(app a) {
+    init_trains();
+
     MENU_SCREEN(trains_main, trains_main_menu());
 }
