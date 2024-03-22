@@ -3,7 +3,7 @@
 #include "../app.h"
 
 enum Menus {
-    bikes_main, // bikes_main_menu
+    app3, // app3_menu
     bikes, // bikes_menu
     bikes_reservations, // bikes_reservations_menu
     bikes_view, // bikes_view_menu
@@ -17,7 +17,7 @@ enum Menus {
 
 #define ID_MAIN_MENU_BIKES 0
 #define ID_MAIN_MENU_RESERVATIONS 1
-menu bikes_main_menu();
+menu app3_menu();
 
 #define ID_BIKES_MENU_VIEW 0
 #define ID_BIKES_MENU_ADD 1

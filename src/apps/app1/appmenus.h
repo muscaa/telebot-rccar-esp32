@@ -4,7 +4,7 @@
 #include "rooms.h"
 
 enum Menus {
-    rooms_main, // rooms_main_menu
+    app1, // app1_menu
     rooms, // rooms_menu
     rooms_bookings, // rooms_bookings_menu
     rooms_view, // rooms_view_menu
@@ -21,7 +21,7 @@ enum Menus {
 
 #define ID_MAIN_MENU_ROOMS 0
 #define ID_MAIN_MENU_BOOKINGS 1
-menu rooms_main_menu();
+menu app1_menu();
 
 #define ID_ROOMS_MENU_VIEW 0
 #define ID_ROOMS_MENU_ADD 1

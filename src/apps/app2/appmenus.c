@@ -1,7 +1,7 @@
 #include "appmenus.h"
 
 override
-menu books_main_menu() {
+menu app2_menu() {
     option_array options = new(option_array);
     mcall(options, add, SELECTION(ID_MAIN_MENU_BOOKS, "Books"));
     mcall(options, add, SELECTION(ID_MAIN_MENU_BORROWED, "Borrowed books"));

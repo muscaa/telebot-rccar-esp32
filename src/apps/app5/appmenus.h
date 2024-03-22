@@ -3,14 +3,14 @@
 #include "../app.h"
 
 enum Menus {
-    trains_main, // trains_main_menu
-    trains, // trains_menu
-    trains_view, // trains_view_menu
-    trains_add, // trains_add_menu
-    trains_all, // trains_available_menu
-    trains_filter, // trains_filter_menu
-    trains_filter_id, // trains_filter_id_menu
-    wagons, // wagons_menu
+    app5, // app5_menu
+    locomotives_main, // locomotives_main_menu
+    locomotives_view, // locomotives_view_menu
+    locomotives_add, // locomotives_add_menu
+    locomotives_all, // locomotives_available_menu
+    locomotives_filter, // locomotives_filter_menu
+    locomotives_filter_id, // locomotives_filter_id_menu
+    wagons_main, // wagons_menu
     wagons_view, // wagons_view_menu
     wagons_add, // wagons_add_menu
     wagons_all, // wagons_available_menu
@@ -19,31 +19,31 @@ enum Menus {
     wagons_filter_type, // wagons_filter_type_menu
 };
 
-#define ID_MAIN_MENU_TRAINS 0
+#define ID_MAIN_MENU_LOCOMOTIVES 0
 #define ID_MAIN_MENU_WAGONS 1
-menu trains_main_menu();
+menu app5_menu();
 
-#define ID_TRAINS_MENU_VIEW 0
-#define ID_TRAINS_MENU_ADD 1
-menu trains_menu();
+#define ID_LOCOMOTIVES_MENU_VIEW 0
+#define ID_LOCOMOTIVES_MENU_ADD 1
+menu locomotives_main_menu();
 
-#define ID_TRAINS_VIEW_MENU_ALL 0
-#define ID_TRAINS_VIEW_MENU_FILTER 1
-menu trains_view_menu();
+#define ID_LOCOMOTIVES_VIEW_MENU_ALL 0
+#define ID_LOCOMOTIVES_VIEW_MENU_FILTER 1
+menu locomotives_view_menu();
 
-menu trains_add_menu();
+menu locomotives_add_menu();
 
-menu trains_available_menu();
+menu locomotives_available_menu();
 
-#define ID_TRAINS_FILTER_MENU_ID 0
-#define ID_TRAINS_FILTER_MENU_APPLY 1
-menu trains_filter_menu();
+#define ID_LOCOMOTIVES_FILTER_MENU_ID 0
+#define ID_LOCOMOTIVES_FILTER_MENU_APPLY 1
+menu locomotives_filter_menu();
 
-menu trains_filter_id_menu();
+menu locomotives_filter_id_menu();
 
 #define ID_WAGONS_MENU_VIEW 0
 #define ID_WAGONS_MENU_ADD 1
-menu wagons_menu();
+menu wagons_main_menu();
 
 #define ID_WAGONS_VIEW_MENU_ALL 0
 #define ID_WAGONS_VIEW_MENU_FILTER 1

@@ -9,4 +9,4 @@ mkdir -p build/
 c_files=$(find src/ -name '*.c')
 
 # Compile all C files
-gcc -Wall -o build/program $c_files
+gcc -Wall -Wno-unused-variable -o build/program $c_files

@@ -10,7 +10,7 @@ and availability, reserving the bike and canceling the reservation.
 
 #include "appmenus.h"
 
-MENU(bikes_main,
+MENU(app3,
     CASE_MENU(ID_MAIN_MENU_BIKES, bikes)
     //CASE_MENU(ID_MAIN_MENU_RESERVATIONS, bikes_reservations)
     ,
@@ -44,5 +44,5 @@ MENU(bikes_main,
 
 override
 void app3_main(app a) {
-    MENU_SCREEN(bikes_main, bikes_main_menu());
+    MENU_SCREEN(app3, app3_menu());
 }

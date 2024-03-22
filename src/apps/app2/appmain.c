@@ -10,7 +10,7 @@ author and availability, borrowing the book and returning the borrowed book.
 
 #include "appmenus.h"
 
-MENU(books_main,
+MENU(app2,
     CASE_MENU(ID_MAIN_MENU_BOOKS, books)
     //CASE_MENU(ID_MAIN_MENU_BORROWED, borrowed_books)
     ,
@@ -48,5 +48,5 @@ MENU(books_main,
 
 override
 void app2_main(app a) {
-    MENU_SCREEN(books_main, books_main_menu());
+    MENU_SCREEN(app2, app2_menu());
 }

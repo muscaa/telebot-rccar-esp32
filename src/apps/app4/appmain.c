@@ -10,7 +10,7 @@ and availability, reserving the product and canceling the reservation.
 
 #include "appmenus.h"
 
-MENU(products_main,
+MENU(app4,
     CASE_MENU(ID_MAIN_MENU_PRODUCTS, products)
     //CASE_MENU(ID_MAIN_MENU_RESERVATIONS, products_reservations)
     ,
@@ -44,5 +44,5 @@ MENU(products_main,
 
 override
 void app4_main(app a) {
-    MENU_SCREEN(products_main, products_main_menu());
+    MENU_SCREEN(app4, app4_menu());
 }

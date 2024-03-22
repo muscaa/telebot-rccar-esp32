@@ -1,7 +1,7 @@
 #include "appmenus.h"
 
 override
-menu rooms_main_menu() {
+menu app1_menu() {
     option_array options = new(option_array);
     mcall(options, add, SELECTION(ID_MAIN_MENU_ROOMS, "Rooms"));
     mcall(options, add, SELECTION(ID_MAIN_MENU_BOOKINGS, "Bookings"));

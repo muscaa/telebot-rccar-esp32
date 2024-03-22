@@ -11,7 +11,7 @@ capacity and availability, booking the room and canceling the booking.
 #include "appmenus.h"
 #include "rooms.h"
 
-MENU(rooms_main,
+MENU(app1,
     CASE_MENU(ID_MAIN_MENU_ROOMS, rooms)
     CASE_MENU(ID_MAIN_MENU_BOOKINGS, rooms_bookings)
     ,
@@ -51,5 +51,5 @@ override
 void app1_main(app a) {
     _load_rooms();
 
-    MENU_SCREEN(rooms_main, rooms_main_menu());
+    MENU_SCREEN(app1, app1_menu());
 }

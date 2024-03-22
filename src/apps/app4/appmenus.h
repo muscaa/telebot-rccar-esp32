@@ -3,7 +3,7 @@
 #include "../app.h"
 
 enum Menus {
-    products_main, // products_main_menu
+    app4, // app4_menu
     products, // products_menu
     products_reservations, // products_reservations_menu
     products_view, // products_view_menu
@@ -17,7 +17,7 @@ enum Menus {
 
 #define ID_MAIN_MENU_PRODUCTS 0
 #define ID_MAIN_MENU_RESERVATIONS 1
-menu products_main_menu();
+menu app4_menu();
 
 #define ID_PRODUCTS_MENU_VIEW 0
 #define ID_PRODUCTS_MENU_ADD 1
