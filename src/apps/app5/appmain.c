@@ -33,9 +33,15 @@ MENU(wagons_available,
                                 ->name("No wagons available.")
                                 ->build());
             } else {
-                mcall(prev_menu->options, remove, index);
-
-                for (int i = index; i < prev_menu->options->length - 3; i++) {
+                int i;
+                for (i = 0; i < prev_menu->options->length - 3; i++) {
+                    option opt = mcall(prev_menu->options, get, i);
+                    if (opt->id == index) {
+                        mcall(prev_menu->options, remove, i);
+                        break;
+                    }
+                }
+                for (; i < prev_menu->options->length - 3; i++) {
                     option o = mcall(prev_menu->options, get, i);
                     o->id--;
                 }
@@ -108,9 +114,15 @@ MENU(trains_available,
                                 ->name("No trains available.")
                                 ->build());
             } else {
-                mcall(prev_menu->options, remove, index);
-
-                for (int i = index; i < prev_menu->options->length - 3; i++) {
+                int i;
+                for (i = 0; i < prev_menu->options->length - 3; i++) {
+                    option opt = mcall(prev_menu->options, get, i);
+                    if (opt->id == index) {
+                        mcall(prev_menu->options, remove, i);
+                        break;
+                    }
+                }
+                for (; i < prev_menu->options->length - 3; i++) {
                     option o = mcall(prev_menu->options, get, i);
                     o->id--;
                 }
@@ -157,9 +169,15 @@ MENU(trains_available,
                                         ->name("No coupled wagons.")
                                         ->build());
                     } else {
-                        mcall(prev_menu->options, remove, wagon_index + 2);
-
-                        for (int i = wagon_index + 1; i < prev_menu->options->length - 3; i++) {
+                        int i;
+                        for (i = 0; i < prev_menu->options->length - 3; i++) {
+                            option opt = mcall(prev_menu->options, get, i);
+                            if (opt->id == wagon_index) {
+                                mcall(prev_menu->options, remove, i);
+                                break;
+                            }
+                        }
+                        for (; i < prev_menu->options->length - 3; i++) {
                             option o = mcall(prev_menu->options, get, i);
                             o->id--;
                         }
