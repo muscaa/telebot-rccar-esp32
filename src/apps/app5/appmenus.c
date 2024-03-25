@@ -1,6 +1,15 @@
 #include "appmenus.h"
+#include <string.h>
 
-#include "trains.h"
+#define INPUT_ID \
+    new(input_builder) \
+    ->max_length(16) \
+    ->accepts("az|09|_")
+
+#define INPUT_TYPE \
+    new(input_builder) \
+    ->max_length(16) \
+    ->accepts("az|AZ|09| ")
 
 override
 menu app5_menu() {
@@ -35,7 +44,7 @@ menu trains_view_menu() {
 }
 
 private void trains_add_action(component c) {
-    if (c->id == 0) {
+    if (c->id == ID_BACK) {
         mcall0(render_stack, pop);
     }
 }
@@ -45,17 +54,14 @@ void trains_add_screen() {
     screen s = mcall(render_stack, push, trains_add_action);
     add_component(s, 0, trigger, new(trigger, K_ESCAPE));
     add_component(s, -1, label, new(label, "Train ID: "));
-    add_component(s, 2, input, new(input_builder)
-                    ->max_length(16)
-                    ->accepts("az|AZ|09|_")
+    add_component(s, 2, input, INPUT_ID
                     //->exists()
                     ->build());
-    add_component(s, 1, separator, new(separator));
-    add_component(s, -1, label, new(label, "(ESC to go back)"));
+    CANCEL_WITH_ESC(s);
 }
 
 override
-menu trains_all_menu() {
+menu trains_available_menu(train_array available) {
     return NULL;
 }
 
@@ -101,48 +107,41 @@ menu wagons_view_menu() {
 private void wagons_add_action(component c) {
     screen s = c->parent;
 
-    if (c->id == 0) {
+    if (c->id == ID_BACK) {
         mcall0(render_stack, pop);
     } else if (c->id == 2) {
-        insert_component(s, 1, -1, label, new(label, "Wagon type: "));
-        insert_component(s, 1, 3, input, new(input_builder)
-                    ->max_length(16)
-                    ->accepts("az|AZ|09| ")
-                    //->exists()
-                    ->build());
+        insert_component(s, ID_BACK, -1, label, new(label, "Wagon type: "));
+        insert_component(s, ID_BACK, 3, input, INPUT_TYPE
+                        ->build());
     } else if (c->id == 3) {
         mcall0(render_stack, pop);
 
         input id = mcall(s, get, 2)->data;
         input type = mcall(s, get, 3)->data;
 
-        mcall(wagons, add, new(wagon, id->result, type->result));
+        add_wagon(id->result, type->result);
     }
 }
 
 override
 void wagons_add_screen() {
     screen s = mcall(render_stack, push, wagons_add_action);
-    add_component(s, 0, trigger, new(trigger, K_ESCAPE));
     add_component(s, -1, label, new(label, "Wagon ID: "));
-    add_component(s, 2, input, new(input_builder)
-                    ->max_length(16)
-                    ->accepts("az|AZ|09|_")
-                    //->exists()
+    add_component(s, 2, input, INPUT_ID
+                    ->exists(wagon_exists)
                     ->build());
-    add_component(s, 1, separator, new(separator));
-    add_component(s, -1, label, new(label, "(ESC to go back)"));
+    CANCEL_WITH_ESC(s);
 }
 
 override
-menu wagons_all_menu() {
+menu wagons_available_menu(wagon_array available) {
     option_array options = new(option_array);
-    for (int i = 0; i < wagons->length; i++) {
-        wagon w = wagons->values[i];
+    for (int i = 0; i < available->length; i++) {
+        wagon w = available->values[i];
 
         mcall(options, add, SELECTION(i, w->id));
     }
-    if (wagons->length == 0) {
+    if (available->length == 0) {
         mcall(options, add, option_separator()
                         ->name("No wagons available.")
                         ->build());
@@ -155,6 +154,8 @@ menu wagons_all_menu() {
 
 override
 menu wagons_filter_menu() {
+    wagons_reset_filter();
+
     option_array options = new(option_array);
     mcall(options, add, SELECTION(ID_WAGONS_FILTER_MENU_ID, "Filter ID"));
     mcall(options, add, SELECTION(ID_WAGONS_FILTER_MENU_TYPE, "Filter type"));
@@ -166,12 +167,72 @@ menu wagons_filter_menu() {
     return new(vmenu, options);
 }
 
-override
-menu wagons_filter_id_menu() {
-    return NULL;
+private void wagons_filter_id_action(component c) {
+    screen s = c->parent;
+
+    if (c->id == ID_BACK) {
+        mcall0(render_stack, pop);
+    } else if (c->id == 2) {
+        input id = mcall(s, get, 2)->data;
+        wagons_id_filter = strlen(id->result) == 0 ? NULL : id->result;
+
+        screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
+        menu prev_menu = mcall(prev_screen->components, get, 2)->data;
+
+        mcall(prev_menu->options, set, 0,
+                SELECTION(ID_WAGONS_FILTER_MENU_ID,
+                wagons_id_filter == NULL ?
+                        "Filter ID" :
+                        format("Filter ID (%s)", wagons_id_filter)
+                )
+        );
+
+        mcall0(render_stack, pop);
+    }
 }
 
 override
-menu wagons_filter_type_menu() {
-    return NULL;
+void wagons_filter_id_screen() {
+    screen s = mcall(render_stack, push, wagons_filter_id_action);
+    add_component(s, -1, label, new(label, "ID filter: "));
+    add_component(s, 2, input, INPUT_ID
+                    ->value(wagons_id_filter)
+                    ->allow_empty()
+                    ->build());
+    CANCEL_WITH_ESC(s);
+}
+
+private void wagons_filter_type_action(component c) {
+    screen s = c->parent;
+
+    if (c->id == ID_BACK) {
+        mcall0(render_stack, pop);
+    } else if (c->id == 2) {
+        input type = mcall(s, get, 2)->data;
+        wagons_type_filter = strlen(type->result) == 0 ? NULL : type->result;
+        
+        screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
+        menu prev_menu = mcall(prev_screen->components, get, 2)->data;
+
+        mcall(prev_menu->options, set, 1,
+                SELECTION(ID_WAGONS_FILTER_MENU_ID,
+                wagons_type_filter == NULL ?
+                        "Filter type" :
+                        format("Filter type (%s)", wagons_type_filter)
+                )
+        );
+
+        mcall0(render_stack, pop);
+    }
+}
+
+override
+void wagons_filter_type_screen() {
+    screen s = mcall(render_stack, push, wagons_filter_type_action);
+    add_component(s, -1, label, new(label, "Type filter: "));
+    add_component(s, 2, input, INPUT_TYPE
+                    ->value(wagons_type_filter)
+                    ->allow_empty()
+                    ->build());
+    CANCEL_WITH_ESC(s);
 }
