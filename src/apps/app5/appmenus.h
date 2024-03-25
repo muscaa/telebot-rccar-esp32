@@ -10,15 +10,16 @@ enum Menus {
     //trains_add,
     trains_available, // trains_available_menu
     trains_filter, // trains_filter_menu
-    trains_filter_id, // trains_filter_id_menu
+    //trains_filter_id,
+    trains_info, // trains_info_menu
     wagons_main, // wagons_menu
     wagons_view, // wagons_view_menu
     //wagons_add,
     wagons_available, // wagons_available_menu
     wagons_filter, // wagons_filter_menu
-    wagons_filter_result, // wagons_available_menu
     //wagons_filter_id,
     //wagons_filter_type,
+    wagons_info, // wagons_info_menu
 };
 
 #define ID_MAIN_MENU_TRAINS 0
@@ -41,7 +42,10 @@ menu trains_available_menu(train_array available);
 #define ID_TRAINS_FILTER_MENU_APPLY 1
 menu trains_filter_menu();
 
-menu trains_filter_id_menu();
+void trains_filter_id_screen();
+
+#define ID_TRAINS_INFO_MENU_DELETE 0
+menu trains_info_menu(train t);
 
 #define ID_WAGONS_MENU_VIEW 0
 #define ID_WAGONS_MENU_ADD 1
@@ -63,3 +67,7 @@ menu wagons_filter_menu();
 void wagons_filter_id_screen();
 
 void wagons_filter_type_screen();
+
+#define ID_WAGONS_INFO_MENU_DELETE 0
+#define ID_WAGONS_INFO_MENU_COUPLE 1
+menu wagons_info_menu(wagon w);

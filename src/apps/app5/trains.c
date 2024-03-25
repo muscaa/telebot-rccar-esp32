@@ -12,6 +12,8 @@ string wagons_id_filter;
 string wagons_type_filter;
 
 train_array trains;
+train_array trains_filtered;
+string trains_id_filter;
 
 private void save_trains() {
     string parent = file_parent(CONFIG_FILE);
@@ -25,6 +27,14 @@ private void save_trains() {
         out.LenString(w->id);
         out.LenString(w->type);
     }
+    out.Int(trains->length);
+    for (int i = 0; i < trains->length; i++) {
+        train t = mcall(trains, get, i);
+
+        out.LenString(t->id);
+        
+        // save coupled wagons
+    }
     pop_save_config();
 }
 
@@ -34,15 +44,31 @@ private void load_trains() {
     }
     mcall0(wagons, clear);
 
+    for (int i = 0; i < trains->length; i++) {
+        free(mcall(trains, get, i));
+
+        // free coupled wagons
+    }
+    mcall0(trains, clear);
+
     if (!file_exists(CONFIG_FILE)) return;
 
     config_reader in = push_load_config(CONFIG_FILE);
-    int length = in.Int();
-    for (int i = 0; i < length; i++) {
+    int wagons_length = in.Int();
+    for (int i = 0; i < wagons_length; i++) {
         string id = in.LenString();
         string type = in.LenString();
 
         mcall(wagons, add, new(wagon, id, type));
+    }
+    int trains_length = in.Int();
+    for (int i = 0; i < trains_length; i++) {
+        string id = in.LenString();
+        train t = new(train, id);
+
+        // load coupled wagons
+
+        mcall(trains, add, t);
     }
     pop_load_config();
 }
@@ -53,6 +79,7 @@ void init_trains() {
     wagons_filtered = new(wagon_array);
 
     trains = new(train_array);
+    trains_filtered = new(train_array);
     
     load_trains();
 }
@@ -120,4 +147,39 @@ constructor(train,
     obj->id = id;
     obj->next_wagon = NULL;
     return obj;
+}
+
+override
+void add_train(string id) {
+    mcall(trains, add, new(train, id));
+
+    save_trains();
+}
+
+override
+bool train_exists(string id) {
+    for (int i = 0; i < trains->length; i++) {
+        if (strcmp(mcall(trains, get, i)->id, id) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+override
+void trains_apply_filter() {
+    mcall0(trains_filtered, clear);
+
+    for (int i = 0; i < trains->length; i++) {
+        train t = mcall(trains, get, i);
+
+        if (trains_id_filter != NULL && strstr(t->id, trains_id_filter) == NULL) continue;
+
+        mcall(trains_filtered, add, t);
+    }
+}
+
+override
+void trains_reset_filter() {
+    trains_id_filter = NULL;
 }

@@ -12,6 +12,27 @@ coupling/decoupling wagons from/to a locomotive.
 #include "appmenus.h"
 #include "trains.h"
 
+MENU(wagons_available,
+    default: {
+        wagon w = mcall(wagons, get, opt->id);
+        MENU_SCREEN(wagons_info, wagons_info_menu(w));
+    }
+    ,
+    MENU(wagons_info,
+        // delete, couple etc
+    )
+)
+
+MENU(trains_available,
+    default: {
+        train t = mcall(trains, get, opt->id);
+        MENU_SCREEN(trains_info, trains_info_menu(t));
+    }
+    ,
+    MENU(trains_info,
+    )
+)
+
 MENU(app5,
     CASE_MENU(ID_MAIN_MENU_TRAINS, trains_main)
     CASE_MENU(ID_MAIN_MENU_WAGONS, wagons_main)
@@ -24,17 +45,18 @@ MENU(app5,
         ,
         MENU(trains_view,
             CASE(ID_TRAINS_VIEW_MENU_ALL,
-                //MENU_SCREEN(trains_available, trains_available_menu(trains));
+                MENU_SCREEN(trains_available, trains_available_menu(trains));
             )
             CASE_MENU(ID_TRAINS_VIEW_MENU_FILTER, trains_filter)
             ,
-            //MENU(trains_available,)
             MENU(trains_filter,
-                //CASE_MENU(ID_TRAINS_FILTER_MENU_ID, trains_filter_id)
-                CASE(ID_TRAINS_FILTER_MENU_APPLY,
+                CASE(ID_TRAINS_FILTER_MENU_ID,
+                    trains_filter_id_screen();
                 )
-                ,
-                //MENU(trains_filter_id,)
+                CASE(ID_TRAINS_FILTER_MENU_APPLY,
+                    trains_apply_filter();
+                    MENU_SCREEN(trains_available, trains_available_menu(trains_filtered));
+                )
             )
         )
     )
@@ -50,9 +72,6 @@ MENU(app5,
             )
             CASE_MENU(ID_WAGONS_VIEW_MENU_FILTER, wagons_filter)
             ,
-            MENU(wagons_available,
-                // open wagon menu
-            )
             MENU(wagons_filter,
                 CASE(ID_WAGONS_FILTER_MENU_ID,
                     wagons_filter_id_screen();
@@ -62,10 +81,7 @@ MENU(app5,
                 )
                 CASE(ID_WAGONS_FILTER_MENU_APPLY,
                     wagons_apply_filter();
-                    MENU_SCREEN(wagons_filter_result, wagons_available_menu(wagons_filtered));
-                )
-                ,
-                MENU(wagons_filter_result,
+                    MENU_SCREEN(wagons_available, wagons_available_menu(wagons_filtered));
                 )
             )
         )

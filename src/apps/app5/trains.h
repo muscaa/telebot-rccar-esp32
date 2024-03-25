@@ -45,3 +45,14 @@ type(train,
 arraydef(train);
 
 extern train_array trains;
+
+void add_train(string id);
+
+bool train_exists(string id);
+
+extern train_array trains_filtered;
+extern string trains_id_filter;
+
+void trains_apply_filter();
+
+void trains_reset_filter();

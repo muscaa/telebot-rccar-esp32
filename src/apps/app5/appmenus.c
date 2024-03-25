@@ -1,5 +1,4 @@
 #include "appmenus.h"
-#include <string.h>
 
 #define INPUT_ID \
     new(input_builder) \
@@ -44,7 +43,15 @@ menu trains_view_menu() {
 }
 
 private void trains_add_action(component c) {
+    screen s = c->parent;
+
     if (c->id == ID_BACK) {
+        mcall0(render_stack, pop);
+    } else if (c->id == 2) {
+        input id = mcall(s, get, 2)->data;
+
+        add_train(id->result);
+
         mcall0(render_stack, pop);
     }
 }
@@ -52,21 +59,42 @@ private void trains_add_action(component c) {
 override
 void trains_add_screen() {
     screen s = mcall(render_stack, push, trains_add_action);
-    add_component(s, 0, trigger, new(trigger, K_ESCAPE));
     add_component(s, -1, label, new(label, "Train ID: "));
     add_component(s, 2, input, INPUT_ID
-                    //->exists()
+                    ->exists(train_exists)
                     ->build());
     CANCEL_WITH_ESC(s);
 }
 
 override
 menu trains_available_menu(train_array available) {
-    return NULL;
+    option_array options = new(option_array);
+    for (int i = 0; i < available->length; i++) {
+        train t = available->values[i];
+
+        int actual_index;
+        for (actual_index = 0; actual_index < trains->length; actual_index++) {
+            train value = mcall(trains, get, actual_index);
+            if (value == t) break;
+        }
+
+        mcall(options, add, SELECTION(actual_index, t->id));
+    }
+    if (available->length == 0) {
+        mcall(options, add, option_separator()
+                        ->name("No trains available.")
+                        ->build());
+    }
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
 }
 
 override
 menu trains_filter_menu() {
+    trains_reset_filter();
+
     option_array options = new(option_array);
     mcall(options, add, SELECTION(ID_TRAINS_FILTER_MENU_ID, "Filter ID"));
     mcall(options, add, SEPARATOR);
@@ -77,9 +105,53 @@ menu trains_filter_menu() {
     return new(vmenu, options);
 }
 
+private void trains_filter_id_action(component c) {
+    screen s = c->parent;
+
+    if (c->id == ID_BACK) {
+        mcall0(render_stack, pop);
+    } else if (c->id == 2) {
+        input id = mcall(s, get, 2)->data;
+        trains_id_filter = strlen(id->result) == 0 ? NULL : id->result;
+
+        screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
+        menu prev_menu = mcall(prev_screen->components, get, 2)->data;
+
+        mcall(prev_menu->options, set, 0,
+                SELECTION(ID_WAGONS_FILTER_MENU_ID,
+                trains_id_filter == NULL ?
+                        "Filter ID" :
+                        format("Filter ID (%s)", trains_id_filter)
+                )
+        );
+
+        mcall0(render_stack, pop);
+    }
+}
+
 override
-menu trains_filter_id_menu() {
-    return NULL;
+void trains_filter_id_screen() {
+    screen s = mcall(render_stack, push, trains_filter_id_action);
+    add_component(s, -1, label, new(label, "ID filter: "));
+    add_component(s, 2, input, INPUT_ID
+                    ->value(trains_id_filter)
+                    ->allow_empty()
+                    ->build());
+    CANCEL_WITH_ESC(s);
+}
+
+override
+menu trains_info_menu(train t) {
+    option_array options = new(option_array);
+    mcall(options, add, option_separator()
+                    ->name(format("Train ID: %s", t->id))
+                    ->build());
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, SELECTION(ID_TRAINS_INFO_MENU_DELETE, "Delete"));
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
 }
 
 override
@@ -114,12 +186,12 @@ private void wagons_add_action(component c) {
         insert_component(s, ID_BACK, 3, input, INPUT_TYPE
                         ->build());
     } else if (c->id == 3) {
-        mcall0(render_stack, pop);
-
         input id = mcall(s, get, 2)->data;
         input type = mcall(s, get, 3)->data;
 
         add_wagon(id->result, type->result);
+
+        mcall0(render_stack, pop);
     }
 }
 
@@ -139,7 +211,13 @@ menu wagons_available_menu(wagon_array available) {
     for (int i = 0; i < available->length; i++) {
         wagon w = available->values[i];
 
-        mcall(options, add, SELECTION(i, w->id));
+        int actual_index;
+        for (actual_index = 0; actual_index < wagons->length; actual_index++) {
+            wagon value = mcall(wagons, get, actual_index);
+            if (value == w) break;
+        }
+
+        mcall(options, add, SELECTION(actual_index, w->id));
     }
     if (available->length == 0) {
         mcall(options, add, option_separator()
@@ -235,4 +313,22 @@ void wagons_filter_type_screen() {
                     ->allow_empty()
                     ->build());
     CANCEL_WITH_ESC(s);
+}
+
+override
+menu wagons_info_menu(wagon w) {
+    option_array options = new(option_array);
+    mcall(options, add, option_separator()
+                    ->name(format("Wagon ID: %s", w->id))
+                    ->build());
+    mcall(options, add, option_separator()
+                    ->name(format("Wagon type: %s", w->type))
+                    ->build());
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, SELECTION(ID_WAGONS_INFO_MENU_DELETE, "Delete (if there are 0 uses)"));
+    mcall(options, add, SELECTION(ID_WAGONS_INFO_MENU_COUPLE, "Couple to train"));
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
 }
