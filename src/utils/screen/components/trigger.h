@@ -3,10 +3,8 @@
 #include "../component.h"
 
 type(trigger,
-    string label,
     int key
 ) {
-    string label;
     int key;
 
     destruct(trigger);

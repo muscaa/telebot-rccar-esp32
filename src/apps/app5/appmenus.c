@@ -1,9 +1,11 @@
 #include "appmenus.h"
 
+#include "trains.h"
+
 override
 menu app5_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_MAIN_MENU_LOCOMOTIVES, "Locomotives"));
+    mcall(options, add, SELECTION(ID_MAIN_MENU_TRAINS, "Trains"));
     mcall(options, add, SELECTION(ID_MAIN_MENU_WAGONS, "Wagons"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -11,10 +13,10 @@ menu app5_menu() {
 }
 
 override
-menu locomotives_main_menu() {
+menu trains_main_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_LOCOMOTIVES_MENU_VIEW, "View locomotives"));
-    mcall(options, add, SELECTION(ID_LOCOMOTIVES_MENU_ADD, "Add locomotive"));
+    mcall(options, add, SELECTION(ID_TRAINS_MENU_VIEW, "View trains"));
+    mcall(options, add, SELECTION(ID_TRAINS_MENU_ADD, "Add train"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -22,32 +24,47 @@ menu locomotives_main_menu() {
 }
 
 override
-menu locomotives_view_menu() {
+menu trains_view_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_LOCOMOTIVES_VIEW_MENU_ALL, "View all"));
-    mcall(options, add, SELECTION(ID_LOCOMOTIVES_VIEW_MENU_FILTER, "Filter"));
+    mcall(options, add, SELECTION(ID_TRAINS_VIEW_MENU_ALL, "View all"));
+    mcall(options, add, SELECTION(ID_TRAINS_VIEW_MENU_FILTER, "Filter"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
     return new(vmenu, options);
 }
 
+private void trains_add_action(component c) {
+    if (c->id == 0) {
+        mcall0(render_stack, pop);
+    }
+}
+
 override
-menu locomotives_add_menu() {
+void trains_add_screen() {
+    screen s = mcall(render_stack, push, trains_add_action);
+    add_component(s, 0, trigger, new(trigger, K_ESCAPE));
+    add_component(s, -1, label, new(label, "Train ID: "));
+    add_component(s, 2, input, new(input_builder)
+                    ->max_length(16)
+                    ->accepts("az|AZ|09|_")
+                    //->exists()
+                    ->build());
+    add_component(s, 1, separator, new(separator));
+    add_component(s, -1, label, new(label, "(ESC to go back)"));
+}
+
+override
+menu trains_all_menu() {
     return NULL;
 }
 
 override
-menu locomotives_available_menu() {
-    return NULL;
-}
-
-override
-menu locomotives_filter_menu() {
+menu trains_filter_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_LOCOMOTIVES_FILTER_MENU_ID, "Filter ID"));
+    mcall(options, add, SELECTION(ID_TRAINS_FILTER_MENU_ID, "Filter ID"));
     mcall(options, add, SEPARATOR);
-    mcall(options, add, SELECTION(ID_LOCOMOTIVES_FILTER_MENU_APPLY, "Apply"));
+    mcall(options, add, SELECTION(ID_TRAINS_FILTER_MENU_APPLY, "Apply"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -55,7 +72,7 @@ menu locomotives_filter_menu() {
 }
 
 override
-menu locomotives_filter_id_menu() {
+menu trains_filter_id_menu() {
     return NULL;
 }
 
@@ -81,14 +98,59 @@ menu wagons_view_menu() {
     return new(vmenu, options);
 }
 
-override
-menu wagons_add_menu() {
-    return NULL;
+private void wagons_add_action(component c) {
+    screen s = c->parent;
+
+    if (c->id == 0) {
+        mcall0(render_stack, pop);
+    } else if (c->id == 2) {
+        insert_component(s, 1, -1, label, new(label, "Wagon type: "));
+        insert_component(s, 1, 3, input, new(input_builder)
+                    ->max_length(16)
+                    ->accepts("az|AZ|09| ")
+                    //->exists()
+                    ->build());
+    } else if (c->id == 3) {
+        mcall0(render_stack, pop);
+
+        input id = mcall(s, get, 2)->data;
+        input type = mcall(s, get, 3)->data;
+
+        mcall(wagons, add, new(wagon, id->result, type->result));
+    }
 }
 
 override
-menu wagons_available_menu() {
-    return NULL;
+void wagons_add_screen() {
+    screen s = mcall(render_stack, push, wagons_add_action);
+    add_component(s, 0, trigger, new(trigger, K_ESCAPE));
+    add_component(s, -1, label, new(label, "Wagon ID: "));
+    add_component(s, 2, input, new(input_builder)
+                    ->max_length(16)
+                    ->accepts("az|AZ|09|_")
+                    //->exists()
+                    ->build());
+    add_component(s, 1, separator, new(separator));
+    add_component(s, -1, label, new(label, "(ESC to go back)"));
+}
+
+override
+menu wagons_all_menu() {
+    option_array options = new(option_array);
+    for (int i = 0; i < wagons->length; i++) {
+        wagon w = wagons->values[i];
+
+        mcall(options, add, SELECTION(i, w->id));
+    }
+    if (wagons->length == 0) {
+        mcall(options, add, option_separator()
+                        ->name("No wagons available.")
+                        ->build());
+    }
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
 }
 
 override

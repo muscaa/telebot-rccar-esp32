@@ -17,7 +17,6 @@ impl_render(input) {
 
     bool exists = d->value_exists != NULL && d->value_exists(d->result);
 
-    mcall(s, append, d->name);
     mcall(s, push_foreground, exists ? COLOR_RED : COLOR_BLUE);
     mcall(s, append, d->result);
     mcall0(s, pop_foreground);
@@ -64,11 +63,8 @@ destructor(input) {
 }
 
 impl_create_component(input);
-constructor(input,
-    string name
-) {
+constructor(input) {
     input obj = malloc(sizeoftype(input));
-    obj->name = name;
     obj->default_value = NULL;
     obj->value_exists = NULL;
     obj->max_length = 0;
@@ -116,10 +112,8 @@ private input impl_function(input_builder, build) {
     return building;
 }
 
-constructor(input_builder,
-    string name
-) {
-    building = new(input, name);
+constructor(input_builder) {
+    building = new(input);
     if (builder == NULL) {
         builder = malloc(sizeoftype(input_builder));
         set_impl(input_builder, builder, value);

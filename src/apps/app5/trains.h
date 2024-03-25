@@ -4,16 +4,6 @@
 
 void init_trains();
 
-type(locomotive,
-    string id
-) {
-    string id;
-};
-
-arraydef(locomotive);
-
-extern locomotive_array locomotives;
-
 type(wagon,
     string id,
     string type
@@ -34,9 +24,9 @@ type(coupled_wagon,
 };
 
 type(train,
-    locomotive locomotive
+    string id
 ) {
-    locomotive locomotive;
+    string id;
     coupled_wagon next_wagon;
 };
 

@@ -62,12 +62,16 @@ private component impl_method(screen, get, int id) {
 private void impl_method(screen, add, component c) {
     mcall(obj, init, c);
     mcall(obj->components, add, c);
+
+    mcall0(render_stack, refresh);
 }
 
 private component impl_method(screen, remove, int id) {
     for (int i = 0; i < obj->components->length; i++) {
         component old = mcall(obj->components, get, i);
         if (old->id == id) {
+            mcall0(render_stack, refresh);
+
             return mcall(obj->components, remove, i);
         }
     }
@@ -79,6 +83,9 @@ private component impl_method(screen, replace, int id, component c) {
         component old = mcall(obj->components, get, i);
         if (old->id == id) {
             mcall(obj, init, c);
+
+            mcall0(render_stack, refresh);
+
             return mcall(obj->components, set, i, c);
         }
     }
@@ -91,6 +98,8 @@ private void impl_method(screen, insert, int id, component c) {
         if (old->id == id) {
             mcall(obj, init, c);
             mcall(obj->components, insert, i, c);
+
+            mcall0(render_stack, refresh);
             break;
         }
     }
@@ -180,6 +189,8 @@ private void impl_method0(screen_renderer, tick) {
             mcall0(s, render);
 
             pop_foreground();
+
+            println(""); // flush
         }
 
         capture = read_capture();

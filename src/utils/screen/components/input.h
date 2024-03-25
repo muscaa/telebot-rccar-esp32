@@ -9,10 +9,7 @@ typedef struct {
 
 arraydef(input_filter);
 
-type(input,
-    string name
-) {
-    string name;
+type(input) {
     string default_value;
     bool function(value_exists, string);
     int max_length;
@@ -25,9 +22,7 @@ type(input,
 };
 create_component(input);
 
-type(input_builder,
-    string name
-) {
+type(input_builder) {
     input_builder function(value, string default_value);
     input_builder function(exists, bool function(value_exists, string value));
     input_builder function(max_length, int max_length);

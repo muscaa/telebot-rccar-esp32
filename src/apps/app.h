@@ -4,8 +4,8 @@
 
 #define SELECTION(option_id, option_name) option_selection(option_name)->id(option_id)->build()
 
-#define ID_BACK -1
-#define ID_BACK_TO_MAIN_MENU -2
+#define ID_BACK -2
+#define ID_BACK_TO_MAIN_MENU -3
 
 #define BACK SELECTION(ID_BACK, "Back")
 #define BACK_TO_MAIN_MENU SELECTION(ID_BACK_TO_MAIN_MENU, "Back to Main Menu")
