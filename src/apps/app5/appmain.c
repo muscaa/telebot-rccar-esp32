@@ -1,10 +1,10 @@
 /*
 #5. Train tracking system
 
-The app allows adding/deleting a locomotive with an id, adding/deleting
-a wagon with id and type, displaying all locomotives and wagons, searching
-for a locomotive by id, searching for a wagon by id and type, creating trains by
-coupling/decoupling wagons from/to a locomotive.
+The app allows adding/deleting a train with an id, adding/deleting
+a wagon with id and type, displaying all trains and wagons, searching
+for a train by id, searching for a wagon by id and type and
+coupling/decoupling wagons from/to a train.
 */
 
 #include "appmain.h"
@@ -19,7 +19,71 @@ MENU(wagons_available,
     }
     ,
     MENU(wagons_info,
-        // delete, couple etc
+        CASE(ID_WAGONS_INFO_MENU_DELETE,
+            int index = mcall(m->options, get, 0)->id;
+            wagon w = mcall(wagons, get, index);
+
+            remove_wagon(w->id);
+
+            screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
+            menu prev_menu = mcall(prev_screen->components, get, 2)->data;
+
+            if (prev_menu->options->length == 4) {
+                mcall(prev_menu->options, set, 0, option_separator()
+                                ->name("No wagons available.")
+                                ->build());
+            } else {
+                mcall(prev_menu->options, remove, index);
+
+                for (int i = index; i < prev_menu->options->length - 3; i++) {
+                    option o = mcall(prev_menu->options, get, i);
+                    o->id--;
+                }
+            }
+
+            mcall0(render_stack, pop);
+        )
+        CASE(ID_WAGONS_INFO_MENU_COUPLE,
+            int index = mcall(m->options, get, 0)->id;
+            wagon w = mcall(wagons, get, index);
+
+            MENU_SCREEN(wagons_couple, wagons_couple_menu(w));
+        )
+        ,
+        MENU(wagons_couple,
+            default: {
+                int index = mcall(m->options, get, 0)->id;
+                wagon w = mcall(wagons, get, index);
+                train t = mcall(trains, get, opt->id);
+
+                couple(t, w);
+
+                screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
+                menu prev_menu = mcall(prev_screen->components, get, 2)->data;
+
+                int uses = 0;
+                for (int i = 0; i < trains->length; i++) {
+                    train t = mcall(trains, get, i);
+                    
+                    coupled_wagon cw = t->next_wagon;
+                    while (cw != NULL) {
+                        int cw_index = find_wagon(cw->wagon->id);
+                        if (cw_index == index) {
+                            uses++;
+                        }
+                        cw = cw->next_wagon;
+                    }
+                }
+                mcall(prev_menu->options, set, 3, uses == 0 ? 
+                                SELECTION(ID_WAGONS_INFO_MENU_DELETE, "Delete") :
+                                option_separator()
+                                        ->name(format("Delete (%d uses)", uses))
+                                        ->build()
+                );
+
+                mcall0(render_stack, pop);
+            }
+        )
     )
 )
 
@@ -30,6 +94,83 @@ MENU(trains_available,
     }
     ,
     MENU(trains_info,
+        CASE(ID_TRAINS_INFO_MENU_DELETE,
+            int index = mcall(m->options, get, 0)->id;
+            train t = mcall(trains, get, index);
+
+            remove_train(t->id);
+
+            screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
+            menu prev_menu = mcall(prev_screen->components, get, 2)->data;
+
+            if (prev_menu->options->length == 4) {
+                mcall(prev_menu->options, set, 0, option_separator()
+                                ->name("No trains available.")
+                                ->build());
+            } else {
+                mcall(prev_menu->options, remove, index);
+
+                for (int i = index; i < prev_menu->options->length - 3; i++) {
+                    option o = mcall(prev_menu->options, get, i);
+                    o->id--;
+                }
+            }
+
+            mcall0(render_stack, pop);
+        )
+        CASE(ID_TRAINS_INFO_MENU_WAGONS,
+            int index = mcall(m->options, get, 0)->id;
+            train t = mcall(trains, get, index);
+
+            MENU_SCREEN(trains_wagons, trains_wagons_menu(t));
+        )
+        ,
+        MENU(trains_wagons,
+            default: {
+                int index = mcall(m->options, get, 0)->id;
+                train t = mcall(trains, get, index);
+
+                coupled_wagon cw = t->next_wagon;
+                for (int i = 0; i < opt->id; i++) {
+                    cw = cw->next_wagon;
+                }
+
+                MENU_SCREEN(trains_wagons_info, trains_wagons_info_menu(cw));
+            }
+            ,
+            MENU(trains_wagons_info,
+                CASE(ID_TRAINS_WAGONS_INFO_MENU_DECOUPLE,
+                    int train_index = mcall(m->options, get, 0)->id;
+                    train t = mcall(trains, get, train_index);
+
+                    int wagon_index = mcall(m->options, get, 1)->id;
+                    coupled_wagon cw = t->next_wagon;
+                    for (int i = 0; i < wagon_index; i++) {
+                        cw = cw->next_wagon;
+                    }
+
+                    screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
+                    menu prev_menu = mcall(prev_screen->components, get, 2)->data;
+
+                    if (prev_menu->options->length == 6) {
+                        mcall(prev_menu->options, set, 2, option_separator()
+                                        ->name("No coupled wagons.")
+                                        ->build());
+                    } else {
+                        mcall(prev_menu->options, remove, wagon_index + 2);
+
+                        for (int i = wagon_index + 1; i < prev_menu->options->length - 3; i++) {
+                            option o = mcall(prev_menu->options, get, i);
+                            o->id--;
+                        }
+                    }
+
+                    decouple(cw);
+
+                    mcall0(render_stack, pop);
+                )
+            )
+        )
     )
 )
 

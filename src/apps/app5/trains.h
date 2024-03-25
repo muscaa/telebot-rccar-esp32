@@ -18,6 +18,10 @@ extern wagon_array wagons;
 
 void add_wagon(string id, string type);
 
+void remove_wagon(string id);
+
+int find_wagon(string id);
+
 bool wagon_exists(string id);
 
 extern wagon_array wagons_filtered;
@@ -30,10 +34,7 @@ void wagons_reset_filter();
 
 type(coupled_wagon,
     wagon wagon
-) {
-    wagon wagon;
-    coupled_wagon next_wagon;
-};
+);
 
 type(train,
     string id
@@ -48,6 +49,10 @@ extern train_array trains;
 
 void add_train(string id);
 
+void remove_train(string id);
+
+int find_train(string id);
+
 bool train_exists(string id);
 
 extern train_array trains_filtered;
@@ -56,3 +61,22 @@ extern string trains_id_filter;
 void trains_apply_filter();
 
 void trains_reset_filter();
+
+#define TYPE_WAGON 0
+#define TYPE_TRAIN 1
+
+type(coupled_wagon,
+    wagon wagon
+) {
+    wagon wagon;
+    union {
+        train train;
+        coupled_wagon wagon;
+    } prev_wagon;
+    int prev_type;
+    coupled_wagon next_wagon;
+};
+
+void couple(train t, wagon w);
+
+void decouple(coupled_wagon cw);

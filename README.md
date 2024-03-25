@@ -31,10 +31,10 @@ and availability, reserving the product and canceling the reservation.
 
 ### #5. Train tracking system
 
-The app allows adding/deleting a locomotive with an id, adding/deleting
-a wagon with id and type, displaying all locomotives and wagons, searching
-for a locomotive by id, searching for a wagon by id and type, creating trains by
-coupling/decoupling wagons from/to a locomotive.
+The app allows adding/deleting a train with an id, adding/deleting
+a wagon with id and type, displaying all trains and wagons, searching
+for a train by id, searching for a wagon by id and type and
+coupling/decoupling wagons from/to a train.
 
 ## Building/Running from source with `gcc`
 

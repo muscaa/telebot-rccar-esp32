@@ -70,15 +70,10 @@ override
 menu trains_available_menu(train_array available) {
     option_array options = new(option_array);
     for (int i = 0; i < available->length; i++) {
-        train t = available->values[i];
+        train t = mcall(available, get, i);
+        int index = find_train(t->id);
 
-        int actual_index;
-        for (actual_index = 0; actual_index < trains->length; actual_index++) {
-            train value = mcall(trains, get, actual_index);
-            if (value == t) break;
-        }
-
-        mcall(options, add, SELECTION(actual_index, t->id));
+        mcall(options, add, SELECTION(index, t->id));
     }
     if (available->length == 0) {
         mcall(options, add, option_separator()
@@ -142,12 +137,69 @@ void trains_filter_id_screen() {
 
 override
 menu trains_info_menu(train t) {
+    int index = find_train(t->id);
+
     option_array options = new(option_array);
     mcall(options, add, option_separator()
+                    ->id(index)
                     ->name(format("Train ID: %s", t->id))
                     ->build());
     mcall(options, add, SEPARATOR);
     mcall(options, add, SELECTION(ID_TRAINS_INFO_MENU_DELETE, "Delete"));
+    mcall(options, add, SELECTION(ID_TRAINS_INFO_MENU_WAGONS, "Coupled wagons"));
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
+}
+
+override
+menu trains_wagons_menu(train t) {
+    int index = find_train(t->id);
+
+    option_array options = new(option_array);
+    mcall(options, add, option_separator()
+                    ->id(index)
+                    ->name(t->id)
+                    ->build());
+    mcall(options, add, SEPARATOR);
+
+    coupled_wagon head = t->next_wagon;
+    if (head == NULL) {
+        mcall(options, add, option_separator()
+                        ->name("No coupled wagons.")
+                        ->build());
+    }
+    for (int i = 0; head != NULL; i++, head = head->next_wagon) {
+        mcall(options, add, SELECTION(i, head->wagon->id));
+    }
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
+}
+
+override
+menu trains_wagons_info_menu(coupled_wagon cw) {
+    int index = 0;
+    coupled_wagon head = cw;
+    while (head->prev_type != TYPE_TRAIN) {
+        head = head->prev_wagon.wagon;
+        index++;
+    }
+    int train_index = find_train(head->prev_wagon.train->id);
+
+    option_array options = new(option_array);
+    mcall(options, add, option_separator()
+                    ->id(train_index)
+                    ->name(format("Wagon ID: %s", cw->wagon->id))
+                    ->build());
+    mcall(options, add, option_separator()
+                    ->id(index)
+                    ->name(format("Wagon type: %s", cw->wagon->type))
+                    ->build());
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, SELECTION(ID_TRAINS_WAGONS_INFO_MENU_DECOUPLE, "Decouple"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -209,15 +261,10 @@ override
 menu wagons_available_menu(wagon_array available) {
     option_array options = new(option_array);
     for (int i = 0; i < available->length; i++) {
-        wagon w = available->values[i];
+        wagon w = mcall(available, get, i);
+        int index = find_wagon(w->id);
 
-        int actual_index;
-        for (actual_index = 0; actual_index < wagons->length; actual_index++) {
-            wagon value = mcall(wagons, get, actual_index);
-            if (value == w) break;
-        }
-
-        mcall(options, add, SELECTION(actual_index, w->id));
+        mcall(options, add, SELECTION(index, w->id));
     }
     if (available->length == 0) {
         mcall(options, add, option_separator()
@@ -317,16 +364,58 @@ void wagons_filter_type_screen() {
 
 override
 menu wagons_info_menu(wagon w) {
+    int index = find_wagon(w->id);
+
     option_array options = new(option_array);
     mcall(options, add, option_separator()
+                    ->id(index)
                     ->name(format("Wagon ID: %s", w->id))
                     ->build());
     mcall(options, add, option_separator()
                     ->name(format("Wagon type: %s", w->type))
                     ->build());
     mcall(options, add, SEPARATOR);
-    mcall(options, add, SELECTION(ID_WAGONS_INFO_MENU_DELETE, "Delete (if there are 0 uses)"));
+
+    int uses = 0;
+    for (int i = 0; i < trains->length; i++) {
+        train t = mcall(trains, get, i);
+        
+        coupled_wagon cw = t->next_wagon;
+        while (cw != NULL) {
+            int cw_index = find_wagon(cw->wagon->id);
+            if (cw_index == index) {
+                uses++;
+            }
+            cw = cw->next_wagon;
+        }
+    }
+    mcall(options, add, uses == 0 ? 
+                    SELECTION(ID_WAGONS_INFO_MENU_DELETE, "Delete") :
+                    option_separator()
+                            ->name(format("Delete (%d uses)", uses))
+                            ->build()
+    );
     mcall(options, add, SELECTION(ID_WAGONS_INFO_MENU_COUPLE, "Couple to train"));
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
+}
+
+override
+menu wagons_couple_menu(wagon w) {
+    int index = find_wagon(w->id);
+
+    option_array options = new(option_array);
+    mcall(options, add, option_separator()
+                    ->id(index)
+                    ->name(w->id)
+                    ->build());
+    mcall(options, add, SEPARATOR);
+    for (int i = 0; i < trains->length; i++) {
+        train t = mcall(trains, get, i);
+        mcall(options, add, SELECTION(i, t->id));
+    }
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);

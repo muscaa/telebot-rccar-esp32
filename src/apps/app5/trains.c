@@ -1,5 +1,4 @@
 #include "trains.h"
-#include <stdlib.h>
 
 #define CONFIG_FILE "app5/trains.dat"
 
@@ -32,8 +31,20 @@ private void save_trains() {
         train t = mcall(trains, get, i);
 
         out.LenString(t->id);
-        
-        // save coupled wagons
+
+        coupled_wagon cw = t->next_wagon;
+        int length = 0;
+        while (cw != NULL) {
+            length++;
+            cw = cw->next_wagon;
+        }
+        out.Int(length);
+
+        cw = t->next_wagon;
+        while (cw != NULL) {
+            out.Int(find_wagon(cw->wagon->id));
+            cw = cw->next_wagon;
+        }
     }
     pop_save_config();
 }
@@ -45,9 +56,16 @@ private void load_trains() {
     mcall0(wagons, clear);
 
     for (int i = 0; i < trains->length; i++) {
-        free(mcall(trains, get, i));
+        train t = mcall(trains, get, i);
+        
+        coupled_wagon cw = t->next_wagon;
+        while (cw != NULL) {
+            coupled_wagon next = cw->next_wagon;
+            free(cw);
+            cw = next;
+        }
 
-        // free coupled wagons
+        free(t);
     }
     mcall0(trains, clear);
 
@@ -66,7 +84,26 @@ private void load_trains() {
         string id = in.LenString();
         train t = new(train, id);
 
-        // load coupled wagons
+        int length = in.Int();
+        for (int j = 0; j < length; j++) {
+            int index = in.Int();
+            wagon w = mcall(wagons, get, index);
+
+            coupled_wagon cw = new(coupled_wagon, w);
+            if (t->next_wagon == NULL) {
+                t->next_wagon = cw;
+                cw->prev_type = TYPE_TRAIN;
+                cw->prev_wagon.train = t;
+            } else {
+                coupled_wagon last = t->next_wagon;
+                while (last->next_wagon != NULL) {
+                    last = last->next_wagon;
+                }
+                last->next_wagon = cw;
+                cw->prev_type = TYPE_WAGON;
+                cw->prev_wagon.wagon = last;
+            }
+        }
 
         mcall(trains, add, t);
     }
@@ -102,13 +139,27 @@ void add_wagon(string id, string type) {
 }
 
 override
-bool wagon_exists(string id) {
+void remove_wagon(string id) {
+    int index = find_wagon(id);
+    if (index == -1) return;
+
+    free(mcall(wagons, remove, index));
+
+    save_trains();
+}
+
+override
+int find_wagon(string id) {
     for (int i = 0; i < wagons->length; i++) {
-        if (strcmp(mcall(wagons, get, i)->id, id) == 0) {
-            return true;
-        }
+        wagon value = mcall(wagons, get, i);
+        if (strcmp(value->id, id) == 0) return i;
     }
-    return false;
+    return -1;
+}
+
+override
+bool wagon_exists(string id) {
+    return find_wagon(id) != -1;
 }
 
 override
@@ -131,15 +182,6 @@ void wagons_reset_filter() {
     wagons_type_filter = NULL;
 }
 
-constructor(coupled_wagon,
-    wagon wagon
-) {
-    coupled_wagon obj = malloc(sizeoftype(coupled_wagon));
-    obj->wagon = wagon;
-    obj->next_wagon = NULL;
-    return obj;
-}
-
 constructor(train,
     string id
 ) {
@@ -157,13 +199,27 @@ void add_train(string id) {
 }
 
 override
-bool train_exists(string id) {
+void remove_train(string id) {
+    int index = find_train(id);
+    if (index == -1) return;
+
+    free(mcall(trains, remove, index));
+
+    save_trains();
+}
+
+override
+int find_train(string id) {
     for (int i = 0; i < trains->length; i++) {
-        if (strcmp(mcall(trains, get, i)->id, id) == 0) {
-            return true;
-        }
+        train value = mcall(trains, get, i);
+        if (strcmp(value->id, id) == 0) return i;
     }
-    return false;
+    return -1;
+}
+
+override
+bool train_exists(string id) {
+    return find_train(id) != -1;
 }
 
 override
@@ -182,4 +238,51 @@ void trains_apply_filter() {
 override
 void trains_reset_filter() {
     trains_id_filter = NULL;
+}
+
+constructor(coupled_wagon,
+    wagon wagon
+) {
+    coupled_wagon obj = malloc(sizeoftype(coupled_wagon));
+    obj->wagon = wagon;
+    obj->prev_wagon.wagon = NULL;
+    obj->prev_type = TYPE_WAGON;
+    obj->next_wagon = NULL;
+    return obj;
+}
+
+override
+void couple(train t, wagon w) {
+    coupled_wagon cw = new(coupled_wagon, w);
+    if (t->next_wagon == NULL) {
+        t->next_wagon = cw;
+        cw->prev_type = TYPE_TRAIN;
+        cw->prev_wagon.train = t;
+    } else {
+        coupled_wagon last = t->next_wagon;
+        while (last->next_wagon != NULL) {
+            last = last->next_wagon;
+        }
+        last->next_wagon = cw;
+        cw->prev_type = TYPE_WAGON;
+        cw->prev_wagon.wagon = last;
+    }
+
+    save_trains();
+}
+
+override
+void decouple(coupled_wagon cw) {
+    if (cw->next_wagon != NULL) {
+        cw->next_wagon->prev_wagon = cw->prev_wagon;
+        cw->next_wagon->prev_type = cw->prev_type;
+    }
+    if (cw->prev_type == TYPE_TRAIN) {
+        cw->prev_wagon.train->next_wagon = cw->next_wagon;
+    } else {
+        cw->prev_wagon.wagon->next_wagon = cw->next_wagon;
+    }
+    free(cw);
+
+    save_trains();
 }
