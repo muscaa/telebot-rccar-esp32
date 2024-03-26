@@ -170,7 +170,7 @@ MENU(trains_available,
                                         ->build());
                     } else {
                         int i;
-                        for (i = 0; i < prev_menu->options->length - 3; i++) {
+                        for (i = 2; i < prev_menu->options->length - 3; i++) {
                             option opt = mcall(prev_menu->options, get, i);
                             if (opt->id == wagon_index) {
                                 mcall(prev_menu->options, remove, i);
