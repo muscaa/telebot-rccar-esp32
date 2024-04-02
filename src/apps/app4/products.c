@@ -5,6 +5,10 @@
 impl_arraydef(product);
 
 product_array products;
+product_array products_filtered;
+string products_name_filter;
+string products_type_filter;
+string products_location_filter;
 
 private void save_products() {
     string parent = file_parent(CONFIG_FILE);
@@ -45,8 +49,21 @@ private void load_products() {
 override
 void init_products() {
     products = new(product_array);
+    products_filtered = new(product_array);
 
     load_products();
+}
+
+constructor(product,
+    string name,
+    string type,
+    string location
+) {
+    product obj = malloc(sizeoftype(product));
+    obj->name = name;
+    obj->type = type;
+    obj->location = location;
+    return obj;
 }
 
 override
@@ -82,4 +99,26 @@ int find_product(string name) {
 override
 bool product_exists(string name) {
     return find_product(name) != -1;
+}
+
+override
+void products_apply_filter() {
+    mcall0(products_filtered, clear);
+
+    for (int i = 0; i < products->length; i++) {
+        product p = mcall(products, get, i);
+
+        if (products_name_filter != NULL && strstr(p->name, products_name_filter) == NULL) continue;
+        if (products_type_filter != NULL && strstr(p->type, products_type_filter) == NULL) continue;
+        if (products_location_filter != NULL && strstr(p->location, products_location_filter) == NULL) continue;
+
+        mcall(products_filtered, add, p);
+    }
+}
+
+override
+void products_reset_filter() {
+    products_name_filter = NULL;
+    products_type_filter = NULL;
+    products_location_filter = NULL;
 }
