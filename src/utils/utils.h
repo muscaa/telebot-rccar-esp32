@@ -14,8 +14,11 @@
 #include "system/system.h"
 #include "system/colors.h"
 #include "system/console.h"
+#include "system/random.h"
 
 #include "screen/screen.h"
 #include "screen/components.h"
 
 #include "date/date_time.h"
+
+#include "uid/uid.h"

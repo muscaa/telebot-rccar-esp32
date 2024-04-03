@@ -11,84 +11,92 @@ and availability, reserving the product and canceling the reservation.
 #include "appmenus.h"
 #include "products.h"
 
-private product selected = NULL;
-
-MENU(products_available,
+MENU(reservations_product,
     default: {
-        selected = mcall(products, get, opt->id);
-        MENU_SCREEN(products_info, products_info_menu(selected));
+        selected_reservation = mcall(selected_product->reservations, get, opt->id);
+        MENU_SCREEN(reservations_info, reservations_info_menu(selected_product, selected_reservation));
     }
     ,
-    MENU(products_info,
-        CASE(ID_INFO_MENU_DELETE,
-            int index = find_product(selected->name);
+    MENU(reservations_info,
+        CASE(ID_RESERVATIONS_INFO_MENU_CANCEL,
+            int index = 0;
+            for (; index < selected_product->reservations->length; index++) {
+                reservation r = mcall(selected_product->reservations, get, index);
 
-            remove_product(selected->name);
-
-            screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
-            menu prev_menu = mcall(prev_screen->components, get, 2)->data;
-
-            if (prev_menu->options->length == 4) { // product, separator, back, main menu
-                mcall(prev_menu->options, set, 0, option_separator()
-                                ->name("No products available.")
-                                ->build());
-            } else {
-                int i = 0;
-                for (; i < prev_menu->options->length - 3; i++) {
-                    option opt = mcall(prev_menu->options, get, i);
-                    if (opt->id == index) {
-                        mcall(prev_menu->options, remove, i);
-                        break;
-                    }
-                }
-                for (; i < prev_menu->options->length - 3; i++) {
-                    option o = mcall(prev_menu->options, get, i);
-                    o->id--;
-                }
+                if (mcall(selected_reservation->uid, equals, r->uid)) break;
             }
+            cancel_reservation(selected_product, selected_reservation->uid);
+            remove_option_and_decrement_after(prev_menu(), index, "No reservations available.");
 
             mcall0(render_stack, pop);
         )
     )
 )
 
+MENU(products_info,
+    CASE(ID_PRODUCTS_INFO_MENU_RESERVATIONS,
+        MENU_SCREEN(reservations_product, reservations_product_menu(selected_product));
+    )
+    CASE(ID_PRODUCTS_INFO_MENU_RESERVE,
+        reservations_create_screen();
+    )
+    CASE(ID_PRODUCTS_INFO_MENU_DELETE,
+        int index = find_product(selected_product->name);
+        remove_product(selected_product->name);
+        remove_option_and_decrement_after(prev_menu(), index, "No products available.");
+
+        mcall0(render_stack, pop);
+    )
+)
+
 MENU(app4,
     CASE_MENU(ID_MAIN_MENU_PRODUCTS, products_main)
-    //CASE_MENU(ID_MAIN_MENU_RESERVATIONS, products_reservations)
+    CASE_MENU(ID_MAIN_MENU_RESERVATIONS, reservations_main)
     ,
     MENU(products_main,
-        CASE_MENU(ID_PRODUCTS_MENU_VIEW, products_view)
-        CASE(ID_PRODUCTS_MENU_ADD,
+        CASE_MENU(ID_PRODUCTS_MAIN_MENU_VIEW, products_view)
+        CASE(ID_PRODUCTS_MAIN_MENU_ADD,
             products_add_screen();
         )
         ,
         MENU(products_view,
-            CASE(ID_VIEW_MENU_ALL,
+            CASE(ID_PRODUCTS_VIEW_MENU_ALL,
                 MENU_SCREEN(products_available, products_available_menu(products));
             )
-            CASE_MENU(ID_VIEW_MENU_FILTER, products_filter)
+            CASE_MENU(ID_PRODUCTS_VIEW_MENU_FILTER, products_filter)
             ,
+            MENU(products_available,
+                default: {
+                    selected_product = mcall(products, get, opt->id);
+                    MENU_SCREEN(products_info, products_info_menu(selected_product));
+                }
+            )
             MENU(products_filter,
-                CASE(ID_FILTER_MENU_NAME,
+                CASE(ID_PRODUCTS_FILTER_MENU_NAME,
                     products_filter_name_screen();
                 )
-                CASE(ID_FILTER_MENU_TYPE,
+                CASE(ID_PRODUCTS_FILTER_MENU_TYPE,
                     products_filter_type_screen();
                 )
-                CASE(ID_FILTER_MENU_LOCATION,
+                CASE(ID_PRODUCTS_FILTER_MENU_LOCATION,
                     products_filter_location_screen();
                 )
-                CASE(ID_FILTER_MENU_QUANTITY,
+                CASE(ID_PRODUCTS_FILTER_MENU_QUANTITY,
                     products_filter_quantity_screen();
                 )
-                CASE(ID_FILTER_MENU_APPLY,
+                CASE(ID_PRODUCTS_FILTER_MENU_APPLY,
                     products_apply_filter();
                     MENU_SCREEN(products_available, products_available_menu(products_filtered));
                 )
             )
         )
     )
-    //MENU(products_reservations,)
+    MENU(reservations_main,
+        default: {
+            selected_product = mcall(products, get, opt->id);
+            MENU_SCREEN(reservations_product, reservations_product_menu(selected_product));
+        }
+    )
 )
 
 override

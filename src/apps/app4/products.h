@@ -4,12 +4,16 @@
 
 void init_products();
 
+typedef(product);
+
 type(reservation,
-    string id,
+    UID uid,
+    product product,
     string name,
     int quantity
 ) {
-    string id;
+    UID uid;
+    product product;
     string name;
     int quantity;
 };
@@ -55,4 +59,4 @@ void products_reset_filter();
 
 reservation create_reservation(product p, string name, int quantity);
 
-void cancel_reservation(product p, string id);
+void cancel_reservation(product p, UID uid);

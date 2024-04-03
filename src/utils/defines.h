@@ -4,8 +4,9 @@
 #define override // empty (used for readability)
 #define abstract // empty (used for readability)
 
+#define typedef(type_name) typedef struct __##type_name* type_name
 #define type(type_name, ...) \
-    typedef struct __##type_name* type_name; \
+    typedef(type_name); \
     type_name construct(type_name, __VA_ARGS__); \
     struct __##type_name
 #define sizeoftype(type_name) sizeof(struct __##type_name)

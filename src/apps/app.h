@@ -62,3 +62,9 @@ arraydef(app);
 extern app launched_app;
 
 screen app_screen(void function(on_action, component c));
+
+screen prev_screen();
+
+menu prev_menu();
+
+void remove_option_and_decrement_after(menu m, int start_id, string none_available_message);

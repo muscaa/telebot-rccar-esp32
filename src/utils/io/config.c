@@ -67,6 +67,12 @@ private void write_string_array(string_array v) {
     }
 }
 
+private void write_bytes(byte* v, int len) {
+    for (int i = 0; i < len; i++) {
+        write(v[i]);
+    }
+}
+
 // reading
 private bool read_bool() {
     return bytes_to_bool(read);
@@ -120,6 +126,14 @@ private string_array read_string_array() {
     return a;
 }
 
+private byte* read_bytes(int len) {
+    byte* b = malloc(len);
+    for (int i = 0; i < len; i++) {
+        b[i] = read();
+    }
+    return b;
+}
+
 private config_writer writer = {
     write_bool,
     write_byte,
@@ -130,7 +144,8 @@ private config_writer writer = {
     write_double,
     write_string,
     write_len_string,
-    write_string_array
+    write_string_array,
+    write_bytes
 };
 private config_reader reader = {
     read_bool,
@@ -142,7 +157,8 @@ private config_reader reader = {
     read_double,
     read_string,
     read_len_string,
-    read_string_array
+    read_string_array,
+    read_bytes
 };
 
 override

@@ -15,6 +15,7 @@ typedef struct {
     void function(String, string);
     void function(LenString, string);
     void function(StringArray, string_array);
+    void function(Bytes, byte* bytes, int len);
 } config_writer;
 
 typedef struct {
@@ -28,6 +29,7 @@ typedef struct {
     string function(String, int);
     string function(LenString);
     string_array function(StringArray);
+    byte* function(Bytes, int len);
 } config_reader;
 
 config_writer push_save_config(string file);

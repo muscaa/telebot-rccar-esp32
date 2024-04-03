@@ -31,13 +31,17 @@ impl_key_event(input) {
     int len = strlen(d->result);
     bool exists = d->value_exists != NULL && d->value_exists(d->result);
 
-    if (key == K_RETURN && (len > 0 || d->allow_empty) && !exists) {
-        d->result = realloc(d->result, len + 1);
-        call_action(obj);
+    if (key == K_RETURN) {
+        if ((len > 0 || d->allow_empty) && !exists) {
+            d->result = realloc(d->result, len + 1);
+            call_action(obj);
+        }
         return true;
-    } else if (len > 0 && key == K_BACKSPACE) {
-        d->result[--len] = '\0';
-        mcall0(render_stack, refresh);
+    } else if (key == K_BACKSPACE) {
+        if (len > 0) {
+            d->result[--len] = '\0';
+            mcall0(render_stack, refresh);
+        }
         return true;
     } else if (len < d->max_length) {
         for (int i = 0; i < d->filters->length; i++) {

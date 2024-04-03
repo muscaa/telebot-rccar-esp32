@@ -1,6 +1,7 @@
 #include "products.h"
 
 #define CONFIG_FILE "app4/products.dat"
+#define UID_LENGTH 4
 
 impl_arraydef(reservation);
 impl_arraydef(product);
@@ -30,7 +31,7 @@ private void save_products() {
         for (int j = 0; j < p->reservations->length; j++) {
             reservation r = mcall(p->reservations, get, j);
 
-            out.LenString(r->id);
+            out.Bytes(r->uid->data, UID_LENGTH);
             out.LenString(r->name);
             out.Int(r->quantity);
         }
@@ -40,7 +41,13 @@ private void save_products() {
 
 private void load_products() {
     for (int i = 0; i < products->length; i++) {
-        free(mcall(products, get, i));
+        product p = mcall(products, get, i);
+        for (int j = 0; j < p->reservations->length; j++) {
+            reservation r = mcall(p->reservations, get, j);
+            delete(r->uid);
+            free(r);
+        }
+        free(p);
     }
     mcall0(products, clear);
 
@@ -58,11 +65,11 @@ private void load_products() {
 
         int reservations_length = in.Int();
         for (int j = 0; j < reservations_length; j++) {
-            string id = in.LenString();
+            UID uid = new(UID, UID_LENGTH, in.Bytes(UID_LENGTH));
             string name = in.LenString();
             int quantity = in.Int();
 
-            mcall(p->reservations, add, new(reservation, id, name, quantity));
+            mcall(p->reservations, add, new(reservation, uid, p, name, quantity));
         }
 
         mcall(products, add, p);
@@ -79,12 +86,14 @@ void init_products() {
 }
 
 constructor(reservation,
-    string id,
+    UID uid,
+    product product,
     string name,
     int quantity
 ) {
     reservation obj = malloc(sizeoftype(reservation));
-    obj->id = id;
+    obj->uid = uid;
+    obj->product = product;
     obj->name = name;
     obj->quantity = quantity;
     return obj;
@@ -174,11 +183,24 @@ void products_reset_filter() {
     products_quantity_filter = NULL;
 }
 
+private bool reservation_exists(UID uid) {
+    for (int i = 0; i < products->length; i++) {
+        product p = mcall(products, get, i);
+
+        for (int j = 0; j < p->reservations->length; j++) {
+            reservation r = mcall(p->reservations, get, j);
+
+            if (mcall(uid, equals, r->uid)) return true;
+        }
+    }
+    return false;
+}
+
 override
 reservation create_reservation(product p, string name, int quantity) {
     if (quantity > mcall0(p, available_quantity)) return NULL;
 
-    reservation r = new(reservation, "00000000", name, quantity);
+    reservation r = new(reservation, new(UID_random, UID_LENGTH, reservation_exists), p, name, quantity);
     mcall(p->reservations, add, r);
 
     save_products();
@@ -187,12 +209,12 @@ reservation create_reservation(product p, string name, int quantity) {
 }
 
 override
-void cancel_reservation(product p, string id) {
+void cancel_reservation(product p, UID uid) {
     int index = -1;
     for (int i = 0; i < p->reservations->length; i++) {
         reservation r = mcall(p->reservations, get, i);
 
-        if (strcmp(r->id, id) == 0) {
+        if (mcall(uid, equals, r->uid)) {
             index = i;
             break;
         }

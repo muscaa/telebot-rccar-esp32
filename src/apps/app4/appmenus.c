@@ -22,6 +22,9 @@
     ->max_length(8) \
     ->accepts("09")
 
+product selected_product;
+reservation selected_reservation;
+
 override
 menu app4_menu() {
     option_array options = new(option_array);
@@ -35,8 +38,8 @@ menu app4_menu() {
 override
 menu products_main_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_PRODUCTS_MENU_VIEW, "View products"));
-    mcall(options, add, SELECTION(ID_PRODUCTS_MENU_ADD, "Add product"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_MAIN_MENU_VIEW, "View products"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_MAIN_MENU_ADD, "Add product"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -44,15 +47,10 @@ menu products_main_menu() {
 }
 
 override
-menu products_reservations_menu() {
-    return NULL;
-}
-
-override
 menu products_view_menu() {
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_VIEW_MENU_ALL, "All products"));
-    mcall(options, add, SELECTION(ID_VIEW_MENU_FILTER, "Filter"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_VIEW_MENU_ALL, "All products"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_VIEW_MENU_FILTER, "Filter"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -123,12 +121,12 @@ menu products_filter_menu() {
     products_reset_filter();
 
     option_array options = new(option_array);
-    mcall(options, add, SELECTION(ID_FILTER_MENU_NAME, "Name filter"));
-    mcall(options, add, SELECTION(ID_FILTER_MENU_TYPE, "Type filter"));
-    mcall(options, add, SELECTION(ID_FILTER_MENU_LOCATION, "Location filter"));
-    mcall(options, add, SELECTION(ID_FILTER_MENU_QUANTITY, "Quantity filter"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_FILTER_MENU_NAME, "Name filter"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_FILTER_MENU_TYPE, "Type filter"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_FILTER_MENU_LOCATION, "Location filter"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_FILTER_MENU_QUANTITY, "Quantity filter"));
     mcall(options, add, SEPARATOR);
-    mcall(options, add, SELECTION(ID_FILTER_MENU_APPLY, "Apply"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_FILTER_MENU_APPLY, "Apply"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -147,8 +145,8 @@ private void products_filter_name_action(component c) {
         screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
         menu prev_menu = mcall(prev_screen->components, get, 2)->data;
 
-        mcall(prev_menu->options, set, ID_FILTER_MENU_NAME,
-                SELECTION(ID_FILTER_MENU_NAME,
+        mcall(prev_menu->options, set, ID_PRODUCTS_FILTER_MENU_NAME,
+                SELECTION(ID_PRODUCTS_FILTER_MENU_NAME,
                         concat("Name filter", products_name_filter != NULL ?
                             format(" (%s)", products_name_filter) : ""
                         )
@@ -182,8 +180,8 @@ private void products_filter_type_action(component c) {
         screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
         menu prev_menu = mcall(prev_screen->components, get, 2)->data;
 
-        mcall(prev_menu->options, set, ID_FILTER_MENU_TYPE,
-                SELECTION(ID_FILTER_MENU_TYPE,
+        mcall(prev_menu->options, set, ID_PRODUCTS_FILTER_MENU_TYPE,
+                SELECTION(ID_PRODUCTS_FILTER_MENU_TYPE,
                         concat("Type filter", products_type_filter != NULL ?
                             format(" (%s)", products_type_filter) : ""
                         )
@@ -217,8 +215,8 @@ private void products_filter_location_action(component c) {
         screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
         menu prev_menu = mcall(prev_screen->components, get, 2)->data;
 
-        mcall(prev_menu->options, set, ID_FILTER_MENU_LOCATION,
-                SELECTION(ID_FILTER_MENU_LOCATION,
+        mcall(prev_menu->options, set, ID_PRODUCTS_FILTER_MENU_LOCATION,
+                SELECTION(ID_PRODUCTS_FILTER_MENU_LOCATION,
                         concat("Location filter", products_location_filter != NULL ?
                             format(" (%s)", products_location_filter) : ""
                         )
@@ -252,8 +250,8 @@ private void products_filter_quantity_action(component c) {
         screen prev_screen = mcall(render_stack->screens, get, render_stack->screens->length - 2);
         menu prev_menu = mcall(prev_screen->components, get, 2)->data;
 
-        mcall(prev_menu->options, set, ID_FILTER_MENU_QUANTITY,
-                SELECTION(ID_FILTER_MENU_QUANTITY,
+        mcall(prev_menu->options, set, ID_PRODUCTS_FILTER_MENU_QUANTITY,
+                SELECTION(ID_PRODUCTS_FILTER_MENU_QUANTITY,
                         concat("Quantity filter", products_quantity_filter != NULL ?
                             format(" (%s)", products_quantity_filter) : ""
                         )
@@ -293,9 +291,111 @@ menu products_info_menu(product p) {
     mcall(options, add, option_separator()
                     ->name(format("Product available quantity: %d", mcall0(p, available_quantity)))
                     ->build());
-    // how much is reserved
     mcall(options, add, SEPARATOR);
-    mcall(options, add, SELECTION(ID_INFO_MENU_DELETE, "Delete"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_INFO_MENU_RESERVATIONS, "Reservations"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_INFO_MENU_RESERVE, "Reserve"));
+    mcall(options, add, SELECTION(ID_PRODUCTS_INFO_MENU_DELETE, "Delete"));
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
+}
+
+override
+menu reservations_main_menu() {
+    option_array options = new(option_array);
+    for (int i = 0; i < products->length; i++) {
+        product p = mcall(products, get, i);
+        if (p->reservations->length == 0) continue;
+
+        mcall(options, add, SELECTION(i, p->name));
+    }
+    if (options->length == 0) {
+        mcall(options, add, option_separator()
+                        ->name("No reservations available.")
+                        ->build());
+    }
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
+}
+
+private bool reservation_quantity_check(string s) {
+    int quantity = atoi(s);
+    return quantity <= 0 || quantity > mcall0(selected_product, available_quantity);
+}
+
+private void reservations_create_action(component c) {
+    screen s = c->parent;
+
+    if (c->id == ID_BACK) {
+        mcall0(render_stack, pop);
+    } else if (c->id == 0) {
+        insert_component(s, ID_BACK, -1, label, new(label, "Reservation quantity: "));
+        insert_component(s, ID_BACK, 1, input, INPUT_QUANTITY
+                        ->exists(reservation_quantity_check)
+                        ->build());
+    } else if (c->id == 1) {
+        input name = mcall(s, get, 0)->data;
+        input quantity = mcall(s, get, 1)->data;
+
+        create_reservation(selected_product, name->result, atoi(quantity->result));
+
+        menu m = prev_menu();
+        mcall(m->options, set, 4, option_separator()
+                    ->name(format("Product available quantity: %d", mcall0(selected_product, available_quantity)))
+                    ->build());
+
+        mcall0(render_stack, pop);
+    }
+}
+
+override
+void reservations_create_screen() {
+    screen s = mcall(render_stack, push, reservations_create_action);
+    add_component(s, -1, label, new(label, "Reservation name: "));
+    add_component(s, 0, input, INPUT_NAME
+                    ->build());
+    CANCEL_WITH_ESC(s);
+}
+
+override
+menu reservations_product_menu(product p) {
+    option_array options = new(option_array);
+    for (int i = 0; i < p->reservations->length; i++) {
+        reservation r = mcall(p->reservations, get, i);
+
+        mcall(options, add, SELECTION(i, format("%s (%s)", mcall0(r->uid, to_string), r->name)));
+    }
+    if (p->reservations->length == 0) {
+        mcall(options, add, option_separator()
+                        ->name("No reservations available.")
+                        ->build());
+    }
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, BACK);
+    mcall(options, add, BACK_TO_MAIN_MENU);
+    return new(vmenu, options);
+}
+
+override
+menu reservations_info_menu(product p, reservation r) {
+    option_array options = new(option_array);
+    mcall(options, add, option_separator()
+                    ->name(format("Reservation ID: %s", mcall0(r->uid, to_string)))
+                    ->build());
+    mcall(options, add, option_separator()
+                    ->name(format("Reservation product: %s", r->product->name))
+                    ->build());
+    mcall(options, add, option_separator()
+                    ->name(format("Reservation name: %s", r->name))
+                    ->build());
+    mcall(options, add, option_separator()
+                    ->name(format("Reservation quantity: %d", r->quantity))
+                    ->build());
+    mcall(options, add, SEPARATOR);
+    mcall(options, add, SELECTION(ID_RESERVATIONS_INFO_MENU_CANCEL, "Cancel"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
