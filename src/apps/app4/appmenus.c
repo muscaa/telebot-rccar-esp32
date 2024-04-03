@@ -73,11 +73,16 @@ private void products_add_action(component c) {
         insert_component(s, ID_BACK, 2, input, INPUT_LOCATION
                         ->build());
     } else if (c->id == 2) {
+        insert_component(s, ID_BACK, -1, label, new(label, "Product quantity: "));
+        insert_component(s, ID_BACK, 3, input, INPUT_QUANTITY
+                        ->build());
+    } else if (c->id == 3) {
         input name = mcall(s, get, 0)->data;
         input type = mcall(s, get, 1)->data;
         input location = mcall(s, get, 2)->data;
+        input quantity = mcall(s, get, 3)->data;
 
-        add_product(name->result, type->result, location->result);
+        add_product(name->result, type->result, location->result, atoi(quantity->result));
 
         mcall0(render_stack, pop);
     }
@@ -144,9 +149,8 @@ private void products_filter_name_action(component c) {
 
         mcall(prev_menu->options, set, ID_FILTER_MENU_NAME,
                 SELECTION(ID_FILTER_MENU_NAME,
-                        concat("Name filter", products_name_filter == NULL ?
-                            "" :
-                            format(" (%s)", products_name_filter)
+                        concat("Name filter", products_name_filter != NULL ?
+                            format(" (%s)", products_name_filter) : ""
                         )
                 )
         );
@@ -180,9 +184,8 @@ private void products_filter_type_action(component c) {
 
         mcall(prev_menu->options, set, ID_FILTER_MENU_TYPE,
                 SELECTION(ID_FILTER_MENU_TYPE,
-                        concat("Type filter", products_type_filter == NULL ?
-                            "" :
-                            format(" (%s)", products_type_filter)
+                        concat("Type filter", products_type_filter != NULL ?
+                            format(" (%s)", products_type_filter) : ""
                         )
                 )
         );
@@ -216,9 +219,8 @@ private void products_filter_location_action(component c) {
 
         mcall(prev_menu->options, set, ID_FILTER_MENU_LOCATION,
                 SELECTION(ID_FILTER_MENU_LOCATION,
-                        concat("Location filter", products_location_filter == NULL ?
-                            "" :
-                            format(" (%s)", products_location_filter)
+                        concat("Location filter", products_location_filter != NULL ?
+                            format(" (%s)", products_location_filter) : ""
                         )
                 )
         );
@@ -252,9 +254,8 @@ private void products_filter_quantity_action(component c) {
 
         mcall(prev_menu->options, set, ID_FILTER_MENU_QUANTITY,
                 SELECTION(ID_FILTER_MENU_QUANTITY,
-                        concat("Quantity filter", products_quantity_filter == NULL ?
-                            "" :
-                            format(" (%s)", products_quantity_filter)
+                        concat("Quantity filter", products_quantity_filter != NULL ?
+                            format(" (%s)", products_quantity_filter) : ""
                         )
                 )
         );
@@ -286,9 +287,13 @@ menu products_info_menu(product p) {
     mcall(options, add, option_separator()
                     ->name(format("Product location: %s", p->location))
                     ->build());
-    //mcall(options, add, option_separator()
-    //                ->name(format("Product quantity: %d", p->quantity))
-    //                ->build());
+    mcall(options, add, option_separator()
+                    ->name(format("Product quantity: %d", p->quantity))
+                    ->build());
+    mcall(options, add, option_separator()
+                    ->name(format("Product available quantity: %d", mcall0(p, available_quantity)))
+                    ->build());
+    // how much is reserved
     mcall(options, add, SEPARATOR);
     mcall(options, add, SELECTION(ID_INFO_MENU_DELETE, "Delete"));
     mcall(options, add, SEPARATOR);

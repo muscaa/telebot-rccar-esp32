@@ -30,7 +30,7 @@ MENU(products_available,
 
             if (prev_menu->options->length == 4) { // product, separator, back, main menu
                 mcall(prev_menu->options, set, 0, option_separator()
-                                ->name("No wagons available.")
+                                ->name("No products available.")
                                 ->build());
             } else {
                 int i = 0;

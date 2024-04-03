@@ -2,6 +2,7 @@
 
 #define CONFIG_FILE "app4/products.dat"
 
+impl_arraydef(reservation);
 impl_arraydef(product);
 
 product_array products;
@@ -23,6 +24,16 @@ private void save_products() {
         out.LenString(p->name);
         out.LenString(p->type);
         out.LenString(p->location);
+        out.Int(p->quantity);
+
+        out.Int(p->reservations->length);
+        for (int j = 0; j < p->reservations->length; j++) {
+            reservation r = mcall(p->reservations, get, j);
+
+            out.LenString(r->id);
+            out.LenString(r->name);
+            out.Int(r->quantity);
+        }
     }
     pop_save_config();
 }
@@ -41,8 +52,20 @@ private void load_products() {
         string name = in.LenString();
         string type = in.LenString();
         string location = in.LenString();
+        int quantity = in.Int();
 
-        mcall(products, add, new(product, name, type, location));
+        product p = new(product, name, type, location, quantity);
+
+        int reservations_length = in.Int();
+        for (int j = 0; j < reservations_length; j++) {
+            string id = in.LenString();
+            string name = in.LenString();
+            int quantity = in.Int();
+
+            mcall(p->reservations, add, new(reservation, id, name, quantity));
+        }
+
+        mcall(products, add, p);
     }
     pop_load_config();
 }
@@ -55,23 +78,48 @@ void init_products() {
     load_products();
 }
 
+constructor(reservation,
+    string id,
+    string name,
+    int quantity
+) {
+    reservation obj = malloc(sizeoftype(reservation));
+    obj->id = id;
+    obj->name = name;
+    obj->quantity = quantity;
+    return obj;
+}
+
+private int impl_method0(product, available_quantity) {
+    int reserved = 0;
+    for (int i = 0; i < obj->reservations->length; i++) {
+        reservation r = mcall(obj->reservations, get, i);
+        reserved += r->quantity;
+    }
+    return obj->quantity - reserved;
+}
+
 constructor(product,
     string name,
     string type,
-    string location
+    string location,
+    int quantity
 ) {
     product obj = malloc(sizeoftype(product));
     obj->name = name;
     obj->type = type;
     obj->location = location;
+    obj->quantity = quantity;
+    obj->reservations = new(reservation_array);
+    set_impl(product, obj, available_quantity);
     return obj;
 }
 
 override
-void add_product(string name, string type, string location) {
+void add_product(string name, string type, string location, int quantity) {
     if (product_exists(name)) return;
 
-    mcall(products, add, new(product, name, type, location));
+    mcall(products, add, new(product, name, type, location, quantity));
 
     save_products();
 }
@@ -112,7 +160,7 @@ void products_apply_filter() {
         if (products_name_filter != NULL && strstr(p->name, products_name_filter) == NULL) continue;
         if (products_type_filter != NULL && strstr(p->type, products_type_filter) == NULL) continue;
         if (products_location_filter != NULL && strstr(p->location, products_location_filter) == NULL) continue;
-        // quantity filter
+        if (products_quantity_filter != NULL && p->quantity != atoi(products_quantity_filter)) continue;
 
         mcall(products_filtered, add, p);
     }
@@ -124,4 +172,35 @@ void products_reset_filter() {
     products_type_filter = NULL;
     products_location_filter = NULL;
     products_quantity_filter = NULL;
+}
+
+override
+reservation create_reservation(product p, string name, int quantity) {
+    if (quantity > mcall0(p, available_quantity)) return NULL;
+
+    reservation r = new(reservation, "00000000", name, quantity);
+    mcall(p->reservations, add, r);
+
+    save_products();
+
+    return r;
+}
+
+override
+void cancel_reservation(product p, string id) {
+    int index = -1;
+    for (int i = 0; i < p->reservations->length; i++) {
+        reservation r = mcall(p->reservations, get, i);
+
+        if (strcmp(r->id, id) == 0) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) return;
+
+    free(mcall(p->reservations, get, index));
+    mcall(p->reservations, remove, index);
+
+    save_products();
 }

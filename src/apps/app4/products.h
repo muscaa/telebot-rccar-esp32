@@ -4,21 +4,38 @@
 
 void init_products();
 
+type(reservation,
+    string id,
+    string name,
+    int quantity
+) {
+    string id;
+    string name;
+    int quantity;
+};
+
+arraydef(reservation);
+
 type(product,
     string name,
     string type,
-    string location
+    string location,
+    int quantity
 ) {
     string name;
     string type;
     string location;
+    int quantity;
+    reservation_array reservations;
+
+    int method0(product, available_quantity);
 };
 
 arraydef(product);
 
 extern product_array products;
 
-void add_product(string name, string type, string location);
+void add_product(string name, string type, string location, int quantity);
 
 void remove_product(string name);
 
@@ -35,3 +52,7 @@ extern string products_quantity_filter;
 void products_apply_filter();
 
 void products_reset_filter();
+
+reservation create_reservation(product p, string name, int quantity);
+
+void cancel_reservation(product p, string id);
