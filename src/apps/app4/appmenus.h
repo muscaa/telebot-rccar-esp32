@@ -1,18 +1,16 @@
 #pragma once
 
 #include "../app.h"
+#include "products.h"
 
 enum Menus {
     app4, // app4_menu
-    products, // products_menu
+    products_main, // products_menu
     products_reservations, // products_reservations_menu
     products_view, // products_view_menu
-    products_add, // products_add_menu
-    products_all, // products_available_menu
+    products_available, // products_available_menu
     products_filter, // products_filter_menu
-    products_filter_name, // products_filter_name_menu
-    products_filter_location, // products_filter_location_menu
-    products_filter_availability, // products_filter_availability_menu
+    products_info, // products_info_menu
 };
 
 #define ID_MAIN_MENU_PRODUCTS 0
@@ -21,7 +19,7 @@ menu app4_menu();
 
 #define ID_PRODUCTS_MENU_VIEW 0
 #define ID_PRODUCTS_MENU_ADD 1
-menu products_menu();
+menu products_main_menu();
 
 menu products_reservations_menu();
 
@@ -29,18 +27,24 @@ menu products_reservations_menu();
 #define ID_VIEW_MENU_FILTER 1
 menu products_view_menu();
 
-menu products_add_menu();
+void products_add_screen();
 
-menu products_available_menu();
+menu products_available_menu(product_array available);
 
 #define ID_FILTER_MENU_NAME 0
-#define ID_FILTER_MENU_LOCATION 1
-#define ID_FILTER_MENU_AVAILABILITY 2
-#define ID_FILTER_MENU_APPLY 3
+#define ID_FILTER_MENU_TYPE 1
+#define ID_FILTER_MENU_LOCATION 2
+#define ID_FILTER_MENU_QUANTITY 3
+#define ID_FILTER_MENU_APPLY 4
 menu products_filter_menu();
 
-menu products_filter_name_menu();
+void products_filter_name_screen();
 
-menu products_filter_location_menu();
+void products_filter_type_screen();
 
-menu products_filter_availability_menu();
+void products_filter_location_screen();
+
+void products_filter_quantity_screen();
+
+#define ID_INFO_MENU_DELETE 0
+menu products_info_menu(product p);

@@ -30,6 +30,7 @@ extern product_array products_filtered;
 extern string products_name_filter;
 extern string products_type_filter;
 extern string products_location_filter;
+extern string products_quantity_filter;
 
 void products_apply_filter();
 
