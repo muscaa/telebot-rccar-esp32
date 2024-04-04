@@ -39,7 +39,7 @@ override
 menu products_main_menu() {
     option_array options = new(option_array);
     mcall(options, add, SELECTION(ID_PRODUCTS_MAIN_MENU_VIEW, "View products"));
-    mcall(options, add, SELECTION(ID_PRODUCTS_MAIN_MENU_ADD, "Add product"));
+    if (has_perm(ACCOUNT_PERMISSION_ADD_CONTENT)) mcall(options, add, SELECTION(ID_PRODUCTS_MAIN_MENU_ADD, "Add product"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);
@@ -294,7 +294,7 @@ menu products_info_menu(product p) {
     mcall(options, add, SEPARATOR);
     mcall(options, add, SELECTION(ID_PRODUCTS_INFO_MENU_RESERVATIONS, "Reservations"));
     mcall(options, add, SELECTION(ID_PRODUCTS_INFO_MENU_RESERVE, "Reserve"));
-    mcall(options, add, SELECTION(ID_PRODUCTS_INFO_MENU_DELETE, "Delete"));
+    if (has_perm(ACCOUNT_PERMISSION_REMOVE_CONTENT)) mcall(options, add, SELECTION(ID_PRODUCTS_INFO_MENU_DELETE, "Delete"));
     mcall(options, add, SEPARATOR);
     mcall(options, add, BACK);
     mcall(options, add, BACK_TO_MAIN_MENU);

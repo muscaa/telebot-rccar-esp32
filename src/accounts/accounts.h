@@ -5,7 +5,9 @@
 void init_accounts();
 
 typedef enum {
-    ACCOUNT_PERMISSION_ADMIN
+    ACCOUNT_PERMISSION_ADMIN,
+    ACCOUNT_PERMISSION_ADD_CONTENT,
+    ACCOUNT_PERMISSION_REMOVE_CONTENT,
 } account_permission;
 
 arraydef(account_permission);

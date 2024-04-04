@@ -21,6 +21,7 @@ private void on_action(component c) {
             break;
         }
         case -4: {
+            // TODO: Account settings action
             break;
         }
         default: {
@@ -41,10 +42,9 @@ void screen_main_menu() {
                             ->build());
     }
     mcall(options, add, SEPARATOR);
-    mcall(options, add, option_selection("Account Settings")
+    /*mcall(options, add, option_selection("Account Settings")
                     ->id(-4)
-                    ->foreground_hover(COLOR_RED)
-                    ->build());
+                    ->build());*/
     mcall(options, add, option_selection("Logout")
                     ->id(-3)
                     ->foreground_hover(COLOR_RED)
