@@ -54,7 +54,9 @@ void screen_main_menu() {
                     ->foreground_hover(COLOR_RED)
                     ->build());
     
-    add_component(s, 0, title, new(title, "Main Menu"));
+    add_component(s, -1, title, new(title, "Main Menu"));
+    add_component(s, -1, separator, new(separator));
+    add_component(s, -1, label, new(label, format("Logged in as: %s\n", get_account_copy()->display_name)));
     add_component(s, -1, separator, new(separator));
     add_component(s, 1, menu, new(vmenu, options));
 }
