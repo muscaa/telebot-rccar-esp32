@@ -14,6 +14,7 @@ type(input) {
     bool function(value_exists, string);
     int max_length;
     bool allow_empty;
+    bool password;
     input_filter_array filters;
     
     string result;
@@ -27,6 +28,7 @@ type(input_builder) {
     input_builder function(exists, bool function(value_exists, string value));
     input_builder function(max_length, int max_length);
     input_builder function(allow_empty);
+    input_builder function(password);
     input_builder function(accepts, string chars);
     input function(build);
 };

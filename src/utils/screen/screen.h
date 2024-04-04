@@ -33,11 +33,13 @@ type(screen,
     void function(on_action, component c)
 ) {
     component_array components;
+    component_array components_to_delete;
     void function(on_action, component c);
 
     void method(screen, init, component c);
     void method0(screen, render);
     void method(screen, key_event, int key);
+    void method0(screen, tick);
 
     component method(screen, get, int id);
     void method(screen, add, component c);

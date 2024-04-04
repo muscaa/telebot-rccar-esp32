@@ -17,10 +17,18 @@ impl_render(input) {
 
     bool exists = d->value_exists != NULL && d->value_exists(d->result);
 
+    string value = d->password ? malloc(strlen(d->result) + 1) : d->result;
+    if (d->password) {
+        memset(value, '*', strlen(d->result));
+        value[strlen(d->result)] = '\0';
+    }
+
     mcall(s, push_foreground, exists ? COLOR_RED : COLOR_BLUE);
-    mcall(s, append, d->result);
+    mcall(s, append, value);
     mcall0(s, pop_foreground);
     mcall0(s, new_line);
+
+    if (d->password) free(value);
 }
 
 impl_key_event(input) {
@@ -73,6 +81,7 @@ constructor(input) {
     obj->value_exists = NULL;
     obj->max_length = 0;
     obj->allow_empty = false;
+    obj->password = false;
     obj->filters = new(input_filter_array);
     obj->result = NULL;
     set_impl(input, obj, __destruct);
@@ -102,6 +111,11 @@ private input_builder impl_function(input_builder, allow_empty) {
     return builder;
 }
 
+private input_builder impl_function(input_builder, password) {
+    building->password = true;
+    return builder;
+}
+
 private input_builder impl_function(input_builder, accepts, string chars) {
     for (int i = 0; i < strlen(chars); i += 2) {
         char from = chars[i];
@@ -124,6 +138,7 @@ constructor(input_builder) {
         set_impl(input_builder, builder, exists);
         set_impl(input_builder, builder, max_length);
         set_impl(input_builder, builder, allow_empty);
+        set_impl(input_builder, builder, password);
         set_impl(input_builder, builder, accepts);
         set_impl(input_builder, builder, build);
     }

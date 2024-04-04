@@ -52,3 +52,8 @@ override
 string copy(string s) {
     return strdup(s);
 }
+
+override
+void string_to_bytes(string s, byte* bytes) {
+    memcpy(bytes, s, strlen(s));
+}

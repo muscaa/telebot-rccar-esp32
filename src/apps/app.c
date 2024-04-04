@@ -56,3 +56,7 @@ void remove_option_and_decrement_after(menu m, int start_id, string none_availab
         }
     }
 }
+
+void goto_screen_main_menu() {
+    mcall(render_stack, pop_to, 2);
+}

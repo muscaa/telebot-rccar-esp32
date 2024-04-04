@@ -22,3 +22,5 @@
 #include "date/date_time.h"
 
 #include "uid/uid.h"
+
+#include "crypto/sha256.h"

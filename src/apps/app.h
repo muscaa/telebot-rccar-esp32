@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../utils/utils.h"
+#include "../accounts/accounts.h"
 
 #define SELECTION(option_id, option_name) option_selection(option_name)->id(option_id)->build()
 
@@ -40,7 +41,7 @@
         \
         switch (opt->id) { \
             CASE(ID_BACK_TO_MAIN_MENU, \
-                mcall(render_stack, pop_to, 1); \
+                goto_screen_main_menu(); \
             ) \
             CASE(ID_BACK, \
                 mcall0(render_stack, pop); \
@@ -68,3 +69,5 @@ screen prev_screen();
 menu prev_menu();
 
 void remove_option_and_decrement_after(menu m, int start_id, string none_available_message);
+
+void goto_screen_main_menu();
