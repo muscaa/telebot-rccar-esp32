@@ -42,8 +42,7 @@ static const WORD k[64] = {
 };
 
 /*********************** FUNCTION DEFINITIONS ***********************/
-void sha256_transform(SHA256_CTX *ctx, const byte data[])
-{
+void sha256_transform(SHA256_CTX *ctx, const byte data[]) {
 	WORD a, b, c, d, e, f, g, h, i, j, t1, t2, m[64];
 
 	for (i = 0, j = 0; i < 16; ++i, j += 4)
@@ -61,8 +60,8 @@ void sha256_transform(SHA256_CTX *ctx, const byte data[])
 	h = ctx->state[7];
 
 	for (i = 0; i < 64; ++i) {
-		t1 = h + EP1(e) + CH(e,f,g) + k[i] + m[i];
-		t2 = EP0(a) + MAJ(a,b,c);
+		t1 = h + EP1(e) + CH(e, f, g) + k[i] + m[i];
+		t2 = EP0(a) + MAJ(a, b, c);
 		h = g;
 		g = f;
 		f = e;
@@ -83,8 +82,8 @@ void sha256_transform(SHA256_CTX *ctx, const byte data[])
 	ctx->state[7] += h;
 }
 
-void sha256_init(SHA256_CTX *ctx)
-{
+override
+void sha256_init(SHA256_CTX *ctx) {
 	ctx->datalen = 0;
 	ctx->bitlen = 0;
 	ctx->state[0] = 0x6a09e667;
@@ -97,8 +96,8 @@ void sha256_init(SHA256_CTX *ctx)
 	ctx->state[7] = 0x5be0cd19;
 }
 
-void sha256_update(SHA256_CTX *ctx, const byte data[], size_t len)
-{
+override
+void sha256_update(SHA256_CTX *ctx, const byte data[], size_t len) {
 	WORD i;
 
 	for (i = 0; i < len; ++i) {
@@ -112,8 +111,8 @@ void sha256_update(SHA256_CTX *ctx, const byte data[], size_t len)
 	}
 }
 
-void sha256_final(SHA256_CTX *ctx, byte hash[])
-{
+override
+void sha256_final(SHA256_CTX *ctx, byte hash[]) {
 	WORD i;
 
 	i = ctx->datalen;
@@ -123,8 +122,7 @@ void sha256_final(SHA256_CTX *ctx, byte hash[])
 		ctx->data[i++] = 0x80;
 		while (i < 56)
 			ctx->data[i++] = 0x00;
-	}
-	else {
+	} else {
 		ctx->data[i++] = 0x80;
 		while (i < 64)
 			ctx->data[i++] = 0x00;
@@ -156,4 +154,21 @@ void sha256_final(SHA256_CTX *ctx, byte hash[])
 		hash[i + 24] = (ctx->state[6] >> (24 - i * 8)) & 0x000000ff;
 		hash[i + 28] = (ctx->state[7] >> (24 - i * 8)) & 0x000000ff;
 	}
+}
+
+override
+HASH sha256_hash(const byte data[], size_t len) {
+    SHA256_CTX ctx;
+    byte* hash = malloc(SHA256_BLOCK_SIZE);
+    sha256_init(&ctx);
+    sha256_update(&ctx, data, len);
+    sha256_final(&ctx, hash);
+    return new(HASH, SHA256_BLOCK_SIZE, hash);
+}
+
+override
+HASH sha256_hash_string(const string s) {
+    byte data[strlen(s)];
+    string_to_bytes(s, data);
+    return sha256_hash(data, strlen(s));
 }

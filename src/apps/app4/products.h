@@ -7,12 +7,12 @@ void init_products();
 typedef(product);
 
 type(reservation,
-    UID uid,
+    HASH uid,
     product product,
     string name,
     int quantity
 ) {
-    UID uid;
+    HASH uid;
     product product;
     string name;
     int quantity;
@@ -59,4 +59,4 @@ void products_reset_filter();
 
 reservation create_reservation(product p, string name, int quantity);
 
-void cancel_reservation(product p, UID uid);
+void cancel_reservation(product p, HASH uid);

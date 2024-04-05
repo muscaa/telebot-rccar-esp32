@@ -77,20 +77,20 @@ private option impl_function(option_builder, build) {
 
 constructor(option_builder) {
     building = new(option);
-    if (builder == NULL) {
-        builder = malloc(sizeoftype(option_builder));
-        set_impl(option_builder, builder, id);
-        set_impl(option_builder, builder, name);
-        set_impl(option_builder, builder, name_hover);
-        set_impl(option_builder, builder, description);
-        set_impl(option_builder, builder, foreground);
-        set_impl(option_builder, builder, foreground_hover);
-        set_impl(option_builder, builder, background);
-        set_impl(option_builder, builder, background_hover);
-        set_impl(option_builder, builder, separator);
-        set_impl(option_builder, builder, on_action);
-        set_impl(option_builder, builder, build);
-    }
+    if (builder != NULL) return builder;
+
+    builder = malloc(sizeoftype(option_builder));
+    set_impl(option_builder, builder, id);
+    set_impl(option_builder, builder, name);
+    set_impl(option_builder, builder, name_hover);
+    set_impl(option_builder, builder, description);
+    set_impl(option_builder, builder, foreground);
+    set_impl(option_builder, builder, foreground_hover);
+    set_impl(option_builder, builder, background);
+    set_impl(option_builder, builder, background_hover);
+    set_impl(option_builder, builder, separator);
+    set_impl(option_builder, builder, on_action);
+    set_impl(option_builder, builder, build);
     return builder;
 }
 

@@ -7,13 +7,13 @@
 * Disclaimer: This code is presented "as is" without any guarantees.
 * Details:    Defines the API for the corresponding SHA1 implementation.
 *********************************************************************/
-
 #pragma once
 
 /*************************** HEADER FILES ***************************/
 #include <stddef.h>
 
 #include "../types/byte.h"
+#include "hash.h"
 
 /****************************** MACROS ******************************/
 #define SHA256_BLOCK_SIZE 32            // SHA256 outputs a 32 byte digest
@@ -32,3 +32,6 @@ typedef struct {
 void sha256_init(SHA256_CTX *ctx);
 void sha256_update(SHA256_CTX *ctx, const byte data[], size_t len);
 void sha256_final(SHA256_CTX *ctx, byte hash[]);
+
+HASH sha256_hash(const byte data[], size_t len);
+HASH sha256_hash_string(const string s);

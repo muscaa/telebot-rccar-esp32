@@ -3,19 +3,19 @@
 #include "../types/byte.h"
 #include "../types/string.h"
 
-type(UID,
+type(HASH,
     int length,
     byte* data
 ) {
     int length;
     byte* data;
 
-    string method0(UID, to_string);
-    bool method(UID, equals, UID uid);
-    destruct(UID);
+    string method0(HASH, to_string);
+    bool method(HASH, equals, HASH hash);
+    destruct(HASH);
 };
 
-UID construct(UID_random, int length, bool function(exists, UID uid));
+HASH construct(HASH_random, int length, bool function(exists, HASH hash));
 
 string hex_string(byte* buf, int len);
 

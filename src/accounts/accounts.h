@@ -13,13 +13,22 @@ typedef enum {
 arraydef(account_permission);
 
 type(account,
+    HASH uid,
     string display_name,
     account_permission_array permissions
 ) {
+    HASH uid;
     string display_name;
     account_permission_array permissions;
 
     destruct(account);
+};
+
+type(readonly_account) {
+    HASH function(uid);
+    string function(display_name);
+    int function(permissions_length);
+    account_permission function(get_permission, int index);
 };
 
 bool accounts_register(string username, string password);
@@ -28,6 +37,6 @@ bool accounts_login(string username, string password);
 
 bool accounts_logout();
 
-account get_account_copy();
+readonly_account get_account();
 
 bool has_perm(account_permission permission);

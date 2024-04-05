@@ -1,4 +1,4 @@
-#include "uid.h"
+#include "hash.h"
 
 #include <stdlib.h>
 #include "../defines.h"
@@ -7,39 +7,39 @@
 #define HEX_STRING "0123456789ABCDEF"
 #define HEX_BYTES(c) ((c >= '0' && c <= '9') ? c - '0' : ((c >= 'A' && c <= 'F') ? c - 'A' + 10 : c - 'a' + 10))
 
-private string impl_method0(UID, to_string) {
+private string impl_method0(HASH, to_string) {
     return hex_string(obj->data, obj->length);
 }
 
-private bool impl_method(UID, equals, UID uid) {
-    if (obj->length != uid->length) return false;
+private bool impl_method(HASH, equals, HASH hash) {
+    if (obj->length != hash->length) return false;
 
     for (int i = 0; i < obj->length; i++) {
-        if (obj->data[i] != uid->data[i]) return false;
+        if (obj->data[i] != hash->data[i]) return false;
     }
 
     return true;
 }
 
-destructor(UID) {
+destructor(HASH) {
     free(obj->data);
 }
 
-constructor(UID,
+constructor(HASH,
     int length,
     byte* data
 ) {
-    UID obj = malloc(sizeoftype(UID));
+    HASH obj = malloc(sizeoftype(HASH));
     obj->length = length;
     obj->data = data;
-    set_impl(UID, obj, to_string);
-    set_impl(UID, obj, equals);
-    set_impl(UID, obj, __destruct);
+    set_impl(HASH, obj, to_string);
+    set_impl(HASH, obj, equals);
+    set_impl(HASH, obj, __destruct);
     return obj;
 }
 
-UID construct(UID_random, int length, bool function(exists, UID uid)) {
-    UID obj = new(UID, length, malloc(length));
+HASH construct(HASH_random, int length, bool function(exists, HASH hash)) {
+    HASH obj = new(HASH, length, malloc(length));
     random_bytes(obj->data, length);
     if (exists != NULL) {
         while (exists(obj)) {

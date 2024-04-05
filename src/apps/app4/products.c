@@ -65,7 +65,7 @@ private void load_products() {
 
         int reservations_length = in.Int();
         for (int j = 0; j < reservations_length; j++) {
-            UID uid = new(UID, UID_LENGTH, in.Bytes(UID_LENGTH));
+            HASH uid = new(HASH, UID_LENGTH, in.Bytes(UID_LENGTH));
             string name = in.LenString();
             int quantity = in.Int();
 
@@ -86,7 +86,7 @@ void init_products() {
 }
 
 constructor(reservation,
-    UID uid,
+    HASH uid,
     product product,
     string name,
     int quantity
@@ -183,7 +183,7 @@ void products_reset_filter() {
     products_quantity_filter = NULL;
 }
 
-private bool reservation_exists(UID uid) {
+private bool reservation_exists(HASH uid) {
     for (int i = 0; i < products->length; i++) {
         product p = mcall(products, get, i);
 
@@ -200,7 +200,7 @@ override
 reservation create_reservation(product p, string name, int quantity) {
     if (quantity > mcall0(p, available_quantity)) return NULL;
 
-    reservation r = new(reservation, new(UID_random, UID_LENGTH, reservation_exists), p, name, quantity);
+    reservation r = new(reservation, new(HASH_random, UID_LENGTH, reservation_exists), p, name, quantity);
     mcall(p->reservations, add, r);
 
     save_products();
@@ -209,7 +209,7 @@ reservation create_reservation(product p, string name, int quantity) {
 }
 
 override
-void cancel_reservation(product p, UID uid) {
+void cancel_reservation(product p, HASH uid) {
     int index = -1;
     for (int i = 0; i < p->reservations->length; i++) {
         reservation r = mcall(p->reservations, get, i);
