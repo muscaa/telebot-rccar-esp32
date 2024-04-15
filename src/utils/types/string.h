@@ -20,3 +20,9 @@ string format(string format, ...);
 string copy(string s);
 
 void string_to_bytes(string s, byte* bytes);
+
+string lower(string s);
+
+bool equals(string s1, string s2);
+
+bool equals_ignore_case(string s1, string s2);

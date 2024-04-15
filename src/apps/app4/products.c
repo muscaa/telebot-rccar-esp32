@@ -166,9 +166,9 @@ void products_apply_filter() {
     for (int i = 0; i < products->length; i++) {
         product p = mcall(products, get, i);
 
-        if (products_name_filter != NULL && strstr(p->name, products_name_filter) == NULL) continue;
-        if (products_type_filter != NULL && strstr(p->type, products_type_filter) == NULL) continue;
-        if (products_location_filter != NULL && strstr(p->location, products_location_filter) == NULL) continue;
+        if (products_name_filter != NULL && strstr(lower(p->name), lower(products_name_filter)) == NULL) continue;
+        if (products_type_filter != NULL && strstr(lower(p->type), lower(products_type_filter)) == NULL) continue;
+        if (products_location_filter != NULL && strstr(lower(p->location), lower(products_location_filter)) == NULL) continue;
         if (products_quantity_filter != NULL && p->quantity != atoi(products_quantity_filter)) continue;
 
         mcall(products_filtered, add, p);

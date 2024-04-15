@@ -57,3 +57,23 @@ override
 void string_to_bytes(string s, byte* bytes) {
     memcpy(bytes, s, strlen(s));
 }
+
+override
+string lower(string s) {
+    string result = malloc(strlen(s) + 1);
+    for (int i = 0; i < strlen(s); i++) {
+        result[i] = tolower(s[i]);
+    }
+    result[strlen(result)] = '\0';
+    return result;
+}
+
+override
+bool equals(string s1, string s2) {
+    return strcmp(s1, s2) == 0;
+}
+
+override
+bool equals_ignore_case(string s1, string s2) {
+    return equals(lower(s1), lower(s2));
+}

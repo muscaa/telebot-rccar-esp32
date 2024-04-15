@@ -332,15 +332,16 @@ private void reservations_create_action(component c) {
     if (c->id == ID_BACK) {
         mcall0(render_stack, pop);
     } else if (c->id == 0) {
-        insert_component(s, ID_BACK, -1, label, new(label, "Reservation quantity: "));
+        /*insert_component(s, ID_BACK, -1, label, new(label, "Reservation quantity: "));
         insert_component(s, ID_BACK, 1, input, INPUT_QUANTITY
                         ->exists(reservation_quantity_check)
                         ->build());
-    } else if (c->id == 1) {
-        input name = mcall(s, get, 0)->data;
-        input quantity = mcall(s, get, 1)->data;
+    } else if (c->id == 1) {*/
+        //input name = mcall(s, get, 0)->data;
+        input quantity = mcall(s, get, 0)->data;
+        string name = get_account()->display_name();
 
-        create_reservation(selected_product, name->result, atoi(quantity->result));
+        create_reservation(selected_product, name, atoi(quantity->result));
 
         menu m = prev_menu();
         mcall(m->options, set, 4, option_separator()
@@ -354,9 +355,14 @@ private void reservations_create_action(component c) {
 override
 void reservations_create_screen() {
     screen s = mcall(render_stack, push, reservations_create_action);
-    add_component(s, -1, label, new(label, "Reservation name: "));
+    /*add_component(s, -1, label, new(label, "Reservation name: "));
     add_component(s, 0, input, INPUT_NAME
-                    ->build());
+                    ->build());*/
+
+    add_component(s, -1, label, new(label, "Reservation quantity: "));
+    add_component(s, 0, input, INPUT_QUANTITY
+                        ->exists(reservation_quantity_check)
+                        ->build());
     CANCEL_WITH_ESC(s);
 }
 
