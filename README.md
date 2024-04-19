@@ -23,13 +23,13 @@ The app allows adding/deleting a bike with type and location,
 displaying all bikes and reservations, searching for a bike by type
 and availability, reserving the bike and canceling the reservation.
 
-### #4. Pharmacy products reservation system
+### #4. Pharmacy products reservation system (complete)
 
 The app allows adding/deleting a product with name, type and location,
 displaying all products and reservations, searching for a product by name
 and availability, reserving the product and canceling the reservation.
 
-### #5. Train tracking system
+### #5. Train tracking system (complete)
 
 The app allows adding/deleting a train with an id, adding/deleting
 a wagon with id and type, displaying all trains and wagons, searching
