@@ -1,0 +1,12 @@
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# PlatformIO
+.pio/
+managed_components/
+dependencies.lock
+sdkconfig.*
+!sdkconfig.defaults
