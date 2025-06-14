@@ -6,8 +6,8 @@ const int SERVO_PIN = 27;
 const int R_PWM_PIN = 26;
 const int L_PWM_PIN = 25;
 
-const int pwmChannel_R = 1;
-const int pwmChannel_L = 2;
+const int pwmChannel_R = 10;
+const int pwmChannel_L = 11;
 const int pwmFreq = 20000;
 const int pwmResolution = 8;
 
@@ -56,9 +56,9 @@ void update(float delta) {
         digitalWrite(2, LOW);
     }
 
-    if (ps5.LStickX() < -deadzone) {
+    if (ps5.Left()) {
         servo.write(0);
-    } else if (ps5.LStickX() > deadzone) {
+    } else if (ps5.Right()) {
         servo.write(180);
     } else {
         servo.write(90);
@@ -71,8 +71,6 @@ void update(float delta) {
         motorSpeedFactor -= 0.1 * delta;
         motorSpeedFactor = constrain(motorSpeedFactor, 0.0, 1.0);
     }
-
-    Serial.println(motorSpeedFactor);
 
     if (ps5.R2Value() > 0) {
         setMotor(ps5.R2Value() * motorSpeedFactor);
