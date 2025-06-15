@@ -10,17 +10,17 @@ namespace rccar::components::motor {
 
 const int GEAR_MAX = 5;
 const int GEAR_SPEEDS_NORMAL[GEAR_MAX] = {
-    40,
-    60,
+    50,
+    65,
     80,
-    100,
-    120
+    95,
+    110
 };
 const int GEAR_SPEEDS_TURBO[GEAR_MAX] = {
-    51,
-    102,
-    153,
-    204,
+    70,
+    110,
+    150,
+    200,
     255
 };
 
