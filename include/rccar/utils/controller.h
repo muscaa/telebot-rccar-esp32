@@ -32,8 +32,6 @@ extern input::Digital R1;
 extern input::Digital R2;
 extern input::Digital R3;
 
-extern input::Digital DIGITAL_VALUES[22];
-
 extern input::Analog L2_VALUE;
 extern input::Analog R2_VALUE;
 
@@ -43,6 +41,6 @@ extern input::Analog L_STICK_Y;
 extern input::Analog R_STICK_X;
 extern input::Analog R_STICK_Y;
 
-extern input::Analog ANALOG_VALUES[6];
+void update(float delta);
 
 }

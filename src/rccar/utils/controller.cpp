@@ -32,15 +32,6 @@ input::Digital R1([]() { return ps5.R1(); });
 input::Digital R2([]() { return ps5.R2(); });
 input::Digital R3([]() { return ps5.R3(); });
 
-input::Digital DIGITAL_VALUES[22] = {
-    LEFT, UP, RIGHT, DOWN,
-    UP_LEFT, UP_RIGHT, DOWN_RIGHT, DOWN_LEFT,
-    SQUARE, TRIANGLE, CIRCLE, CROSS,
-    SHARE, OPTIONS, PS_BUTTON, TOUCHPAD,
-    L1, L2, L3,
-    R1, R2, R3
-};
-
 input::Analog L2_VALUE([]() { return ps5.L2Value() / 255.0F; });
 input::Analog R2_VALUE([]() { return ps5.R2Value() / 255.0F; });
 
@@ -50,10 +41,43 @@ input::Analog L_STICK_Y([]() { return (ps5.LStickY() + (ps5.LStickY() < 0 ? 1 : 
 input::Analog R_STICK_X([]() { return (ps5.RStickX() + (ps5.RStickX() < 0 ? 1 : 0)) / 127.0F; });
 input::Analog R_STICK_Y([]() { return (ps5.RStickY() + (ps5.RStickY() < 0 ? 1 : 0)) / 127.0F; });
 
-input::Analog ANALOG_VALUES[6] = {
-    L2_VALUE, R2_VALUE,
-    L_STICK_X, L_STICK_Y,
-    R_STICK_X, R_STICK_Y
-};
+void update(float delta) {
+    LEFT.update(delta);
+    UP.update(delta);
+    RIGHT.update(delta);
+    DOWN.update(delta);
+
+    UP_LEFT.update(delta);
+    UP_RIGHT.update(delta);
+    DOWN_RIGHT.update(delta);
+    DOWN_LEFT.update(delta);
+
+    SQUARE.update(delta);
+    TRIANGLE.update(delta);
+    CIRCLE.update(delta);
+    CROSS.update(delta);
+
+    SHARE.update(delta);
+    OPTIONS.update(delta);
+    PS_BUTTON.update(delta);
+    TOUCHPAD.update(delta);
+
+    L1.update(delta);
+    L2.update(delta);
+    L3.update(delta);
+
+    R1.update(delta);
+    R2.update(delta);
+    R3.update(delta);
+
+    L2_VALUE.update(delta);
+    R2_VALUE.update(delta);
+
+    L_STICK_X.update(delta);
+    L_STICK_Y.update(delta);
+
+    R_STICK_X.update(delta);
+    R_STICK_Y.update(delta);
+}
 
 }

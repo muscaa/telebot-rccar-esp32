@@ -24,7 +24,7 @@ void update(float delta) {
         return;
     }
 
-    servo.write(90 + 90 * stick);
+    servo.write(static_cast<int>(90 + 90 * stick));
 }
 
 }

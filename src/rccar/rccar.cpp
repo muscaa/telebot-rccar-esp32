@@ -16,13 +16,7 @@ void init() {
 }
 
 void update(float delta) {
-    for (utils::input::Digital& input : utils::controller::DIGITAL_VALUES) {
-        input.update(delta);
-    }
-    for (utils::input::Analog& input : utils::controller::ANALOG_VALUES) {
-        input.update(delta);
-    }
-
+    utils::controller::update(delta);
     components::servo::update(delta);
     components::motor::update(delta);
 }
