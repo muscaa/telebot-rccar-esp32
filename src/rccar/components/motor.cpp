@@ -4,6 +4,7 @@
 
 #include "rccar/constants.h"
 #include "rccar/utils/controller.h"
+#include "rccar/rccar.h"
 
 namespace rccar::components::motor {
 
@@ -25,6 +26,7 @@ const int GEAR_SPEEDS_TURBO[GEAR_MAX] = {
 };
 
 static int gear = 0;
+static int fallback_gear = 0;
 static bool turbo = false;
 
 void setup() {
@@ -74,12 +76,18 @@ void update(float delta) {
         turbo = !turbo;
     }
 
+    if (utils::controller::UP.isPressed()) {
+        fallback_gear = constrain(fallback_gear + 1, 0, GEAR_MAX);
+    } else if (utils::controller::DOWN.isPressed()) {
+        fallback_gear = constrain(fallback_gear - 1, 0, GEAR_MAX);
+    }
+
     if (utils::controller::R2.isDown()) {
-        setSpeedGear(utils::controller::R2_VALUE.getValue(), false);
+        setSpeedGear(utils::controller::R2_VALUE.getValue(), inverted_controls);
     } else if (utils::controller::L2.isDown()) {
-        setSpeedGear(utils::controller::L2_VALUE.getValue(), true);
+        setSpeedGear(utils::controller::L2_VALUE.getValue(), !inverted_controls);
     } else {
-        gear = 0;
+        gear = fallback_gear;
         setSpeed(0);
     }
 

@@ -5,6 +5,7 @@
 
 #include "rccar/constants.h"
 #include "rccar/utils/controller.h"
+#include "rccar/rccar.h"
 
 namespace rccar::components::servo {
 
@@ -24,7 +25,7 @@ void update(float delta) {
         return;
     }
 
-    servo.write(static_cast<int>(90 + 90 * stick * -0.15F));
+    servo.write(static_cast<int>(90 + 90 * stick * 0.15F * (inverted_controls ? 1 : -1)));
 }
 
 }

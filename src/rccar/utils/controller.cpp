@@ -78,6 +78,8 @@ void update(float delta) {
 
     R_STICK_X.update(delta);
     R_STICK_Y.update(delta);
+
+    ps5.setLed(0, 255, 0);
 }
 
 }

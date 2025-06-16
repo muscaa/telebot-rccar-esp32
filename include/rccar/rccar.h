@@ -2,6 +2,8 @@
 
 namespace rccar {
 
+extern bool inverted_controls;
+
 void setup();
 
 void init();
